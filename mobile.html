@@ -1,1 +1,160 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<title>Americano Lisa vs Manon</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<style>
+body{
+  font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;
+  margin:0;
+  background:#f4f4f4;
+}
+header{
+  background:#111;
+  color:#fff;
+  padding:12px;
+  text-align:center;
+  font-weight:700;
+}
+.container{
+  padding:10px;
+  max-width:900px;
+  margin:auto;
+}
+.tabs{
+  display:flex;
+  gap:6px;
+  margin-bottom:10px;
+}
+.tab{
+  flex:1;
+  padding:8px;
+  border:none;
+  border-radius:6px;
+  background:#ddd;
+  font-size:14px;
+}
+.tab.active{
+  background:#111;
+  color:#fff;
+}
+.section{
+  display:none;
+  background:#fff;
+  border-radius:8px;
+  padding:10px;
+}
+.section.active{display:block;}
 
+.match{
+  border:1px solid #ddd;
+  border-radius:6px;
+  padding:8px;
+  margin-bottom:6px;
+}
+.small{font-size:12px;color:#555;}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+}
+th,td{
+  border:1px solid #ddd;
+  padding:6px;
+  text-align:left;
+}
+th{background:#f0f0f0;}
+</style>
+</head>
+
+<body>
+<header>Americano Lisa vs Manon – Mobile</header>
+
+<div class="container">
+  <div class="tabs">
+    <button class="tab active" data-tab="matches">Matchs</button>
+    <button class="tab" data-tab="ranking">Classement</button>
+  </div>
+
+  <div id="matches" class="section active">
+    <h3>Matchs</h3>
+    <div id="matchesContainer" class="small">Chargement…</div>
+  </div>
+
+  <div id="ranking" class="section">
+    <h3>Classement individuel</h3>
+    <div id="rankingContainer" class="small">Chargement…</div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  onSnapshot,
+  query,
+  orderBy
+} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB8BS8_Z7-vUVkVZcHhWxUzP62KkB1I4M4",
+  authDomain: "americano-noel-suzini.firebaseapp.com",
+  projectId: "americano-noel-suzini"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const playersCol = collection(db,"players");
+const matchesCol = collection(db,"matches");
+
+const matchesEl = document.getElementById("matchesContainer");
+const rankingEl = document.getElementById("rankingContainer");
+
+document.querySelectorAll(".tab").forEach(btn=>{
+  btn.onclick=()=>{
+    document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));
+    document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById(btn.dataset.tab).classList.add("active");
+  }
+});
+
+onSnapshot(query(matchesCol,orderBy("createdAt","asc")),snap=>{
+  if(snap.empty){
+    matchesEl.textContent="Aucun match.";
+    return;
+  }
+  matchesEl.innerHTML="";
+  snap.docs.forEach(d=>{
+    const m=d.data();
+    const div=document.createElement("div");
+    div.className="match";
+    div.innerHTML=`
+      <strong>Tour ${m.roundNumber ?? "-"}</strong><br>
+      ${(m.teamA||[]).join(" & ")} vs ${(m.teamB||[]).join(" & ")}<br>
+      <span class="small">Score : ${m.scoreA ?? "-"} – ${m.scoreB ?? "-"}</span>
+    `;
+    matchesEl.appendChild(div);
+  });
+});
+
+onSnapshot(query(playersCol,orderBy("pointsGeneral","desc")),snap=>{
+  if(snap.empty){
+    rankingEl.textContent="Aucun joueur.";
+    return;
+  }
+  let html="<table><tr><th>#</th><th>Nom</th><th>Points</th></tr>";
+  snap.docs.forEach((d,i)=>{
+    const p=d.data();
+    html+=`<tr><td>${i+1}</td><td>${p.name||""}</td><td>${p.pointsGeneral||0}</td></tr>`;
+  });
+  html+="</table>";
+  rankingEl.innerHTML=html;
+});
+</script>
+</body>
+</html>
