@@ -1,13 +1,714 @@
-<!doctype html>
+<!-- =========================
+     Lisa.html
+     ========================= -->
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Page en préparation</title>
+  <meta charset="UTF-8" />
+  <title>Lisa – Americano</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    :root{
+      --bg:#ffffff;
+      --panel:#ffffff;
+      --text:#111827;
+      --muted:#6b7280;
+      --border:rgba(0,0,0,.10);
+      --shadow: 0 10px 30px rgba(0,0,0,.10);
+
+      --headerBg1:#ef4444;
+      --headerBg2:#b91c1c;
+      --headerText:#ffffff;
+
+      --teamAccent:#ef4444;
+      --teamAccent2:#b91c1c;
+
+      --ok:#16a34a;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    /* ===== Header (avec piments) ===== */
+    header{
+      position: sticky;
+      top:0;
+      z-index: 50;
+      box-shadow: var(--shadow);
+      background:
+        radial-gradient(circle at 14px 14px, rgba(255,255,255,.18) 0 2px, transparent 3px),
+        radial-gradient(circle at 34px 22px, rgba(255,255,255,.14) 0 2px, transparent 3px),
+        linear-gradient(90deg, var(--headerBg1), var(--headerBg2));
+      overflow:hidden;
+    }
+    /* motifs piments (emoji) */
+    header::before{
+      content:"🌶️ 🌶️ 🌶️ 🌶️ 🌶️ 🌶️ 🌶️ 🌶️ 🌶️ 🌶️ 🌶️ 🌶️";
+      position:absolute;
+      left:-10px;
+      right:-10px;
+      top:6px;
+      opacity:.20;
+      font-size: 22px;
+      white-space: nowrap;
+      transform: rotate(-2deg);
+      pointer-events:none;
+      filter: saturate(1.1);
+    }
+    header::after{
+      content:"🌶️ 🌶️ 🌶️ 🌶️ 🌶️ 🌶️ 🌶️ 🌶️ 🌶️ 🌶️ 🌶️ 🌶️";
+      position:absolute;
+      left:-10px;
+      right:-10px;
+      bottom:6px;
+      opacity:.18;
+      font-size: 22px;
+      white-space: nowrap;
+      transform: rotate(2deg);
+      pointer-events:none;
+      filter: saturate(1.1);
+    }
+
+    .headRow{
+      position: relative;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 12px 14px;
+      display:grid;
+      grid-template-columns: 140px 1fr 220px;
+      align-items:center;
+      gap:10px;
+    }
+    .leftSlot{ display:flex; align-items:center; justify-content:flex-start; }
+    .centerSlot{ display:flex; flex-direction:column; align-items:center; text-align:center; line-height:1.15; }
+    .rightSlot{ display:flex; align-items:center; justify-content:flex-end; gap:10px; }
+
+    .brandImg{
+      height: 44px;
+      width: auto;
+      max-width: 100%;
+      object-fit: contain;
+      display:block;
+      filter: drop-shadow(0 3px 10px rgba(0,0,0,.18));
+    }
+
+    .t1{
+      font-weight: 1000;
+      font-size: 16px;
+      color: var(--headerText);
+      letter-spacing:.3px;
+      text-transform: uppercase;
+    }
+    .t2{
+      font-weight: 800;
+      font-size: 13px;
+      color: rgba(255,255,255,.92);
+      margin-top:2px;
+    }
+
+    .statusPill{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      background: rgba(0,0,0,.18);
+      border: 1px solid rgba(255,255,255,.22);
+      font-size:12px;
+      color:#fff;
+      white-space:nowrap;
+    }
+    .dot{
+      width:10px; height:10px; border-radius:999px;
+      background: var(--warn);
+      box-shadow: 0 0 0 4px rgba(245,158,11,.18);
+    }
+    .dot.ok{ background: var(--ok); box-shadow: 0 0 0 4px rgba(34,197,94,.18); }
+    .dot.bad{ background: var(--bad); box-shadow: 0 0 0 4px rgba(239,68,68,.18); }
+
+    /* ===== Layout ===== */
+    .container{
+      max-width: 1100px;
+      margin: 14px auto 40px auto;
+      padding: 0 12px;
+    }
+
+    .tabs{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin: 12px 0 10px;
+    }
+    .tabBtn{
+      flex:1;
+      min-width: 160px;
+      border:1px solid var(--border);
+      background:#f3f4f6;
+      color: var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:900;
+      font-size:14px;
+      transition:.15s ease;
+    }
+    .tabBtn:hover{ transform: translateY(-1px); }
+    .tabBtn.active{
+      border-color: rgba(239,68,68,.40);
+      background: rgba(239,68,68,.16);
+      box-shadow: 0 12px 25px rgba(0,0,0,.12);
+    }
+
+    .tabContent{ display:none; }
+    .tabContent.active{ display:block; }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 920px){
+      .grid{ grid-template-columns: 1fr; }
+      .headRow{ grid-template-columns: 120px 1fr 200px; }
+      .brandImg{ height: 40px; }
+      header::before, header::after{ font-size: 18px; }
+    }
+
+    .panel{
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 12px;
+    }
+    .panelTitle{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .panelTitle h2{
+      margin:0;
+      font-size: 15px;
+      font-weight: 1000;
+      letter-spacing:.2px;
+    }
+    .hint{ color: var(--muted); font-size: 12px; }
+
+    .row{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding: 6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(0,0,0,.10);
+      background:#f3f4f6;
+      font-size:12px;
+      font-weight:1000;
+      color: var(--text);
+      white-space:nowrap;
+    }
+    .badge.team{
+      background: rgba(239,68,68,.18);
+      border-color: rgba(239,68,68,.35);
+    }
+
+    .turnBox{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(0,0,0,.10);
+      background: #fafafa;
+      margin-bottom: 10px;
+    }
+    .turnText{
+      font-weight: 1000;
+    }
+    .turnText.ok{ color: #065f46; }
+    .turnText.wait{ color: #7c2d12; }
+
+    .chips{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      padding: 8px;
+      border-radius: 14px;
+      border: 1px dashed rgba(0,0,0,.12);
+      background: #fafafa;
+      min-height: 54px;
+    }
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 8px 10px;
+      border-radius:999px;
+      border: 1px solid rgba(0,0,0,.10);
+      cursor:pointer;
+      font-weight: 1000;
+      font-size: 12px;
+      user-select:none;
+      background: #f3f4f6;
+      color:#111827;
+      transition:.12s ease;
+    }
+    .chip:hover{ transform: translateY(-1px); }
+    .chip small{
+      font-weight: 1000;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.10);
+      background: rgba(255,255,255,.70);
+      color: #111827;
+    }
+    /* chips Lisa */
+    .chip.lisa{
+      background: rgba(239,68,68,.18);
+      border-color: rgba(239,68,68,.35);
+    }
+    .chip.lisa small{
+      background: rgba(185,28,28,.14);
+      border-color: rgba(185,28,28,.30);
+    }
+    /* chips Manon (affichage seulement) */
+    .chip.manon{
+      background: rgba(250,204,21,.22);
+      border-color: rgba(250,204,21,.45);
+    }
+    .chip.manon small{
+      background: rgba(202,138,4,.14);
+      border-color: rgba(202,138,4,.30);
+    }
+
+    .divider{ height:1px; background: rgba(0,0,0,.08); margin: 10px 0; }
+
+    .log{
+      background: #0b1220;
+      border: 1px solid rgba(0,0,0,.10);
+      border-radius: 14px;
+      padding: 10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      color: #e5e7eb;
+      max-height: 380px;
+      overflow:auto;
+      white-space: pre-wrap;
+    }
+
+    .placeholder{
+      padding: 18px;
+      border: 1px dashed rgba(0,0,0,.18);
+      border-radius: 14px;
+      background: #fafafa;
+      color: #111827;
+      font-weight: 900;
+    }
+
+    .small{ font-size: 12px; color: var(--muted); }
+  </style>
 </head>
-<body style="font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;margin:16px;">
-  <h2>Page en préparation…</h2>
-  <p>Elle sera remplie à l’étape suivante.</p>
-  <p><a href="index.html">← Retour</a></p>
+
+<body>
+<header>
+  <div class="headRow">
+    <div class="leftSlot">
+      <!-- JPEG -->
+      <img src="img/logo-suzini.jpeg" alt="TC Suzini" class="brandImg">
+    </div>
+
+    <div class="centerSlot">
+      <div class="t1">Lisa – Choix équipes</div>
+      <div class="t2">🌶️ Americano Lisa vs Manon</div>
+    </div>
+
+    <div class="rightSlot">
+      <!-- JPEG -->
+      <img src="img/tournoi.jpeg" alt="Tournoi" class="brandImg">
+      <div class="statusPill">
+        <span class="dot" id="statusDot"></span>
+        <span id="statusText">Connexion…</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="tabs">
+    <button class="tabBtn active" data-tab="teamsTab">Choix des équipes</button>
+    <button class="tabBtn" data-tab="matchesTab">Matchs</button>
+  </div>
+
+  <div id="teamsTab" class="tabContent active">
+    <div class="grid">
+      <div class="panel">
+        <div class="panelTitle">
+          <h2>Choix des équipes</h2>
+          <span class="hint">Firestore: <b>players</b> + <b>meta/draft</b></span>
+        </div>
+
+        <div class="turnBox">
+          <div>
+            <div class="small">Tour actuel</div>
+            <div class="turnText" id="turnLine">—</div>
+          </div>
+          <div class="badge team" id="meBadge">🌶️ Team Lisa</div>
+        </div>
+
+        <div class="small" style="margin-bottom:10px;">
+          Règles : choix alterné + contrainte H/F (selon admin).<br>
+          Ici, tu peux <b>seulement choisir</b> quand c’est ton tour. <b>Pas de retrait</b> (admin uniquement).
+        </div>
+
+        <div class="grid" style="grid-template-columns: 1fr 1fr 1fr; gap:10px;">
+          <div>
+            <div class="row" style="justify-content:space-between; margin-bottom:6px;">
+              <span class="badge">Sans équipe</span>
+              <span class="badge" id="countSolo">0</span>
+            </div>
+            <div class="chips" id="soloList"></div>
+          </div>
+
+          <div>
+            <div class="row" style="justify-content:space-between; margin-bottom:6px;">
+              <span class="badge team">🌶️ Team Lisa</span>
+              <span class="badge team" id="countLisa">0</span>
+            </div>
+            <div class="chips" id="lisaList"></div>
+          </div>
+
+          <div>
+            <div class="row" style="justify-content:space-between; margin-bottom:6px;">
+              <span class="badge">🐝 Team Manon</span>
+              <span class="badge" id="countManon">0</span>
+            </div>
+            <div class="chips" id="manonList"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panelTitle">
+          <h2>Journal</h2>
+          <span class="hint">debug</span>
+        </div>
+        <div class="log" id="logBox"></div>
+        <div class="small" style="margin-top:8px;">
+          Si “Missing or insufficient permissions” : règles Firestore.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="matchesTab" class="tabContent">
+    <div class="panel">
+      <div class="panelTitle"><h2>Matchs</h2><span class="hint">à venir</span></div>
+      <div class="placeholder">⏳ Onglet Matchs à venir.</div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  // ================================
+  // CONFIG PAGE
+  // ================================
+  const MY_TEAM = "Lisa"; // page Lisa
+
+  // ================================
+  // Firebase
+  // ================================
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    doc,
+    getDoc,
+    updateDoc,
+    onSnapshot,
+    query,
+    orderBy
+  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyD7-WLKEmajFSh4INdTCVpPvF2hv_jPQm8",
+    authDomain: "americano-lisa-manon.firebaseapp.com",
+    projectId: "americano-lisa-manon",
+    storageBucket: "americano-lisa-manon.firebasestorage.app",
+    messagingSenderId: "98885291802",
+    appId: "1:98885291802:web:6aff774b8f8df14db226a3"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // ================================
+  // UI helpers
+  // ================================
+  const statusDot = document.getElementById("statusDot");
+  const statusText = document.getElementById("statusText");
+  const logBox = document.getElementById("logBox");
+  const turnLine = document.getElementById("turnLine");
+
+  function log(msg, kind="ok"){
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2,"0");
+    const mm = String(now.getMinutes()).padStart(2,"0");
+    const ss = String(now.getSeconds()).padStart(2,"0");
+    const icon = kind==="ok" ? "✅" : (kind==="warn" ? "⚠️" : "❌");
+    logBox.textContent = `[${hh}:${mm}:${ss}] ${icon} ${msg}\n` + logBox.textContent;
+  }
+
+  function setStatus(state, text){
+    statusText.textContent = text;
+    statusDot.classList.remove("ok","bad");
+    if(state==="ok") statusDot.classList.add("ok");
+    else if(state==="bad") statusDot.classList.add("bad");
+  }
+
+  // Tabs
+  const tabBtns = document.querySelectorAll(".tabBtn");
+  const tabContents = document.querySelectorAll(".tabContent");
+  tabBtns.forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const target = btn.dataset.tab;
+      tabBtns.forEach(b=>b.classList.remove("active"));
+      tabContents.forEach(c=>c.classList.remove("active"));
+      btn.classList.add("active");
+      document.getElementById(target).classList.add("active");
+    });
+  });
+
+  // ================================
+  // Firestore refs
+  // ================================
+  const playersCol = collection(db, "players");
+  const draftRef = doc(db, "meta", "draft");
+
+  let playersCache = [];
+  let draftCache = { starter:"Lisa", turn:null, initialized:false };
+
+  function otherTeam(team){ return team==="Lisa" ? "Manon" : "Lisa"; }
+  function sortByName(list){
+    return [...list].sort((a,b)=>(a.name||"").localeCompare((b.name||""),"fr",{sensitivity:"base"}));
+  }
+  function teamIcon(team){
+    return team === "Lisa" ? "🌶️" : (team==="Manon" ? "🐝" : "•");
+  }
+
+  function countGenderInTeam(team){
+    const list = playersCache.filter(p => p.team === team);
+    let h = 0, f = 0;
+    list.forEach(p=>{
+      if(p.gender === "H") h++;
+      else if(p.gender === "F") f++;
+    });
+    return { h, f };
+  }
+  function hasSoloGender(g){
+    return playersCache.some(p => !p.team && p.gender === g);
+  }
+  function requiredGenderForTeam(team){
+    const { h, f } = countGenderInTeam(team);
+    let req = null;
+    if(h > f) req = "F";
+    else if(f > h) req = "H";
+    if(req && !hasSoloGender(req)) req = null;
+    return req;
+  }
+  function genderLabel(g){
+    if(g === "H") return "Homme";
+    if(g === "F") return "Femme";
+    return "Non renseigné";
+  }
+
+  function confirmPickPopup({ playerName, playerGender, team, requiredGender }){
+    const icon = teamIcon(team);
+    const reqTxt = requiredGender ? `${genderLabel(requiredGender)} (${requiredGender})` : "Aucune (choix libre)";
+    const pTxt = playerGender ? `${genderLabel(playerGender)} (${playerGender})` : "Non renseigné";
+
+    const msg =
+`${icon} Choix joueur – Team ${team}
+
+Joueur : ${playerName}
+Sexe : ${pTxt}
+
+Contrainte actuelle : ${reqTxt}
+
+Confirmer le choix ?`;
+
+    return window.confirm(msg);
+  }
+
+  function renderTurn(){
+    const turn = draftCache.turn;
+    if(!turn){
+      turnLine.textContent = "⏳ Draft non initialisé par l’admin (définir qui commence).";
+      turnLine.className = "turnText wait";
+      return;
+    }
+    if(turn === MY_TEAM){
+      turnLine.textContent = `✅ À toi de choisir (${teamIcon(MY_TEAM)} ${MY_TEAM})`;
+      turnLine.className = "turnText ok";
+    } else {
+      turnLine.textContent = `⏳ Attends : c’est à ${turn} de choisir (${teamIcon(turn)} ${turn})`;
+      turnLine.className = "turnText wait";
+    }
+  }
+
+  function renderLists(){
+    renderTurn();
+
+    const solo = sortByName(playersCache.filter(p=>!p.team));
+    const lisa = sortByName(playersCache.filter(p=>p.team==="Lisa"));
+    const manon = sortByName(playersCache.filter(p=>p.team==="Manon"));
+
+    document.getElementById("countSolo").textContent = String(solo.length);
+    document.getElementById("countLisa").textContent = String(lisa.length);
+    document.getElementById("countManon").textContent = String(manon.length);
+
+    const soloList = document.getElementById("soloList");
+    const lisaList = document.getElementById("lisaList");
+    const manonList = document.getElementById("manonList");
+
+    soloList.innerHTML = "";
+    lisaList.innerHTML = "";
+    manonList.innerHTML = "";
+
+    const mkChip = (p, teamClass, clickable) => {
+      const chip = document.createElement("div");
+      chip.className = "chip" + (teamClass ? " " + teamClass : "");
+      const g = (p.gender || "").toUpperCase() || "•";
+      const icon = p.team ? teamIcon(p.team) + " " : "";
+      chip.innerHTML = `<span>${icon}${p.name || "(sans nom)"}</span><small>${g}</small>`;
+      if(!clickable){
+        chip.style.cursor = "default";
+        chip.style.opacity = "0.95";
+        chip.addEventListener("click", ()=>{ /* no-op */ });
+        return chip;
+      }
+
+      chip.addEventListener("click", async ()=>{
+        try{
+          if(!draftCache.turn){
+            alert("Draft non initialisé par l’admin.");
+            return;
+          }
+          if(draftCache.turn !== MY_TEAM){
+            alert(`Ce n’est pas ton tour. C’est à ${draftCache.turn} de choisir.`);
+            return;
+          }
+          if(p.team){
+            return; // par sécurité
+          }
+
+          const req = requiredGenderForTeam(MY_TEAM);
+
+          // si contrainte active, bloque si mismatch (quand sexe requis dispo)
+          if(req && p.gender && p.gender !== req){
+            alert(`Contrainte H/F : tu dois choisir un(e) ${genderLabel(req)} maintenant.`);
+            return;
+          }
+          if(req && !p.gender){
+            alert(`Contrainte H/F : tu dois choisir un(e) ${genderLabel(req)} maintenant.\nOr ce joueur n'a pas de sexe renseigné → choix impossible.`);
+            return;
+          }
+
+          const ok = confirmPickPopup({
+            playerName: p.name || "(sans nom)",
+            playerGender: p.gender || null,
+            team: MY_TEAM,
+            requiredGender: req
+          });
+          if(!ok) return;
+
+          await updateDoc(doc(db, "players", p.id), { team: MY_TEAM });
+          await updateDoc(draftRef, { turn: otherTeam(MY_TEAM), updatedAt: Date.now() });
+          log(`${teamIcon(MY_TEAM)} ${MY_TEAM} choisit : ${p.name} → tour à ${otherTeam(MY_TEAM)}`);
+        }catch(e){
+          console.error(e);
+          log(`Erreur choix joueur: ${e?.message || e}`, "bad");
+          alert("Erreur lors du choix du joueur.");
+        }
+      });
+
+      return chip;
+    };
+
+    if(!solo.length){
+      soloList.innerHTML = `<div class="small">Aucun joueur sans équipe.</div>`;
+    } else {
+      solo.forEach(p=> soloList.appendChild(mkChip(p, "", true)));
+    }
+
+    // Dans les pages Lisa/Manon : affichage seulement (pas de retrait)
+    if(!lisa.length){
+      lisaList.innerHTML = `<div class="small">Aucun joueur.</div>`;
+    } else {
+      lisa.forEach(p=> lisaList.appendChild(mkChip(p, "lisa", false)));
+    }
+
+    if(!manon.length){
+      manonList.innerHTML = `<div class="small">Aucun joueur.</div>`;
+    } else {
+      manon.forEach(p=> manonList.appendChild(mkChip(p, "manon", false)));
+    }
+  }
+
+  async function init(){
+    try{
+      setStatus("ok","Connecté");
+      log("Page Lisa chargée.");
+    }catch(e){
+      console.error(e);
+      setStatus("bad","Erreur");
+      log(`Erreur init: ${e?.message || e}`, "bad");
+      return;
+    }
+
+    onSnapshot(query(playersCol, orderBy("createdAt","asc")), (snap)=>{
+      playersCache = snap.docs.map(d=>({ id:d.id, ...d.data() }));
+      renderLists();
+    }, (err)=>{
+      console.error(err);
+      setStatus("bad","Erreur Firestore");
+      log(`onSnapshot players: ${err?.message || err}`, "bad");
+    });
+
+    onSnapshot(draftRef, async (snap)=>{
+      if(!snap.exists()){
+        // l’admin créera le doc, mais on gère proprement ici
+        draftCache = { starter:"Lisa", turn:null, initialized:false };
+        renderTurn();
+        return;
+      }
+      draftCache = snap.data() || draftCache;
+      renderLists();
+    }, (err)=>{
+      console.error(err);
+      setStatus("bad","Erreur Firestore");
+      log(`onSnapshot draft: ${err?.message || err}`, "bad");
+    });
+  }
+
+  init();
+</script>
 </body>
 </html>
