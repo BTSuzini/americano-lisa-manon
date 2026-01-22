@@ -1,13 +1,693 @@
+<!-- =========================
+     TV.html (vue TV)
+     - 3 bandeaux en haut (Vert Admin + Rouge Lisa + Jaune Manon)
+     - Layout 2/3 gauche : Dernier / En cours / À venir
+     - Layout 1/3 droite : Classement équipes + Classement général
+     - Optimisé écran TV (grandes typos, cartes larges)
+     - Assets : img/logo-suzini.jpeg + img/tournoi.jpeg (jpeg)
+     ========================= -->
 <!doctype html>
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Page en préparation</title>
+  <title>Americano Lisa vs Manon – TV</title>
+
+  <style>
+    :root{
+      --bg:#0b1220;
+      --panel:#0f172a;
+      --panel2:#111c33;
+      --text:#e5e7eb;
+      --muted:#9ca3af;
+      --border:rgba(255,255,255,.10);
+      --shadow: 0 16px 40px rgba(0,0,0,.45);
+
+      --green:#16a34a;
+      --green2:#15803d;
+
+      --lisa:#b91c1c;
+      --lisa2:#7f1d1d;
+
+      --manon:#facc15;
+      --manon2:#ca8a04;
+
+      --ok:#22c55e;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1100px 700px at 15% 10%, rgba(34,197,94,.18), transparent 55%),
+                  radial-gradient(1000px 650px at 85% 15%, rgba(250,204,21,.14), transparent 55%),
+                  radial-gradient(900px 600px at 50% 100%, rgba(239,68,68,.14), transparent 60%),
+                  var(--bg);
+      color: var(--text);
+    }
+
+    /* ====== 3 bandeaux ====== */
+    .topBars{
+      position: sticky;
+      top:0;
+      z-index: 50;
+      box-shadow: var(--shadow);
+    }
+
+    /* Vert (Admin) */
+    .barAdmin{
+      background: linear-gradient(90deg, rgba(22,163,74,1), rgba(21,128,61,1));
+      padding: 12px 18px;
+      border-bottom: 1px solid rgba(255,255,255,.12);
+    }
+    .adminRow{
+      max-width: 1800px;
+      margin: 0 auto;
+      display:grid;
+      grid-template-columns: 180px 1fr 180px;
+      align-items:center;
+      gap:14px;
+    }
+    .brandImg{
+      height: 58px;
+      width:auto;
+      object-fit: contain;
+      display:block;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.28));
+    }
+    .adminCenter{
+      text-align:center;
+      line-height:1.12;
+      color:#fff;
+    }
+    .t1{ font-weight:1000; font-size: 26px; letter-spacing:.2px; }
+    .t2{ font-weight:900; font-size: 18px; opacity:.95; }
+
+    .rightPack{
+      display:flex;
+      align-items:center;
+      justify-content:flex-end;
+      gap:14px;
+    }
+    .statusDotOnly{
+      width:14px; height:14px; border-radius:999px;
+      background: var(--warn);
+      box-shadow: 0 0 0 6px rgba(245,158,11,.18);
+      border: 1px solid rgba(255,255,255,.35);
+    }
+    .statusDotOnly.ok{ background: var(--ok); box-shadow: 0 0 0 6px rgba(34,197,94,.18); }
+    .statusDotOnly.bad{ background: var(--bad); box-shadow: 0 0 0 6px rgba(239,68,68,.18); }
+
+    /* Rouge Lisa */
+    .barLisa{
+      background: linear-gradient(90deg, rgba(185,28,28,1), rgba(127,29,29,1));
+      padding: 10px 18px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      color:#fff;
+      font-weight:1000;
+      font-size: 22px;
+      letter-spacing:.2px;
+      text-align:center;
+    }
+
+    /* Jaune Manon */
+    .barManon{
+      background: linear-gradient(90deg, rgba(250,204,21,1), rgba(202,138,4,1));
+      padding: 10px 18px;
+      border-bottom: 1px solid rgba(0,0,0,.15);
+      color:#111827;
+      font-weight:1000;
+      font-size: 22px;
+      letter-spacing:.2px;
+      text-align:center;
+    }
+
+    /* ====== Layout ====== */
+    .wrap{
+      max-width: 1800px;
+      margin: 16px auto 26px;
+      padding: 0 18px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 2fr 1fr; /* ✅ 2/3 gauche */
+      gap: 16px;
+      align-items: start;
+    }
+
+    .col{
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(15,23,42,.96), rgba(15,23,42,.90));
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 14px 14px 16px;
+    }
+
+    .cardHead{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom: 10px;
+    }
+    .cardTitle{
+      font-weight:1000;
+      font-size: 18px;
+      letter-spacing:.2px;
+    }
+    .cardMeta{
+      font-weight:900;
+      font-size: 14px;
+      color: var(--muted);
+      text-align:right;
+      white-space:nowrap;
+    }
+
+    .miniInfo{
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .courtBlock{
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 16px;
+      background: rgba(255,255,255,.04);
+      padding: 12px;
+      margin-top: 10px;
+    }
+    .courtTop{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom: 8px;
+    }
+    .courtName{
+      font-weight:1000;
+      font-size: 14px;
+      color: rgba(229,231,235,.96);
+    }
+    .courtState{
+      font-weight:900;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .teamLine{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding: 8px 10px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.22);
+      margin-top: 8px;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      font-weight:1000;
+      font-size: 13px;
+      border: 1px solid rgba(255,255,255,.12);
+      white-space:nowrap;
+    }
+    .badge.lisa{ background: rgba(239,68,68,.18); }
+    .badge.manon{ background: rgba(250,204,21,.18); color:#111827; border-color: rgba(0,0,0,.12); }
+    .names{
+      font-weight: 1000;
+      font-size: 16px;
+      color: rgba(229,231,235,.95);
+      text-align:right;
+      flex:1;
+    }
+    .names.dark{
+      color:#111827;
+    }
+
+    .scoreRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255,255,255,.10);
+    }
+    .scoreLabel{
+      color: var(--muted);
+      font-weight: 900;
+      font-size: 13px;
+    }
+    .scoreValue{
+      font-weight: 1000;
+      font-size: 22px;
+      letter-spacing:.5px;
+    }
+
+    .benchBox{
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 16px;
+      border: 1px dashed rgba(255,255,255,.16);
+      background: rgba(0,0,0,.18);
+    }
+    .benchTitle{
+      font-weight:1000;
+      font-size: 14px;
+      margin-bottom: 8px;
+      color: rgba(229,231,235,.92);
+    }
+    .benchList{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      font-weight: 1000;
+      font-size: 14px;
+      color: rgba(229,231,235,.92);
+    }
+
+    /* Tables rankings */
+    table{
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 16px;
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      font-size: 14px;
+    }
+    th, td{
+      padding: 10px 10px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      text-align:left;
+      vertical-align: top;
+      font-weight: 900;
+    }
+    th{
+      background: rgba(255,255,255,.06);
+      color: rgba(229,231,235,.92);
+      font-weight: 1000;
+      font-size: 13px;
+      letter-spacing:.2px;
+    }
+    td b{ font-weight: 1000; }
+    .right{ text-align:right; }
+
+    .duelRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding: 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      margin-top: 10px;
+    }
+    .bigPts{
+      font-weight:1000;
+      font-size: 28px;
+      letter-spacing:.5px;
+    }
+
+    /* TV safety (no tiny text) */
+    @media (max-width: 1200px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
-<body style="font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;margin:16px;">
-  <h2>Page en préparation…</h2>
-  <p>Elle sera remplie à l’étape suivante.</p>
-  <p><a href="index.html">← Retour</a></p>
+
+<body>
+  <div class="topBars">
+    <!-- Bandeau vert (Admin) -->
+    <div class="barAdmin">
+      <div class="adminRow">
+        <div>
+          <img src="img/logo-suzini.jpeg" alt="TC Suzini" class="brandImg">
+        </div>
+        <div class="adminCenter">
+          <div class="t1">Americano Lisa vs Manon</div>
+          <div class="t2">BT Suzini</div>
+        </div>
+        <div class="rightPack">
+          <img src="img/tournoi.jpeg" alt="Tournoi" class="brandImg">
+          <span class="statusDotOnly" id="statusDot" aria-label="statut connexion"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bandeau rouge Lisa -->
+    <div class="barLisa">🌶️🌶️🌶️ Team LISA « LOS PIMIENTOOOOOOS » 🌶️🌶️🌶️</div>
+
+    <!-- Bandeau jaune Manon -->
+    <div class="barManon">🐝🐝🐝 Team Manon « HONEY SMASH » 🐝🐝🐝</div>
+  </div>
+
+  <div class="wrap">
+    <div class="grid">
+      <!-- ===================== GAUCHE (2/3) ===================== -->
+      <div class="col">
+        <div class="card">
+          <div class="cardHead">
+            <div class="cardTitle">Dernier tour (validé)</div>
+            <div class="cardMeta" id="lastMeta">—</div>
+          </div>
+          <div id="lastBody" class="miniInfo">Chargement…</div>
+        </div>
+
+        <div class="card">
+          <div class="cardHead">
+            <div class="cardTitle">Tour en cours</div>
+            <div class="cardMeta" id="curMeta">—</div>
+          </div>
+          <div id="curBody" class="miniInfo">Chargement…</div>
+        </div>
+
+        <div class="card">
+          <div class="cardHead">
+            <div class="cardTitle">Tour à venir</div>
+            <div class="cardMeta" id="nextMeta">—</div>
+          </div>
+          <div id="nextBody" class="miniInfo">Chargement…</div>
+        </div>
+      </div>
+
+      <!-- ===================== DROITE (1/3) ===================== -->
+      <div class="col">
+        <!-- Classement équipes -->
+        <div class="card">
+          <div class="cardHead">
+            <div class="cardTitle">Classement par équipe</div>
+            <div class="cardMeta">Somme pointsGeneral</div>
+          </div>
+
+          <div id="teamRankBox">
+            <div class="miniInfo">Chargement…</div>
+          </div>
+        </div>
+
+        <!-- Classement général -->
+        <div class="card">
+          <div class="cardHead">
+            <div class="cardTitle">Classement individuel (général)</div>
+            <div class="cardMeta">pointsGeneral</div>
+          </div>
+
+          <div id="indRankBox">
+            <div class="miniInfo">Chargement…</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script type="module">
+  // ================================
+  // Firebase
+  // ================================
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    doc,
+    onSnapshot,
+    query,
+    orderBy
+  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyD7-WLKEmajFSh4INdTCVpPvF2hv_jPQm8",
+    authDomain: "americano-lisa-manon.firebaseapp.com",
+    projectId: "americano-lisa-manon",
+    storageBucket: "americano-lisa-manon.firebasestorage.app",
+    messagingSenderId: "98885291802",
+    appId: "1:98885291802:web:6aff774b8f8df14db226a3"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // ================================
+  // State
+  // ================================
+  const playersCol = collection(db, "players");
+  const matchesCol = collection(db, "matches");
+
+  let playersCache = [];
+  let matchesCache = [];
+
+  // ================================
+  // UI
+  // ================================
+  const statusDot = document.getElementById("statusDot");
+
+  function setStatus(state){
+    statusDot.classList.remove("ok","bad");
+    if(state==="ok") statusDot.classList.add("ok");
+    else if(state==="bad") statusDot.classList.add("bad");
+  }
+
+  const lastMeta = document.getElementById("lastMeta");
+  const curMeta  = document.getElementById("curMeta");
+  const nextMeta = document.getElementById("nextMeta");
+
+  const lastBody = document.getElementById("lastBody");
+  const curBody  = document.getElementById("curBody");
+  const nextBody = document.getElementById("nextBody");
+
+  const teamRankBox = document.getElementById("teamRankBox");
+  const indRankBox  = document.getElementById("indRankBox");
+
+  // ================================
+  // Helpers
+  // ================================
+  function sortByName(list){
+    return [...list].sort((a,b)=>(a.name||"").localeCompare((b.name||""),"fr",{sensitivity:"base"}));
+  }
+
+  function groupMatchesByRound(list){
+    const map = new Map();
+    list.forEach(m=>{
+      const r = Number(m.roundNumber || 0);
+      if(!r) return;
+      if(!map.has(r)) map.set(r, []);
+      map.get(r).push(m);
+    });
+    return [...map.entries()].map(([round, matches])=>{
+      const mm = [...matches].sort((a,b)=>(a.court||0)-(b.court||0));
+      return { round, matches: mm };
+    }).sort((a,b)=>a.round-b.round);
+  }
+
+  function isRoundFullyValidated(roundObj){
+    if(!roundObj || !roundObj.matches?.length) return false;
+    if(roundObj.matches.length < 2) return false;
+    return roundObj.matches.slice(0,2).every(m => m.validated === true);
+  }
+
+  function buildBenchForRound(roundObj){
+    const playing = new Set();
+    (roundObj.matches || []).slice(0,2).forEach(m=>{
+      (m.teamA||[]).forEach(n=>playing.add(n));
+      (m.teamB||[]).forEach(n=>playing.add(n));
+    });
+
+    const allNames = playersCache.map(p=>p.name).filter(Boolean);
+    const bench = allNames.filter(n=>!playing.has(n));
+    return bench.sort((a,b)=>a.localeCompare(b,"fr",{sensitivity:"base"}));
+  }
+
+  function scoreText(m){
+    const a = (typeof m.scoreA==="number") ? m.scoreA : null;
+    const b = (typeof m.scoreB==="number") ? m.scoreB : null;
+    if(a===null || b===null) return "—";
+    return `${a} - ${b}`;
+  }
+
+  function renderRoundCardTV(roundObj, mode){
+    // mode: "last" | "current" | "next"
+    if(!roundObj){
+      return `<div class="miniInfo">Aucun tour.</div>`;
+    }
+    const r = roundObj.round;
+    const matches = (roundObj.matches||[]).slice(0,2);
+    if(matches.length < 2){
+      return `<div class="miniInfo">Tour ${r} incomplet (2 terrains requis).</div>`;
+    }
+
+    const typeLabel = (matches[0].type || matches[1].type || "—");
+    const bench = buildBenchForRound(roundObj);
+
+    let html = `<div class="miniInfo"><b>Tour ${r}</b> • Type: <b>${typeLabel}</b></div>`;
+
+    matches.forEach((m, idx)=>{
+      const court = m.court || (idx+1);
+      const A = (m.teamA||[]);
+      const B = (m.teamB||[]);
+      const validated = (m.validated===true);
+
+      // Sur TV : on affiche toujours un score (— si absent)
+      const sc = (mode==="next") ? "—" : scoreText(m);
+
+      html += `
+        <div class="courtBlock">
+          <div class="courtTop">
+            <div class="courtName">Terrain ${court}</div>
+            <div class="courtState">${validated ? "✅ Validé" : (mode==="next" ? "🕒 À venir" : "⏳ En cours")}</div>
+          </div>
+
+          <div class="teamLine">
+            <span class="badge lisa">🌶️ Lisa</span>
+            <div class="names">${(A[0]||"—")} &nbsp;•&nbsp; ${(A[1]||"—")}</div>
+          </div>
+
+          <div class="teamLine" style="background: rgba(250,204,21,.14); border-color: rgba(0,0,0,.10);">
+            <span class="badge manon">🐝 Manon</span>
+            <div class="names dark">${(B[0]||"—")} &nbsp;•&nbsp; ${(B[1]||"—")}</div>
+          </div>
+
+          <div class="scoreRow">
+            <div class="scoreLabel">Score</div>
+            <div class="scoreValue">${sc}</div>
+          </div>
+        </div>
+      `;
+    });
+
+    html += `
+      <div class="benchBox">
+        <div class="benchTitle">Banc</div>
+        <div class="benchList">
+          ${bench.length ? bench.map(n=>`<span class="pill">${n}</span>`).join("") : `<span class="miniInfo">Personne</span>`}
+        </div>
+      </div>
+    `;
+
+    return html;
+  }
+
+  function renderTours(){
+    const rounds = groupMatchesByRound(matchesCache);
+
+    const lastValid = [...rounds].reverse().find(r=>isRoundFullyValidated(r)) || null;
+    const current  = rounds.find(r=>!isRoundFullyValidated(r)) || null;
+
+    let next = null;
+    if(current){
+      next = rounds.find(r=>r.round === current.round + 1) || null;
+    } else if(lastValid){
+      next = rounds.find(r=>r.round === lastValid.round + 1) || null;
+    }
+
+    lastMeta.textContent = lastValid ? `Tour ${lastValid.round}` : "—";
+    curMeta.textContent  = current  ? `Tour ${current.round}`  : "—";
+    nextMeta.textContent = next     ? `Tour ${next.round}`     : "—";
+
+    lastBody.innerHTML = renderRoundCardTV(lastValid, "last");
+    curBody.innerHTML  = current ? renderRoundCardTV(current, "current") : `<div class="miniInfo">Aucun tour en cours.</div>`;
+    nextBody.innerHTML = next ? renderRoundCardTV(next, "next") : `<div class="miniInfo">Aucun tour à venir.</div>`;
+  }
+
+  function renderRankings(){
+    if(!playersCache.length){
+      teamRankBox.innerHTML = `<div class="miniInfo">Aucun joueur.</div>`;
+      indRankBox.innerHTML  = `<div class="miniInfo">Aucun joueur.</div>`;
+      return;
+    }
+
+    // Classement général (comme admin)
+    const sorted = [...playersCache]
+      .filter(p=>p.name)
+      .sort((a,b)=>(Number(b.pointsGeneral)||0) - (Number(a.pointsGeneral)||0));
+
+    // Classement équipes : somme des pointsGeneral
+    const sumLisa  = sorted.filter(p=>p.team==="Lisa").reduce((s,p)=> s + (Number(p.pointsGeneral)||0), 0);
+    const sumManon = sorted.filter(p=>p.team==="Manon").reduce((s,p)=> s + (Number(p.pointsGeneral)||0), 0);
+
+    teamRankBox.innerHTML = `
+      <div class="duelRow">
+        <span class="badge lisa">🌶️ Team Lisa</span>
+        <span class="bigPts">${sumLisa}</span>
+      </div>
+      <div class="duelRow" style="border-color: rgba(0,0,0,.10); background: rgba(250,204,21,.18); color:#111827;">
+        <span class="badge manon">🐝 Team Manon</span>
+        <span class="bigPts">${sumManon}</span>
+      </div>
+    `;
+
+    // Table top 20 (TV)
+    const top = sorted.slice(0, 20);
+    let html = `<table>
+      <thead>
+        <tr><th style="width:60px;">#</th><th>Joueur</th><th style="width:120px;">Team</th><th class="right" style="width:120px;">Pts</th></tr>
+      </thead>
+      <tbody>`;
+
+    top.forEach((p, idx)=>{
+      const teamTxt = p.team==="Lisa" ? "🌶️ Lisa" : (p.team==="Manon" ? "🐝 Manon" : "—");
+      html += `<tr>
+        <td>${idx+1}</td>
+        <td><b>${p.name||""}</b></td>
+        <td>${teamTxt}</td>
+        <td class="right"><b>${Number(p.pointsGeneral)||0}</b></td>
+      </tr>`;
+    });
+    html += `</tbody></table>`;
+
+    indRankBox.innerHTML = html;
+  }
+
+  // ================================
+  // Live listeners
+  // ================================
+  function init(){
+    setStatus("warn");
+
+    onSnapshot(query(playersCol, orderBy("createdAt","asc")), (snap)=>{
+      playersCache = snap.docs.map(d=>({ id:d.id, ...d.data() }));
+      renderRankings();
+      renderTours(); // pour recalculer banc / pills
+      setStatus("ok");
+    }, (err)=>{
+      console.error(err);
+      setStatus("bad");
+    });
+
+    onSnapshot(query(matchesCol, orderBy("createdAt","asc")), (snap)=>{
+      matchesCache = snap.docs.map(d=>({ id:d.id, ...d.data() }));
+      renderTours();
+      setStatus("ok");
+    }, (err)=>{
+      console.error(err);
+      setStatus("bad");
+    });
+  }
+
+  init();
+</script>
 </body>
 </html>
