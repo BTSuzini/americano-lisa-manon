@@ -2,645 +2,253 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin – Americano Lisa vs Manon</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <style>
-    :root{
-      --red:#b71c1c;
-      --bg:#0f1115;
-      --panel:#141822;
-      --line:rgba(255,255,255,0.12);
-      --muted:rgba(255,255,255,0.75);
-      --white:#fff;
-      --soft:rgba(255,255,255,0.06);
-      --ok:#2e7d32;
-      --warn:#f9a825;
-    }
-    html,body{height:100%}
     body{
+      font-family: system-ui, -apple-system, Segoe UI, Arial, sans-serif;
       margin:0;
-      font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
-      background: var(--bg);
-      color: var(--white);
+      background:#0f172a;
+      color:#e5e7eb;
     }
     header{
-      background: var(--red);
-      padding: 12px 14px;
-      font-weight: 900;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
+      background:#b91c1c;
+      padding:14px;
+      font-weight:700;
     }
-    header .title{
-      display:flex;
-      flex-direction:column;
-      gap:2px;
-      min-width:0;
+    header small{
+      display:block;
+      font-weight:400;
+      opacity:.9;
     }
-    header .title strong{
-      font-size: 16px;
-      line-height: 1.1;
-      white-space: nowrap;
-      overflow:hidden;
-      text-overflow: ellipsis;
-    }
-    header .title span{
-      font-size: 12px;
-      color: rgba(255,255,255,0.9);
-      font-weight: 700;
-    }
-    header .status{
-      font-size: 12px;
-      font-weight: 800;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.25);
-      background: rgba(255,255,255,0.12);
-      white-space: nowrap;
-    }
-    .wrap{
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 12px;
-      display:flex;
-      flex-direction:column;
-      gap: 12px;
-    }
-    .grid{
+    .container{
+      max-width:1100px;
+      margin:auto;
+      padding:14px;
       display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap:14px;
     }
-    @media (max-width: 900px){
-      .grid{ grid-template-columns: 1fr; }
+    .box{
+      background:#020617;
+      border-radius:10px;
+      padding:12px;
+      border:1px solid #1e293b;
     }
-    .panel{
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      overflow:hidden;
+    h2{
+      margin:0 0 10px 0;
+      font-size:16px;
     }
-    .panel h2{
-      margin:0;
-      padding: 10px 12px;
-      font-size: 14px;
-      border-bottom: 1px solid var(--line);
-      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.00));
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
+    input,select,button{
+      padding:8px;
+      border-radius:6px;
+      border:none;
+      font-size:14px;
     }
-    .panel h2 small{
-      color: var(--muted);
-      font-weight: 700;
-      font-size: 12px;
-      white-space: nowrap;
-    }
-    .content{ padding: 12px; }
-    .row{ display:flex; gap:10px; flex-wrap: wrap; align-items:flex-end; }
-    label{ display:flex; flex-direction:column; gap:6px; font-size: 12px; font-weight: 700; color: var(--muted); }
-    input, select{
-      padding: 10px 10px;
-      border-radius: 10px;
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,0.04);
-      color: var(--white);
-      outline: none;
-      min-width: 180px;
+    input,select{
+      background:#020617;
+      color:#e5e7eb;
+      border:1px solid #334155;
     }
     button{
-      border: 0;
-      padding: 10px 12px;
-      border-radius: 10px;
-      font-weight: 900;
-      cursor: pointer;
-      background: rgba(255,255,255,0.12);
-      color: var(--white);
-      border: 1px solid rgba(255,255,255,0.18);
+      cursor:pointer;
+      font-weight:600;
     }
-    button.primary{ background: var(--red); border-color: rgba(255,255,255,0.15); }
-    button.ok{ background: rgba(46,125,50,0.25); border-color: rgba(46,125,50,0.45); }
-    button.warn{ background: rgba(249,168,37,0.18); border-color: rgba(249,168,37,0.45); }
-    button:disabled{
-      opacity: 0.45;
-      cursor: not-allowed;
-    }
+    .btn-red{ background:#dc2626; color:white; }
+    .btn-yellow{ background:#facc15; color:#020617; }
+    .btn-gray{ background:#334155; color:white; }
+
+    .row{ display:flex; gap:8px; flex-wrap:wrap; }
     .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: var(--soft);
-      font-size: 12px;
-      font-weight: 900;
-      color: var(--muted);
-      white-space: nowrap;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:13px;
+      cursor:pointer;
     }
-    .pill strong{ color: var(--white); }
-    .cols3{
-      display:grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 12px;
-    }
-    @media (max-width: 900px){
-      .cols3{ grid-template-columns: 1fr; }
-    }
-    .list{
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-      max-height: 520px;
-      overflow:auto;
-      padding-right: 4px;
-    }
-    .card{
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,0.03);
-      border-radius: 12px;
-      padding: 10px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: 10px;
-    }
-    .card .name{
-      font-weight: 950;
-      font-size: 14px;
-      line-height: 1.1;
-    }
-    .card .meta{
-      font-size: 12px;
-      color: var(--muted);
-      font-weight: 800;
-      margin-top: 2px;
-    }
-    .actions{
-      display:flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content:flex-end;
-    }
-    .note{
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.35;
-      margin-top: 8px;
-    }
-    .danger{
-      color: rgba(255,180,180,0.95);
-      font-weight: 900;
-    }
+    .lisa{ background:#ec4899; color:white; }
+    .manon{ background:#8b5cf6; color:white; }
+    .neutral{ background:#334155; }
+
+    .lists{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
+    ul{ list-style:none; padding:0; margin:0; }
+    li{ margin-bottom:6px; }
+
     .log{
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      font-size: 12px;
-      background: rgba(0,0,0,0.25);
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 10px;
-      white-space: pre-wrap;
+      font-family:monospace;
+      font-size:12px;
+      background:#020617;
+      padding:8px;
+      border-radius:6px;
+      max-height:160px;
       overflow:auto;
-      max-height: 220px;
     }
   </style>
 </head>
 <body>
-  <header>
-    <div class="title">
-      <strong>Admin – Attribution Teams (Lisa / Manon)</strong>
-      <span>Americano Lisa vs Manon</span>
+
+<header>
+  Admin – Attribution Teams (Lisa / Manon)
+  <small>Americano Lisa vs Manon</small>
+</header>
+
+<div class="container">
+
+  <!-- 1. AJOUT JOUEUR -->
+  <div class="box">
+    <h2>1) Ajout de joueurs (sans équipe)</h2>
+    <div class="row">
+      <input id="playerName" placeholder="Nom / Prénom" />
+      <select id="playerGender">
+        <option value="">Sexe (optionnel)</option>
+        <option value="F">Femme</option>
+        <option value="H">Homme</option>
+      </select>
+      <button class="btn-red" onclick="addPlayer()">Ajouter le joueur</button>
     </div>
-    <div id="connStatus" class="status">Connexion…</div>
-  </header>
-
-  <div class="wrap">
-
-    <div class="panel">
-      <h2>
-        <span>1) Ajout de joueurs (sans équipe)</span>
-        <small>Firestore: players</small>
-      </h2>
-      <div class="content">
-        <div class="row">
-          <label>
-            Nom / Prénom
-            <input id="inpName" type="text" placeholder="Ex: Jules P." />
-          </label>
-
-          <label>
-            Sexe
-            <select id="inpGender">
-              <option value="">(optionnel)</option>
-              <option value="H">H</option>
-              <option value="F">F</option>
-            </select>
-          </label>
-
-          <button id="btnAdd" class="primary">Ajouter le joueur</button>
-        </div>
-        <div class="note">
-          Astuce : tu peux laisser “Sexe” vide si tu ne veux pas gérer de filtres.<br>
-          Les joueurs ajoutés ici n’ont <strong>pas d’équipe</strong> tant que Lisa/Manon ne les choisissent pas.
-        </div>
-      </div>
-    </div>
-
-    <div class="grid">
-      <div class="panel">
-        <h2>
-          <span>2) Réglage du draft (qui commence ?)</span>
-          <small>Firestore: meta/draft</small>
-        </h2>
-        <div class="content">
-          <div class="row">
-            <span class="pill">Au tour de : <strong id="whoTurn">—</strong></span>
-            <span class="pill">Commence : <strong id="whoFirst">—</strong></span>
-          </div>
-
-          <div class="row" style="margin-top:10px;">
-            <label>
-              Qui commence ?
-              <select id="selFirst">
-                <option value="LISA">Lisa</option>
-                <option value="MANON">Manon</option>
-              </select>
-            </label>
-
-            <button id="btnSetFirst" class="warn">Définir “qui commence”</button>
-            <button id="btnReset" class="warn">Réinitialiser le draft</button>
-          </div>
-
-          <div class="note">
-            - “Définir” fixe le premier choix et met “au tour de” sur la même personne.<br>
-            - “Réinitialiser” remet tout à zéro (utile si tu recommences).
-          </div>
-        </div>
-      </div>
-
-      <div class="panel">
-        <h2>
-          <span>3) Journal (debug simple)</span>
-          <small>utile si ça bloque</small>
-        </h2>
-        <div class="content">
-          <div id="log" class="log">—</div>
-          <div class="note">
-            Si tu vois <span class="danger">“Missing or insufficient permissions”</span>, il faudra ajuster les règles Firestore.
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="panel">
-      <h2>
-        <span>4) Listes (Sans équipe / Team Lisa / Team Manon)</span>
-        <small>choix alterné automatique</small>
-      </h2>
-      <div class="content">
-        <div class="cols3">
-          <div>
-            <div class="row" style="justify-content:space-between;">
-              <span class="pill">Sans équipe : <strong id="countNone">0</strong></span>
-            </div>
-            <div id="listNone" class="list"></div>
-          </div>
-
-          <div>
-            <div class="row" style="justify-content:space-between;">
-              <span class="pill">Team Lisa : <strong id="countLisa">0</strong></span>
-            </div>
-            <div id="listLisa" class="list"></div>
-          </div>
-
-          <div>
-            <div class="row" style="justify-content:space-between;">
-              <span class="pill">Team Manon : <strong id="countManon">0</strong></span>
-            </div>
-            <div id="listManon" class="list"></div>
-          </div>
-        </div>
-
-        <div class="note" style="margin-top:10px;">
-          Règle : on ne peut attribuer un joueur que lorsque c’est le tour de la bonne personne (Lisa/Manon).<br>
-          L’alternance est automatique après chaque attribution.
-        </div>
-      </div>
-    </div>
-
   </div>
 
+  <!-- 2. DRAFT -->
+  <div class="box">
+    <h2>2) Réglage du draft</h2>
+    <div class="row">
+      <strong>Au tour de :</strong> <span id="turnLabel">—</span>
+    </div>
+    <div class="row" style="margin-top:6px;">
+      <select id="starterSelect">
+        <option value="">Qui commence ?</option>
+        <option value="Lisa">Lisa</option>
+        <option value="Manon">Manon</option>
+      </select>
+      <button class="btn-yellow" onclick="setStarter()">Définir “qui commence”</button>
+      <button class="btn-gray" onclick="resetDraft()">Réinitialiser</button>
+    </div>
+  </div>
+
+  <!-- 3. LISTES -->
+  <div class="box">
+    <h2>3) Listes</h2>
+    <div class="lists">
+      <div>
+        <strong>Sans équipe</strong>
+        <ul id="listNone"></ul>
+      </div>
+      <div>
+        <strong>Team Lisa</strong>
+        <ul id="listLisa"></ul>
+      </div>
+      <div>
+        <strong>Team Manon</strong>
+        <ul id="listManon"></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. LOG -->
+  <div class="box">
+    <h2>Journal</h2>
+    <div id="log" class="log"></div>
+  </div>
+
+</div>
+
 <script type="module">
-  // Firebase imports
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
   import {
-    getFirestore,
-    collection,
-    doc,
-    addDoc,
-    setDoc,
-    updateDoc,
-    onSnapshot,
-    query,
-    orderBy,
-    serverTimestamp
+    getFirestore, collection, addDoc, updateDoc, doc,
+    onSnapshot, setDoc, getDoc
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-  // ⚠️ IMPORTANT : ta config Firebase (comme tes autres pages)
   const firebaseConfig = {
-    apiKey: "AIzaSyB8BS8_Z7-vUVkVZcHhWxUzP62KkB1I4M4",
-    authDomain: "americano-noel-suzini.firebaseapp.com",
-    projectId: "americano-noel-suzini",
-    storageBucket: "americano-noel-suzini.firebasestorage.app",
-    messagingSenderId: "925339847006",
-    appId: "1:925339847006:web:ce952f6db6fc5ded7527cf",
-    measurementId: "G-LG0BQ9V11J"
+    apiKey: "AIzaSyD7-WLKemajFSh4INdTCVpPvF2hv_jPQm8",
+    authDomain: "americano-lisa-manon.firebaseapp.com",
+    projectId: "americano-lisa-manon",
+    storageBucket: "americano-lisa-manon.firebasestorage.app",
+    messagingSenderId: "98885291802",
+    appId: "1:98885291802:web:6aff774bfb8fd14db226a3"
   };
 
   const app = initializeApp(firebaseConfig);
-  try { getAnalytics(app); } catch(e){ /* analytics peut échouer sans gravité */ }
   const db = getFirestore(app);
 
-  // UI
-  const connStatus = document.getElementById("connStatus");
-  const logEl = document.getElementById("log");
-
-  const inpName = document.getElementById("inpName");
-  const inpGender = document.getElementById("inpGender");
-  const btnAdd = document.getElementById("btnAdd");
-
-  const selFirst = document.getElementById("selFirst");
-  const btnSetFirst = document.getElementById("btnSetFirst");
-  const btnReset = document.getElementById("btnReset");
-
-  const whoTurn = document.getElementById("whoTurn");
-  const whoFirst = document.getElementById("whoFirst");
-
-  const listNone = document.getElementById("listNone");
-  const listLisa = document.getElementById("listLisa");
-  const listManon = document.getElementById("listManon");
-
-  const countNone = document.getElementById("countNone");
-  const countLisa = document.getElementById("countLisa");
-  const countManon = document.getElementById("countManon");
-
-  function log(msg){
-    const now = new Date();
-    const t = now.toLocaleTimeString("fr-FR", { hour:"2-digit", minute:"2-digit", second:"2-digit" });
-    logEl.textContent = `[${t}] ${msg}\n` + logEl.textContent;
-  }
-
-  // Firestore refs
   const playersCol = collection(db, "players");
   const draftRef = doc(db, "meta", "draft");
 
-  // Cache
-  let playersCache = []; // {id, name, gender, team, createdAt}
-  let draftCache = null; // {firstPicker, nextPicker}
+  const log = msg => {
+    const d = new Date().toLocaleTimeString();
+    document.getElementById("log").innerHTML =
+      `[${d}] ${msg}<br>` + document.getElementById("log").innerHTML;
+  };
 
-  function labelTeam(team){
-    if (team === "LISA") return "Lisa";
-    if (team === "MANON") return "Manon";
-    return "—";
-  }
-
-  function otherPicker(p){
-    return p === "LISA" ? "MANON" : "LISA";
-  }
-
-  function normalizeName(s){
-    return (s || "").trim().replace(/\s+/g, " ");
-  }
-
-  // --- Actions ---
-  btnAdd.addEventListener("click", async () => {
-    const name = normalizeName(inpName.value);
-    const gender = (inpGender.value || "").trim();
-
-    if (!name){
-      alert("Entre un nom/prénom.");
-      return;
-    }
-
-    btnAdd.disabled = true;
-    try{
-      await addDoc(playersCol, {
-        name,
-        gender: gender || null,
-        team: null,
-        createdAt: Date.now()
-      });
-      inpName.value = "";
-      inpGender.value = "";
-      log(`✅ Joueur ajouté : ${name}`);
-    }catch(e){
-      console.error(e);
-      log(`❌ Erreur ajout joueur : ${e?.message || e}`);
-      alert("Erreur lors de l'ajout (voir Journal).");
-    }finally{
-      btnAdd.disabled = false;
-    }
-  });
-
-  btnSetFirst.addEventListener("click", async () => {
-    const first = selFirst.value;
-    btnSetFirst.disabled = true;
-    try{
-      await setDoc(draftRef, {
-        firstPicker: first,
-        nextPicker: first,
-        updatedAt: Date.now()
-      }, { merge: true });
-      log(`🎯 Draft : ${labelTeam(first)} commence.`);
-    }catch(e){
-      console.error(e);
-      log(`❌ Erreur set first : ${e?.message || e}`);
-      alert("Erreur Firestore (voir Journal).");
-    }finally{
-      btnSetFirst.disabled = false;
-    }
-  });
-
-  btnReset.addEventListener("click", async () => {
-    if (!confirm("Réinitialiser le draft ? (ne supprime pas les joueurs, mais remet le tour sur 'qui commence')")) return;
-
-    btnReset.disabled = true;
-    try{
-      const first = (draftCache?.firstPicker) || selFirst.value || "LISA";
-      await setDoc(draftRef, {
-        firstPicker: first,
-        nextPicker: first,
-        updatedAt: Date.now()
-      }, { merge: true });
-      log(`♻️ Draft réinitialisé. Tour = ${labelTeam(first)}.`);
-    }catch(e){
-      console.error(e);
-      log(`❌ Erreur reset : ${e?.message || e}`);
-      alert("Erreur Firestore (voir Journal).");
-    }finally{
-      btnReset.disabled = false;
-    }
-  });
-
-  async function assignPlayer(playerId, picker){
-    // picker = "LISA" ou "MANON"
-    // On n’autorise que si c’est bien son tour
-    const currentTurn = draftCache?.nextPicker || null;
-    if (currentTurn !== picker){
-      alert(`Ce n'est pas le tour de ${labelTeam(picker)} (tour actuel : ${labelTeam(currentTurn)}).`);
-      return;
-    }
-
-    try{
-      const p = playersCache.find(x => x.id === playerId);
-      if (!p) return;
-
-      // 1) assigne le joueur à l'équipe du picker
-      await updateDoc(doc(db, "players", playerId), {
-        team: picker
-      });
-
-      // 2) alterne : prochain tour = autre
-      await setDoc(draftRef, {
-        nextPicker: otherPicker(picker),
-        updatedAt: Date.now()
-      }, { merge: true });
-
-      log(`✅ ${labelTeam(picker)} choisit : ${p.name} → Team ${labelTeam(picker)}.`);
-    }catch(e){
-      console.error(e);
-      log(`❌ Erreur assign : ${e?.message || e}`);
-      alert("Erreur Firestore (voir Journal).");
-    }
-  }
-
-  // --- Rendering ---
-  function render(){
-    // Draft info
-    const first = draftCache?.firstPicker || null;
-    const next = draftCache?.nextPicker || null;
-    whoFirst.textContent = labelTeam(first);
-    whoTurn.textContent = labelTeam(next);
-
-    // Split lists
-    const none = [];
-    const lisa = [];
-    const manon = [];
-
-    playersCache.forEach(p => {
-      if (p.team === "LISA") lisa.push(p);
-      else if (p.team === "MANON") manon.push(p);
-      else none.push(p);
+  async function addPlayer(){
+    const name = playerName.value.trim();
+    if(!name) return;
+    await addDoc(playersCol,{
+      name,
+      gender: playerGender.value || null,
+      team: null,
+      createdAt: Date.now()
     });
-
-    // Count
-    countNone.textContent = String(none.length);
-    countLisa.textContent = String(lisa.length);
-    countManon.textContent = String(manon.length);
-
-    // Render helpers
-    function playerCard(p, mode){
-      // mode: "NONE" or "TEAM"
-      const div = document.createElement("div");
-      div.className = "card";
-
-      const left = document.createElement("div");
-      left.style.minWidth = "0";
-      left.innerHTML = `
-        <div class="name">${p.name || ""}</div>
-        <div class="meta">${p.gender ? ("Sexe : " + p.gender) : "Sexe : —"}</div>
-      `;
-
-      const actions = document.createElement("div");
-      actions.className = "actions";
-
-      if (mode === "NONE"){
-        const turn = draftCache?.nextPicker || null;
-
-        const bLisa = document.createElement("button");
-        bLisa.textContent = "Lisa choisit";
-        bLisa.className = "ok";
-        bLisa.disabled = (turn !== "LISA");
-        bLisa.addEventListener("click", () => assignPlayer(p.id, "LISA"));
-
-        const bManon = document.createElement("button");
-        bManon.textContent = "Manon choisit";
-        bManon.className = "ok";
-        bManon.disabled = (turn !== "MANON");
-        bManon.addEventListener("click", () => assignPlayer(p.id, "MANON"));
-
-        // Si pas de draft initialisé, on bloque et on explique
-        if (!draftCache?.nextPicker){
-          bLisa.disabled = true;
-          bManon.disabled = true;
-        }
-
-        actions.appendChild(bLisa);
-        actions.appendChild(bManon);
-      } else {
-        const t = document.createElement("span");
-        t.className = "pill";
-        t.innerHTML = `Team : <strong>${labelTeam(p.team)}</strong>`;
-        actions.appendChild(t);
-      }
-
-      div.appendChild(left);
-      div.appendChild(actions);
-      return div;
-    }
-
-    function fillList(container, list, mode){
-      container.innerHTML = "";
-      if (!list.length){
-        const empty = document.createElement("div");
-        empty.style.color = "rgba(255,255,255,0.75)";
-        empty.style.fontSize = "13px";
-        empty.style.padding = "8px 2px";
-        empty.textContent = "— Aucun —";
-        container.appendChild(empty);
-        return;
-      }
-      list
-        .slice()
-        .sort((a,b)=>(a.name||"").localeCompare((b.name||""),"fr",{sensitivity:"base"}))
-        .forEach(p => container.appendChild(playerCard(p, mode)));
-    }
-
-    fillList(listNone, none, "NONE");
-    fillList(listLisa, lisa, "TEAM");
-    fillList(listManon, manon, "TEAM");
-
-    // Connexion OK
-    connStatus.textContent = "Connecté (Firestore)";
+    playerName.value="";
+    log(`Joueur ajouté : ${name}`);
   }
 
-  // --- Firestore listeners ---
-  const playersQ = query(playersCol, orderBy("createdAt", "asc"));
-  onSnapshot(playersQ, (snap) => {
-    playersCache = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    if (playersCache.length && connStatus.textContent.includes("Connexion")) {
-      connStatus.textContent = "Connecté (Firestore)";
-    }
-    render();
-  }, (err) => {
-    console.error(err);
-    connStatus.textContent = "Erreur Firestore";
-    log(`❌ onSnapshot players : ${err?.message || err}`);
+  async function setStarter(){
+    const who = starterSelect.value;
+    if(!who) return;
+    await setDoc(draftRef,{
+      starter: who,
+      turn: who
+    });
+    log(`Draft initialisé – ${who} commence`);
+  }
+
+  async function resetDraft(){
+    await setDoc(draftRef,{});
+    log("Draft réinitialisé");
+  }
+
+  async function pick(playerId, team){
+    const snap = await getDoc(draftRef);
+    if(!snap.exists()) return;
+    const { turn } = snap.data();
+    if(turn !== team) return;
+
+    await updateDoc(doc(db,"players",playerId),{ team });
+    await updateDoc(draftRef,{ turn: team === "Lisa" ? "Manon" : "Lisa" });
+    log(`${team} choisit un joueur`);
+  }
+
+  onSnapshot(playersCol, snap=>{
+    listNone.innerHTML="";
+    listLisa.innerHTML="";
+    listManon.innerHTML="";
+
+    snap.docs.forEach(d=>{
+      const p=d.data();
+      const li=document.createElement("li");
+
+      if(!p.team){
+        li.innerHTML=`<span class="pill neutral">${p.name}</span>`;
+        li.onclick=()=>pick(d.id,document.getElementById("turnLabel").textContent);
+        listNone.appendChild(li);
+      }
+      if(p.team==="Lisa"){
+        li.innerHTML=`<span class="pill lisa">${p.name}</span>`;
+        listLisa.appendChild(li);
+      }
+      if(p.team==="Manon"){
+        li.innerHTML=`<span class="pill manon">${p.name}</span>`;
+        listManon.appendChild(li);
+      }
+    });
   });
 
-  onSnapshot(draftRef, (snap) => {
-    draftCache = snap.exists() ? snap.data() : null;
-    render();
-  }, (err) => {
-    console.error(err);
-    log(`❌ onSnapshot draft : ${err?.message || err}`);
+  onSnapshot(draftRef,snap=>{
+    document.getElementById("turnLabel").textContent =
+      snap.exists() ? snap.data().turn || "—" : "—";
   });
 
-  // Petit message initial
-  log("Admin prêt. Étape 1 : ajoute des joueurs, puis définis qui commence.");
 </script>
+
 </body>
 </html>
