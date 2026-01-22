@@ -7,29 +7,27 @@
 
   <style>
     :root{
-    --bg:#ffffff;          /* fond blanc */
-    --panel:#ffffff;       /* panneaux blancs */
-    --panel2:#f8fafc;      /* léger gris très clair */
-    --text:#111827;        /* texte sombre */
-    --muted:#6b7280;       /* texte secondaire */
-    --border:rgba(0,0,0,.10);
-    --shadow: 0 10px 30px rgba(0,0,0,.10);
+      --bg:#ffffff;
+      --panel:#ffffff;
+      --text:#111827;
+      --muted:#6b7280;
+      --border:rgba(0,0,0,.10);
+      --shadow: 0 10px 30px rgba(0,0,0,.10);
 
-    --green:#16a34a;
-    --green2:#15803d;
-    --accent: var(--green);
+      --green:#16a34a;
+      --green2:#15803d;
 
-    --lisa:#ef4444;
-    --lisa2:#b91c1c;
-    --manon:#facc15;
-    --manon2:#ca8a04;
+      --lisa:#ef4444;      /* rouge (chips joueurs) */
+      --lisaDark:#b91c1c;  /* rouge foncé (badge Team Lisa) */
 
-    --ok:#16a34a;
-    --warn:#f59e0b;
-    --bad:#ef4444;
+      --manon:#facc15;      /* jaune (chips joueurs) */
+      --manonDark:#ca8a04;  /* jaune foncé (badge Team Manon) */
 
-    --btnText:#ffffff;
-  }
+      --ok:#16a34a;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+    }
+
     *{ box-sizing:border-box; }
     body{
       margin:0;
@@ -38,22 +36,60 @@
       color: var(--text);
     }
 
-    .titleBlock{
-      display:flex;
-      flex-direction:column;
-      line-height:1.15;
+    /* ===== HEADER ===== */
+    header{
+      background: linear-gradient(90deg, rgba(22,163,74,1), rgba(21,128,61,1));
+      padding: 12px 14px;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top:0;
+      z-index: 50;
     }
-    .titleBlock .t1{ font-weight:800; font-size:16px; }
-    .titleBlock .t2{ font-weight:600; font-size:13px; opacity:.9; }
+    .headRow{
+      max-width: 1100px;
+      margin: 0 auto;
+      display:grid;
+      grid-template-columns: 140px 1fr 220px; /* gauche / centre / droite */
+      align-items:center;
+      gap:10px;
+    }
+    .leftSlot{ display:flex; align-items:center; justify-content:flex-start; }
+    .centerSlot{ display:flex; flex-direction:column; align-items:center; text-align:center; line-height:1.15; }
+    .rightSlot{ display:flex; align-items:center; justify-content:flex-end; gap:10px; }
+
+    .brandImg{
+      height: 44px;
+      width: auto;
+      max-width: 100%;
+      object-fit: contain;
+      display:block;
+    }
+
+    /* Titre bandeau : blanc, gras, centré */
+    .centerSlot .t1{
+      font-weight: 900;
+      font-size: 16px;
+      color:#fff;
+      letter-spacing:.2px;
+    }
+    .centerSlot .t2{
+      font-weight: 700;
+      font-size: 13px;
+      color: rgba(255,255,255,.92);
+      opacity: 1;
+      margin-top: 2px;
+    }
+
     .statusPill{
       display:flex;
       align-items:center;
       gap:8px;
       padding:8px 10px;
       border-radius:999px;
-      background: rgba(0,0,0,.25);
-      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.22);
+      border: 1px solid rgba(255,255,255,.20);
       font-size:12px;
+      color:#fff;
       white-space:nowrap;
     }
     .dot{
@@ -64,49 +100,13 @@
     .dot.ok{ background: var(--ok); box-shadow: 0 0 0 4px rgba(34,197,94,.18); }
     .dot.bad{ background: var(--bad); box-shadow: 0 0 0 4px rgba(239,68,68,.18); }
 
+    /* ===== LAYOUT ===== */
     .container{
       max-width: 1100px;
       margin: 14px auto 40px auto;
       padding: 0 12px;
     }
 
-header{
-  background: linear-gradient(90deg, rgba(22,163,74,1), rgba(21,128,61,1));
-  padding: 12px 14px;
-  box-shadow: var(--shadow);
-  position: sticky;
-  top:0;
-  z-index: 50;
-}
-
-/* bandeau centré + 3 zones */
-.headRow{
-  max-width: 1100px;
-  margin: 0 auto;
-  display:grid;
-  grid-template-columns: 120px 1fr 120px; /* gauche / centre / droite */
-  align-items:center;
-  gap:10px;
-}
-
-/* logos */
-.brandImg{
-  height: 42px;
-  width: auto;
-  object-fit: contain;
-  display:block;
-}
-
-.leftSlot{ display:flex; align-items:center; justify-content:flex-start; }
-.centerSlot{ display:flex; flex-direction:column; align-items:center; text-align:center; line-height:1.15; }
-.rightSlot{ display:flex; align-items:center; justify-content:flex-end; }
-
-/* status pill reste visible mais plus discret sur fond vert */
-.statusPill{
-  justify-self: end;
-}
-
-    
     /* Tabs */
     .tabs{
       display:flex;
@@ -123,21 +123,20 @@ header{
       padding: 10px 12px;
       border-radius: 12px;
       cursor:pointer;
-      font-weight:700;
+      font-weight:800;
       font-size:14px;
       transition: .15s ease;
     }
-    .tabBtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.05); }
+    .tabBtn:hover{ transform: translateY(-1px); }
     .tabBtn.active{
-      border-color: rgba(255,255,255,.22);
-      background: rgba(22,163,74,.20);
-      box-shadow: 0 12px 25px rgba(0,0,0,.22);
+      border-color: rgba(22,163,74,.35);
+      background: rgba(22,163,74,.18);
+      box-shadow: 0 12px 25px rgba(0,0,0,.14);
     }
 
     .tabContent{ display:none; }
     .tabContent.active{ display:block; }
 
-    /* Panels */
     .grid{
       display:grid;
       grid-template-columns: 2fr 1fr;
@@ -146,16 +145,17 @@ header{
     @media (max-width: 920px){
       .grid{ grid-template-columns: 1fr; }
       .tabBtn{ min-width: 130px; }
+      .headRow{ grid-template-columns: 120px 1fr 200px; }
+      .brandImg{ height: 40px; }
     }
 
     .panel{
-    background: #ffffff;
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    box-shadow: var(--shadow);
-    padding: 12px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 12px;
     }
-    
     .panelTitle{
       display:flex;
       align-items:center;
@@ -166,13 +166,10 @@ header{
     .panelTitle h2{
       margin:0;
       font-size: 15px;
-      font-weight: 800;
+      font-weight: 900;
       letter-spacing:.2px;
     }
-    .hint{
-      color: var(--muted);
-      font-size: 12px;
-    }
+    .hint{ color: var(--muted); font-size: 12px; }
 
     .row{
       display:flex;
@@ -182,207 +179,167 @@ header{
     }
 
     input, select, textarea{
-    background: #ffffff;
-    border: 1px solid rgba(0,0,0,.15);
-    color: var(--text);
-  }
-  input::placeholder{ color: rgba(17,24,39,.45); }
-    
+      background: #ffffff;
+      border: 1px solid rgba(0,0,0,.15);
+      color: var(--text);
+      padding: 10px 10px;
+      border-radius: 10px;
+      outline:none;
+      font-size: 14px;
+    }
+    input::placeholder{ color: rgba(17,24,39,.45); }
     select{ cursor:pointer; }
     textarea{ resize: vertical; min-height: 80px; }
 
     .btn{
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06);
-      color: var(--btnText);
+      border: 1px solid rgba(0,0,0,.12);
+      background: #ffffff;
+      color: var(--text);
       padding: 10px 12px;
       border-radius: 12px;
       cursor:pointer;
-      font-weight: 800;
+      font-weight: 900;
       font-size: 13px;
       transition:.15s ease;
       white-space:nowrap;
     }
-    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); }
+    .btn:hover{ transform: translateY(-1px); }
 
-    /* ✅ Boutons verts */
     .btn.primary{
       background: linear-gradient(180deg, rgba(22,163,74,.98), rgba(21,128,61,.98));
-      border-color: rgba(255,255,255,.20);
+      border-color: rgba(22,163,74,.25);
       color: #fff;
     }
     .btn.secondary{
-      background: rgba(255,255,255,.05);
-      color: #fff;
+      background: #f3f4f6;
+      border-color: rgba(0,0,0,.10);
+      color: var(--text);
     }
-    .btn.danger{
-      background: rgba(239,68,68,.15);
-      border-color: rgba(239,68,68,.35);
-      color: #fff;
-    }
-    .btn.small{ padding: 7px 10px; border-radius: 10px; font-size: 12px; }
 
+    /* ===== BADGES (Team) : même couleur mais plus foncée ===== */
     .badge{
       display:inline-flex;
       align-items:center;
       gap:6px;
       padding: 6px 10px;
       border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(0,0,0,.10);
+      background: #f3f4f6;
       font-size: 12px;
       font-weight: 900;
       color: var(--text);
       white-space:nowrap;
     }
-
-    /* ✅ Lisa = ROUGE + 🌶️ */
     .badge.lisa{
-      background: rgba(239,68,68,.18);
-      border-color: rgba(239,68,68,.35);
-    }
-    /* ✅ Manon = JAUNE + 🐝 */
-    .badge.manon{
-      background: rgba(250,204,21,.16);
-      border-color: rgba(250,204,21,.35);
+      background: rgba(185,28,28,.18);
+      border-color: rgba(185,28,28,.35);
       color: #111827;
     }
-    .badge.neutral{ background: rgba(255,255,255,.06); }
-    .badge.ok{ background: rgba(34,197,94,.18); border-color: rgba(34,197,94,.35); }
-    .badge.warn{ background: rgba(245,158,11,.18); border-color: rgba(245,158,11,.35); }
-    .badge.bad{ background: rgba(239,68,68,.18); border-color: rgba(239,68,68,.35); }
+    .badge.manon{
+      background: rgba(202,138,4,.22);
+      border-color: rgba(202,138,4,.40);
+      color: #111827;
+    }
+    .badge.neutral{ background: #f3f4f6; }
 
+    /* ===== CHIPS (joueurs) : comme “Team Lisa/Manon” mais version joueur ===== */
     .chips{
       display:flex;
       flex-wrap:wrap;
       gap:8px;
       padding: 8px;
       border-radius: 14px;
-      border: 1px dashed rgba(255,255,255,.12);
-      background: rgba(255,255,255,.03);
+      border: 1px dashed rgba(0,0,0,.12);
+      background: #fafafa;
       min-height: 54px;
     }
+
     .chip{
       display:inline-flex;
       align-items:center;
       gap:8px;
       padding: 8px 10px;
       border-radius: 999px;
-      background: rgba(31,41,55,.75);
-      border: 1px solid rgba(255,255,255,.12);
+      border: 1px solid rgba(0,0,0,.10);
       cursor:pointer;
-      font-weight:900;
+      font-weight: 900;
       font-size: 12px;
       user-select:none;
+      background: #f3f4f6;   /* solo */
+      color: #111827;
     }
+    .chip:hover{ transform: translateY(-1px); }
+
     .chip small{
-      font-weight:900;
-      opacity:.95;
+      font-weight: 900;
       padding: 2px 8px;
       border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.2);
-      color: rgba(255,255,255,.95);
+      border: 1px solid rgba(0,0,0,.10);
+      background: rgba(255,255,255,.65);
+      color: #111827;
     }
-    .chip.lisa small{
-      background: rgba(239,68,68,.22);
+
+    .chip.lisa{
+      background: rgba(239,68,68,.18);
       border-color: rgba(239,68,68,.35);
     }
+    .chip.lisa small{
+      background: rgba(185,28,28,.14);
+      border-color: rgba(185,28,28,.30);
+    }
+
+    .chip.manon{
+      background: rgba(250,204,21,.22);
+      border-color: rgba(250,204,21,.45);
+    }
     .chip.manon small{
-      background: rgba(250,204,21,.18);
-      border-color: rgba(250,204,21,.35);
+      background: rgba(202,138,4,.14);
+      border-color: rgba(202,138,4,.30);
     }
 
     .divider{
       height:1px;
-      background: rgba(255,255,255,.08);
+      background: rgba(0,0,0,.08);
       margin: 10px 0;
     }
 
     /* Journal */
     .log{
-      background: rgba(0,0,0,.25);
-      border: 1px solid rgba(255,255,255,.10);
+      background: #0b1220;
+      border: 1px solid rgba(0,0,0,.10);
       border-radius: 14px;
       padding: 10px;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
       font-size: 12px;
-      color: rgba(229,231,235,.9);
+      color: #e5e7eb;
       max-height: 380px;
       overflow:auto;
       white-space: pre-wrap;
     }
 
-    /* Tables */
-    table{
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 12px;
-      overflow:hidden;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-    }
-    th, td{
-      padding: 8px 8px;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      text-align:left;
-      vertical-align: top;
-    }
-    th{
-      font-size: 12px;
-      color: rgba(229,231,235,.9);
-      background: rgba(255,255,255,.04);
-      font-weight: 900;
-    }
-    tr:hover td{ background: rgba(255,255,255,.02); }
-
-    .miniInput{
-      width: 70px;
-      padding: 6px 8px;
-      border-radius: 10px;
-      font-size: 12px;
-      text-align:center;
-    }
-
-    .muted{ color: var(--muted); }
-    .small{ font-size: 12px; color: var(--muted); }
-    .right{ text-align:right; }
-
-    /* Subtabs (matchs / stats) */
-    .subtabs{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      margin-bottom:10px;
-    }
-    .subBtn{
-      flex:1;
-      min-width: 220px;
-      padding: 9px 10px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.03);
-      color: var(--text);
-      cursor:pointer;
-      font-weight: 800;
-      font-size: 13px;
-    }
-    .subBtn.active{
-      background: rgba(255,255,255,.08);
-      border-color: rgba(255,255,255,.18);
-    }
-    .subContent{ display:none; }
-    .subContent.active{ display:block; }
-
+    /* Encart jaune en bas : texte noir */
     .warnBox{
-      border: 1px solid rgba(245,158,11,.35);
-      background: rgba(245,158,11,.10);
-      color: rgba(255,255,255,.92);
+      border: 1px solid rgba(245,158,11,.45);
+      background: rgba(245,158,11,.18);
+      color: #111827;          /* ✅ noir */
       border-radius: 14px;
       padding: 10px;
       font-size: 12px;
       margin-top:10px;
+      font-weight: 700;
+    }
+
+    .muted{ color: var(--muted); }
+    .small{ font-size: 12px; color: var(--muted); }
+
+    /* Placeholder */
+    .placeholder{
+      padding: 18px;
+      border: 1px dashed rgba(0,0,0,.18);
+      border-radius: 14px;
+      background: #fafafa;
+      color: #111827;
+      font-weight: 800;
     }
   </style>
 </head>
@@ -397,12 +354,12 @@ header{
 
     <!-- CENTRE : titre -->
     <div class="centerSlot">
-      <div class="t1">Admin – Americano Lisa vs Manon</div>
+      <div class="t1">ADMIN – AMERICANO LISA vs MANON</div>
       <div class="t2">BT Suzini • Firestore en temps réel</div>
     </div>
 
     <!-- DROITE : image tournoi + statut -->
-    <div class="rightSlot" style="gap:10px;">
+    <div class="rightSlot">
       <img src="img/tournoi.png" alt="Tournoi" class="brandImg">
       <div class="statusPill" id="statusPill">
         <span class="dot" id="statusDot"></span>
@@ -411,7 +368,7 @@ header{
     </div>
   </div>
 </header>
-  
+
 <script>
   // ========= SÉCURITÉ SIMPLE (localStorage) =========
   // Change ton PIN ici (6 chiffres conseillé)
@@ -437,7 +394,7 @@ header{
     <button class="tabBtn" data-tab="statsTab">Statistiques</button>
   </div>
 
-  <!-- ===================== TAB TEAMS ===================== -->
+  <!-- ===================== TAB TEAMS (SEUL ONgLET ACTIF) ===================== -->
   <div id="teamsTab" class="tabContent active">
     <div class="grid">
       <div class="panel">
@@ -533,7 +490,7 @@ header{
 
         <div class="warnBox">
           ⚠️ Onglet “Teams” = draft Lisa/Manon (choix alterné + équilibrage H/F).<br>
-          Les onglets Matchs / Classements / Stats restent indépendants : tu gères les matchs ensuite, validés par l’admin.
+          Les autres onglets sont vides pour le moment (on les branchera ensuite).
         </div>
       </div>
 
@@ -550,171 +507,39 @@ header{
     </div>
   </div>
 
-  <!-- ===================== TAB MATCHES ===================== -->
-  <!-- (inchangé) -->
+  <!-- ===================== TAB MATCHES (VIDE POUR L'INSTANT) ===================== -->
   <div id="matchesTab" class="tabContent">
     <div class="panel">
       <div class="panelTitle">
         <h2>Matchs</h2>
-        <span class="hint">Firestore: <b>matches</b></span>
+        <span class="hint">à venir</span>
       </div>
-
-      <div class="subtabs">
-        <button class="subBtn active" data-subtab="matchCreate">Créer / Modifier</button>
-        <button class="subBtn" data-subtab="matchCurrent">À valider</button>
-        <button class="subBtn" data-subtab="matchHistory">Historique</button>
-      </div>
-
-      <div id="matchCreate" class="subContent active">
-        <div class="panel" style="margin:0; background: rgba(255,255,255,.02);">
-          <div class="panelTitle">
-            <h2>Créer un match</h2>
-            <span class="hint">2 joueurs vs 2 joueurs</span>
-          </div>
-
-          <div class="row" style="margin-bottom:8px;">
-            <input id="matchRound" type="number" min="1" placeholder="Tour" style="width:120px;">
-            <input id="matchCourt" type="number" min="1" placeholder="Terrain" style="width:120px;">
-            <select id="matchType" style="min-width:180px;">
-              <option value="">Type (optionnel)</option>
-              <option value="MIXTE">Mixte</option>
-              <option value="H">H</option>
-              <option value="F">F</option>
-              <option value="LIBRE">Libre</option>
-            </select>
-            <button class="btn primary" id="btnCreateMatch">Créer le match</button>
-            <button class="btn danger" id="btnDeleteAllMatches">⚠️ Vider tous les matchs</button>
-          </div>
-
-          <div class="grid" style="grid-template-columns: 1fr 1fr; gap:10px;">
-            <div class="panel" style="margin:0; background: rgba(255,255,255,.02);">
-              <div class="panelTitle"><h2>Équipe A</h2><span class="hint">2 joueurs</span></div>
-              <div class="row">
-                <select id="teamA1" style="flex:1; min-width:180px;"></select>
-                <select id="teamA2" style="flex:1; min-width:180px;"></select>
-              </div>
-            </div>
-            <div class="panel" style="margin:0; background: rgba(255,255,255,.02);">
-              <div class="panelTitle"><h2>Équipe B</h2><span class="hint">2 joueurs</span></div>
-              <div class="row">
-                <select id="teamB1" style="flex:1; min-width:180px;"></select>
-                <select id="teamB2" style="flex:1; min-width:180px;"></select>
-              </div>
-            </div>
-          </div>
-
-          <div class="small" style="margin-top:10px;">
-            Règle points (simple) : quand tu <b>valides</b> un match, chaque joueur reçoit le score de son équipe (A → scoreA, B → scoreB).
-          </div>
-        </div>
-
-        <div class="divider"></div>
-
-        <div class="panelTitle">
-          <h2>Modifier un match existant</h2>
-          <span class="hint">édition rapide</span>
-        </div>
-
-        <div class="row" style="margin-bottom:8px;">
-          <select id="editMatchSelect" style="flex:2; min-width:260px;"></select>
-          <button class="btn secondary" id="btnLoadMatch">Charger</button>
-        </div>
-
-        <div class="grid" style="grid-template-columns: 1fr 1fr; gap:10px;">
-          <div class="panel" style="margin:0; background: rgba(255,255,255,.02);">
-            <div class="panelTitle"><h2>Scores</h2><span class="hint">laisser vide si non joué</span></div>
-            <div class="row">
-              <input id="editScoreA" type="number" min="0" placeholder="Score A" class="miniInput">
-              <input id="editScoreB" type="number" min="0" placeholder="Score B" class="miniInput">
-              <button class="btn primary" id="btnSaveScores">Enregistrer</button>
-              <button class="btn secondary" id="btnToggleValidated">Valider / Dévalider</button>
-              <button class="btn danger" id="btnDeleteMatch">Supprimer</button>
-            </div>
-            <div class="small" id="editMatchInfo" style="margin-top:8px;"></div>
-          </div>
-
-          <div class="panel" style="margin:0; background: rgba(255,255,255,.02);">
-            <div class="panelTitle"><h2>Équipes</h2><span class="hint">modifie si besoin</span></div>
-            <div class="row" style="margin-bottom:6px;">
-              <select id="editA1" style="flex:1; min-width:180px;"></select>
-              <select id="editA2" style="flex:1; min-width:180px;"></select>
-            </div>
-            <div class="row">
-              <select id="editB1" style="flex:1; min-width:180px;"></select>
-              <select id="editB2" style="flex:1; min-width:180px;"></select>
-              <button class="btn primary" id="btnSaveTeams">Enregistrer équipes</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div id="matchCurrent" class="subContent">
-        <div class="panelTitle">
-          <h2>Matchs à valider</h2>
-          <span class="hint">scores + validation</span>
-        </div>
-        <div id="currentMatchesWrap" class="small muted">Chargement…</div>
-      </div>
-
-      <div id="matchHistory" class="subContent">
-        <div class="panelTitle">
-          <h2>Historique</h2>
-          <span class="hint">tous les matchs</span>
-        </div>
-        <div id="historyMatchesWrap" class="small muted">Chargement…</div>
-      </div>
+      <div class="placeholder">⏳ Contenu “Matchs” à venir. (On branche après validation de l’onglet Teams.)</div>
     </div>
   </div>
 
-  <!-- ===================== TAB RANKINGS ===================== -->
-  <!-- (inchangé) -->
+  <!-- ===================== TAB RANKINGS (VIDE POUR L'INSTANT) ===================== -->
   <div id="rankingsTab" class="tabContent">
     <div class="panel">
       <div class="panelTitle">
         <h2>Classements</h2>
-        <span class="hint">calculé sur les matchs <b>validés</b></span>
+        <span class="hint">à venir</span>
       </div>
-
-      <div class="subtabs">
-        <button class="subBtn active" data-subtab="rankGeneral">Général</button>
-        <button class="subBtn" data-subtab="rankLisa">Team Lisa</button>
-        <button class="subBtn" data-subtab="rankManon">Team Manon</button>
-      </div>
-
-      <div id="rankGeneral" class="subContent active"></div>
-      <div id="rankLisa" class="subContent"></div>
-      <div id="rankManon" class="subContent"></div>
-
-      <div class="small" style="margin-top:10px;">
-        Points affichés = <b>pointsGeneral</b> dans Firestore (recalcul auto après validation/dévalidation de match).
-      </div>
+      <div class="placeholder">⏳ Contenu “Classements” à venir.</div>
     </div>
   </div>
 
-  <!-- ===================== TAB STATS ===================== -->
-  <!-- (inchangé) -->
+  <!-- ===================== TAB STATS (VIDE POUR L'INSTANT) ===================== -->
   <div id="statsTab" class="tabContent">
     <div class="panel">
       <div class="panelTitle">
         <h2>Statistiques</h2>
-        <span class="hint">sur les matchs <b>validés</b></span>
+        <span class="hint">à venir</span>
       </div>
-
-      <div class="subtabs">
-        <button class="subBtn active" data-subtab="statsMatches">Matchs joués</button>
-        <button class="subBtn" data-subtab="statsPartners">Partenaires</button>
-        <button class="subBtn" data-subtab="statsOpponents">Adversaires</button>
-      </div>
-
-      <div id="statsMatches" class="subContent active"></div>
-      <div id="statsPartners" class="subContent"></div>
-      <div id="statsOpponents" class="subContent"></div>
-
-      <div class="small" style="margin-top:10px;">
-        Les stats sont recalculées en temps réel à chaque validation de match.
-      </div>
+      <div class="placeholder">⏳ Contenu “Statistiques” à venir.</div>
     </div>
   </div>
+
 </div>
 
 <script type="module">
@@ -727,7 +552,6 @@ header{
     getFirestore,
     collection,
     addDoc,
-    deleteDoc,
     doc,
     getDoc,
     setDoc,
@@ -789,35 +613,15 @@ header{
     });
   });
 
-  // Subtabs
-  document.querySelectorAll(".subBtn").forEach(btn=>{
-    btn.addEventListener("click", ()=>{
-      const parent = btn.closest(".panel");
-      const target = btn.dataset.subtab;
-
-      parent.querySelectorAll(".subBtn").forEach(b=>b.classList.remove("active"));
-      parent.querySelectorAll(".subContent").forEach(c=>c.classList.remove("active"));
-
-      btn.classList.add("active");
-      document.getElementById(target).classList.add("active");
-    });
-  });
-
   // ================================
-  // Firestore refs
+  // Firestore refs (Teams only)
   // ================================
   const playersCol = collection(db, "players");
-  const matchesCol = collection(db, "matches");
   const draftRef = doc(db, "meta", "draft");
 
-  // Caches
   let playersCache = [];
-  let matchesCache = [];
   let draftCache = { starter: "Lisa", turn: null, initialized: false };
 
-  // ================================
-  // Draft (Lisa/Manon) + CONTRAINTE H/F + POPUP (mode B)
-  // ================================
   async function ensureDraftDoc(){
     const snap = await getDoc(draftRef);
     if(!snap.exists()){
@@ -832,23 +636,12 @@ header{
   }
 
   function otherTeam(team){ return team==="Lisa" ? "Manon" : "Lisa"; }
-
-  function normalizeName(s){
-    return (s || "").trim().replace(/\s+/g," ");
-  }
-
+  function normalizeName(s){ return (s || "").trim().replace(/\s+/g," "); }
   function sortByName(list){
     return [...list].sort((a,b)=>(a.name||"").localeCompare((b.name||""),"fr",{sensitivity:"base"}));
   }
-
   function teamIcon(team){
     return team === "Lisa" ? "🌶️" : (team === "Manon" ? "🐝" : "•");
-  }
-
-  function playerLabel(p){
-    const g = p.gender ? ` • ${p.gender}` : "";
-    const t = p.team ? ` • ${p.team}` : "";
-    return `${p.name}${g}${t}`;
   }
 
   function countGenderInTeam(team){
@@ -860,25 +653,17 @@ header{
     });
     return { h, f };
   }
-
   function hasSoloGender(g){
     return playersCache.some(p => !p.team && p.gender === g);
   }
-
   function requiredGenderForTeam(team){
-    // Règle :
-    // - si H > F => prochain choix doit être F
-    // - si F > H => prochain choix doit être H
-    // - sinon => libre
-    // Exception : si sexe requis non dispo dans SOLO => libre
     const { h, f } = countGenderInTeam(team);
     let req = null;
     if(h > f) req = "F";
     else if(f > h) req = "H";
-    if(req && !hasSoloGender(req)) req = null; // exception
-    return req; // "H" | "F" | null
+    if(req && !hasSoloGender(req)) req = null;
+    return req;
   }
-
   function genderLabel(g){
     if(g === "H") return "Homme";
     if(g === "F") return "Femme";
@@ -927,17 +712,15 @@ Confirmer l’attribution à Team ${team} ?`;
     const mkChip = (p, teamClass) => {
       const chip = document.createElement("div");
       chip.className = "chip" + (teamClass ? " " + teamClass : "");
-      const initial = (p.gender || "").toUpperCase() || "•";
-
-      // on met aussi l’emoji équipe dans le chip si déjà dans une team
+      const g = (p.gender || "").toUpperCase() || "•";
       const icon = p.team ? teamIcon(p.team) + " " : "";
-      chip.innerHTML = `<span>${icon}${p.name || "(sans nom)"}</span><small>${initial}</small>`;
+      chip.innerHTML = `<span>${icon}${p.name || "(sans nom)"}</span><small>${g}</small>`;
 
       chip.addEventListener("click", async ()=>{
         try{
           if(!p.id) return;
 
-          // ====== Click SOLO -> assign to current turn with constraint + popup ======
+          // SOLO -> assign
           if(!p.team){
             if(!draftCache.turn){
               alert("Définis d'abord qui commence (bouton Définir).");
@@ -947,7 +730,6 @@ Confirmer l’attribution à Team ${team} ?`;
             const team = draftCache.turn;
             const req = requiredGenderForTeam(team);
 
-            // Si contrainte active, et joueur ne match pas -> on bloque (car sexe requis dispo)
             if(req && p.gender && p.gender !== req){
               alert(`Contrainte H/F : Team ${team} doit choisir un(e) ${genderLabel(req)} maintenant.\nCe joueur (${genderLabel(p.gender)}) ne peut pas être choisi tant que la contrainte est active.`);
               return;
@@ -957,7 +739,6 @@ Confirmer l’attribution à Team ${team} ?`;
               return;
             }
 
-            // Popup confirmation (mode B)
             const ok = confirmDraftPopup({
               playerName: p.name || "(sans nom)",
               playerGender: p.gender || null,
@@ -972,7 +753,7 @@ Confirmer l’attribution à Team ${team} ?`;
             return;
           }
 
-          // ====== Click in team -> remove back to SOLO ======
+          // Team -> remove back to SOLO
           const was = p.team;
           if(!confirm(`Retirer "${p.name}" de Team ${was} (retour Sans équipe) ?`)) return;
           await updateDoc(doc(db,"players",p.id), { team: null });
@@ -1057,6 +838,7 @@ Confirmer l’attribution à Team ${team} ?`;
   document.getElementById("btnResetDraft").addEventListener("click", async ()=>{
     if(!confirm("Réinitialiser le draft ? (Ne supprime pas les joueurs, remet juste le tour + enlève les teams.)")) return;
     try{
+      // on enlève les teams
       for(const p of playersCache){
         if(p.team){
           await updateDoc(doc(db,"players",p.id), { team: null });
@@ -1077,557 +859,13 @@ Confirmer l’attribution à Team ${team} ?`;
   });
 
   // ================================
-  // Matches management (inchangé)
-  // ================================
-  const matchRound = document.getElementById("matchRound");
-  const matchCourt = document.getElementById("matchCourt");
-  const matchType = document.getElementById("matchType");
-  const teamA1 = document.getElementById("teamA1");
-  const teamA2 = document.getElementById("teamA2");
-  const teamB1 = document.getElementById("teamB1");
-  const teamB2 = document.getElementById("teamB2");
-
-  const editMatchSelect = document.getElementById("editMatchSelect");
-  const editScoreA = document.getElementById("editScoreA");
-  const editScoreB = document.getElementById("editScoreB");
-  const editMatchInfo = document.getElementById("editMatchInfo");
-  const editA1 = document.getElementById("editA1");
-  const editA2 = document.getElementById("editA2");
-  const editB1 = document.getElementById("editB1");
-  const editB2 = document.getElementById("editB2");
-
-  let loadedMatchId = null;
-
-  function fillPlayerSelect(sel, includeEmpty=true){
-    const prev = sel.value;
-    sel.innerHTML = "";
-    if(includeEmpty){
-      const opt = document.createElement("option");
-      opt.value = "";
-      opt.textContent = "—";
-      sel.appendChild(opt);
-    }
-    const sorted = sortByName(playersCache.filter(p=>p.name));
-    sorted.forEach(p=>{
-      const opt = document.createElement("option");
-      opt.value = p.name;
-      opt.textContent = playerLabel(p);
-      sel.appendChild(opt);
-    });
-    if(prev && [...sel.options].some(o=>o.value===prev)) sel.value = prev;
-  }
-
-  function refreshAllPlayerSelects(){
-    [teamA1,teamA2,teamB1,teamB2, editA1,editA2,editB1,editB2].forEach(s=> fillPlayerSelect(s, true));
-  }
-
-  function refreshMatchSelect(){
-    const prev = editMatchSelect.value;
-    editMatchSelect.innerHTML = "";
-    const opt0 = document.createElement("option");
-    opt0.value = "";
-    opt0.textContent = "Choisir un match…";
-    editMatchSelect.appendChild(opt0);
-
-    const sorted = [...matchesCache].sort((a,b)=>{
-      const ra = (a.roundNumber ?? 0) - (b.roundNumber ?? 0);
-      if(ra !== 0) return ra;
-      return (a.court ?? 0) - (b.court ?? 0);
-    });
-
-    sorted.forEach(m=>{
-      const opt = document.createElement("option");
-      opt.value = m.id;
-      const a = (m.teamA||[]).join(" & ");
-      const b = (m.teamB||[]).join(" & ");
-      const v = m.validated ? "✅" : "⏳";
-      opt.textContent = `${v} Tour ${m.roundNumber ?? "?"} • T${m.court ?? "?"} • ${a} vs ${b}`;
-      editMatchSelect.appendChild(opt);
-    });
-
-    if(prev && [...editMatchSelect.options].some(o=>o.value===prev)) editMatchSelect.value = prev;
-  }
-
-  function getMatchById(id){ return matchesCache.find(m=>m.id===id); }
-
-  document.getElementById("btnCreateMatch").addEventListener("click", async ()=>{
-    const r = Number(matchRound.value);
-    const c = Number(matchCourt.value);
-    const t = (matchType.value || "").trim() || null;
-
-    const a1 = (teamA1.value || "").trim();
-    const a2 = (teamA2.value || "").trim();
-    const b1 = (teamB1.value || "").trim();
-    const b2 = (teamB2.value || "").trim();
-
-    if(!r || r < 1){ alert("Tour invalide."); return; }
-    if(!c || c < 1){ alert("Terrain invalide."); return; }
-
-    const teamA = [a1,a2].filter(Boolean);
-    const teamB = [b1,b2].filter(Boolean);
-
-    if(teamA.length !== 2 || teamB.length !== 2){
-      alert("Sélectionne 2 joueurs pour A et 2 joueurs pour B.");
-      return;
-    }
-    const all = [...teamA, ...teamB];
-    const uniq = new Set(all);
-    if(uniq.size !== 4){
-      alert("Un joueur ne peut pas être sélectionné 2 fois dans le même match.");
-      return;
-    }
-
-    try{
-      await addDoc(matchesCol, {
-        roundNumber: r,
-        court: c,
-        type: t,
-        teamA,
-        teamB,
-        scoreA: null,
-        scoreB: null,
-        validated: false,
-        createdAt: Date.now()
-      });
-      log(`Match créé : Tour ${r} • Terrain ${c}`);
-      matchRound.value = "";
-      matchCourt.value = "";
-      matchType.value = "";
-      teamA1.value = ""; teamA2.value = ""; teamB1.value = ""; teamB2.value = "";
-    }catch(e){
-      console.error(e);
-      log(`Erreur création match: ${e?.message || e}`, "bad");
-      alert("Erreur lors de la création du match.");
-    }
-  });
-
-  document.getElementById("btnDeleteAllMatches").addEventListener("click", async ()=>{
-    if(!confirm("⚠️ Supprimer TOUS les matchs ? (irréversible)")) return;
-    try{
-      for(const m of matchesCache){
-        await deleteDoc(doc(db,"matches",m.id));
-      }
-      log("Tous les matchs ont été supprimés.", "warn");
-      await recomputePointsGeneral();
-    }catch(e){
-      console.error(e);
-      log(`Erreur suppression matches: ${e?.message || e}`, "bad");
-      alert("Erreur lors de la suppression des matchs.");
-    }
-  });
-
-  document.getElementById("btnLoadMatch").addEventListener("click", ()=>{
-    const id = editMatchSelect.value;
-    if(!id){ alert("Choisis un match."); return; }
-    const m = getMatchById(id);
-    if(!m){ alert("Match introuvable."); return; }
-
-    loadedMatchId = id;
-    editScoreA.value = (typeof m.scoreA === "number") ? m.scoreA : "";
-    editScoreB.value = (typeof m.scoreB === "number") ? m.scoreB : "";
-
-    const a = (m.teamA||[]);
-    const b = (m.teamB||[]);
-    editA1.value = a[0] || "";
-    editA2.value = a[1] || "";
-    editB1.value = b[0] || "";
-    editB2.value = b[1] || "";
-
-    editMatchInfo.innerHTML = `
-      <span class="badge neutral">Tour ${m.roundNumber ?? "?"}</span>
-      <span class="badge neutral">Terrain ${m.court ?? "?"}</span>
-      <span class="badge ${m.validated ? "ok":"warn"}">${m.validated ? "Validé":"À valider"}</span>
-    `;
-    log(`Match chargé: ${id}`);
-  });
-
-  document.getElementById("btnSaveScores").addEventListener("click", async ()=>{
-    if(!loadedMatchId){ alert("Charge un match d'abord."); return; }
-    const a = editScoreA.value === "" ? null : Number(editScoreA.value);
-    const b = editScoreB.value === "" ? null : Number(editScoreB.value);
-    if(a !== null && (isNaN(a) || a < 0)) { alert("Score A invalide."); return; }
-    if(b !== null && (isNaN(b) || b < 0)) { alert("Score B invalide."); return; }
-
-    try{
-      await updateDoc(doc(db,"matches",loadedMatchId), { scoreA: a, scoreB: b });
-      log(`Scores enregistrés (${a ?? "—"} - ${b ?? "—"})`);
-    }catch(e){
-      console.error(e);
-      log(`Erreur save scores: ${e?.message || e}`, "bad");
-      alert("Erreur lors de la sauvegarde des scores.");
-    }
-  });
-
-  document.getElementById("btnSaveTeams").addEventListener("click", async ()=>{
-    if(!loadedMatchId){ alert("Charge un match d'abord."); return; }
-    const a1 = (editA1.value || "").trim();
-    const a2 = (editA2.value || "").trim();
-    const b1 = (editB1.value || "").trim();
-    const b2 = (editB2.value || "").trim();
-
-    const teamA = [a1,a2].filter(Boolean);
-    const teamB = [b1,b2].filter(Boolean);
-    if(teamA.length !== 2 || teamB.length !== 2){
-      alert("Il faut 2 joueurs pour A et 2 pour B.");
-      return;
-    }
-    const all = [...teamA, ...teamB];
-    if(new Set(all).size !== 4){
-      alert("Un joueur ne peut pas être sélectionné 2 fois dans le même match.");
-      return;
-    }
-
-    try{
-      await updateDoc(doc(db,"matches",loadedMatchId), { teamA, teamB });
-      log("Équipes enregistrées.");
-    }catch(e){
-      console.error(e);
-      log(`Erreur save teams: ${e?.message || e}`, "bad");
-      alert("Erreur lors de la sauvegarde des équipes.");
-    }
-  });
-
-  document.getElementById("btnToggleValidated").addEventListener("click", async ()=>{
-    if(!loadedMatchId){ alert("Charge un match d'abord."); return; }
-    const m = getMatchById(loadedMatchId);
-    if(!m){ alert("Match introuvable."); return; }
-
-    if(!m.validated){
-      if(typeof m.scoreA !== "number" || typeof m.scoreB !== "number"){
-        alert("Saisis les deux scores avant de valider.");
-        return;
-      }
-    }
-
-    try{
-      await updateDoc(doc(db,"matches",loadedMatchId), { validated: !m.validated });
-      log(!m.validated ? "Match validé." : "Match dévalidé.", !m.validated ? "ok":"warn");
-      await recomputePointsGeneral();
-    }catch(e){
-      console.error(e);
-      log(`Erreur validation: ${e?.message || e}`, "bad");
-      alert("Erreur lors de la validation.");
-    }
-  });
-
-  document.getElementById("btnDeleteMatch").addEventListener("click", async ()=>{
-    if(!loadedMatchId){ alert("Charge un match d'abord."); return; }
-    if(!confirm("Supprimer ce match ?")) return;
-    try{
-      await deleteDoc(doc(db,"matches",loadedMatchId));
-      log("Match supprimé.", "warn");
-      loadedMatchId = null;
-      editMatchSelect.value = "";
-      editScoreA.value = "";
-      editScoreB.value = "";
-      editMatchInfo.textContent = "";
-      await recomputePointsGeneral();
-    }catch(e){
-      console.error(e);
-      log(`Erreur suppression match: ${e?.message || e}`, "bad");
-      alert("Erreur lors de la suppression du match.");
-    }
-  });
-
-  // Render match lists
-  const currentMatchesWrap = document.getElementById("currentMatchesWrap");
-  const historyMatchesWrap = document.getElementById("historyMatchesWrap");
-
-  function renderMatches(){
-    if(!matchesCache.length){
-      currentMatchesWrap.innerHTML = `<div class="small muted">Aucun match.</div>`;
-      historyMatchesWrap.innerHTML = `<div class="small muted">Aucun match.</div>`;
-      return;
-    }
-
-    const sorted = [...matchesCache].sort((a,b)=>{
-      const ra = (a.roundNumber ?? 0) - (b.roundNumber ?? 0);
-      if(ra !== 0) return ra;
-      return (a.court ?? 0) - (b.court ?? 0);
-    });
-
-    const toValidate = sorted.filter(m=>m.validated !== true);
-
-    const makeTable = (list, mode) => {
-      let html = `<table>
-        <thead>
-          <tr>
-            <th>Tour</th>
-            <th>Terrain</th>
-            <th>Équipe A</th>
-            <th>Équipe B</th>
-            <th>Score</th>
-            <th class="right">État</th>
-          </tr>
-        </thead>
-        <tbody>`;
-
-      list.forEach(m=>{
-        const a = (m.teamA||[]).join(" & ");
-        const b = (m.teamB||[]).join(" & ");
-        const sA = (typeof m.scoreA==="number") ? m.scoreA : "";
-        const sB = (typeof m.scoreB==="number") ? m.scoreB : "";
-        const state = m.validated ? `<span class="badge ok">Validé</span>` : `<span class="badge warn">À valider</span>`;
-
-        if(mode==="validate"){
-          html += `
-            <tr data-id="${m.id}">
-              <td>${m.roundNumber ?? ""}</td>
-              <td>${m.court ?? ""}</td>
-              <td>${a}</td>
-              <td>${b}</td>
-              <td>
-                <input class="miniInput" type="number" min="0" value="${sA}" data-k="a">
-                -
-                <input class="miniInput" type="number" min="0" value="${sB}" data-k="b">
-                <button class="btn small primary" data-act="save">Enregistrer</button>
-                <button class="btn small secondary" data-act="validate">Valider</button>
-              </td>
-              <td class="right">${state}</td>
-            </tr>`;
-        } else {
-          html += `
-            <tr>
-              <td>${m.roundNumber ?? ""}</td>
-              <td>${m.court ?? ""}</td>
-              <td>${a}</td>
-              <td>${b}</td>
-              <td>${(sA===""||sB==="") ? "<span class='muted'>—</span>" : `${sA} - ${sB}`}</td>
-              <td class="right">${state}</td>
-            </tr>`;
-        }
-      });
-
-      html += `</tbody></table>`;
-      return html;
-    };
-
-    currentMatchesWrap.innerHTML = toValidate.length
-      ? makeTable(toValidate, "validate")
-      : `<div class="small muted">Aucun match à valider.</div>`;
-
-    historyMatchesWrap.innerHTML = makeTable(sorted, "history");
-
-    // bind actions in validate mode
-    currentMatchesWrap.querySelectorAll("tr[data-id]").forEach(row=>{
-      const id = row.getAttribute("data-id");
-      const inA = row.querySelector('input[data-k="a"]');
-      const inB = row.querySelector('input[data-k="b"]');
-      const btnSave = row.querySelector('button[data-act="save"]');
-      const btnVal = row.querySelector('button[data-act="validate"]');
-
-      btnSave.addEventListener("click", async ()=>{
-        const a = inA.value === "" ? null : Number(inA.value);
-        const b = inB.value === "" ? null : Number(inB.value);
-        if(a !== null && (isNaN(a) || a<0)) { alert("Score A invalide."); return; }
-        if(b !== null && (isNaN(b) || b<0)) { alert("Score B invalide."); return; }
-        try{
-          await updateDoc(doc(db,"matches",id), { scoreA: a, scoreB: b });
-          log(`Scores enregistrés (match ${id}).`);
-        }catch(e){
-          console.error(e);
-          log(`Erreur save scores (table): ${e?.message || e}`, "bad");
-          alert("Erreur lors de la sauvegarde.");
-        }
-      });
-
-      btnVal.addEventListener("click", async ()=>{
-        const a = inA.value === "" ? null : Number(inA.value);
-        const b = inB.value === "" ? null : Number(inB.value);
-        if(a === null || b === null){ alert("Saisis les deux scores."); return; }
-        try{
-          await updateDoc(doc(db,"matches",id), { scoreA: a, scoreB: b, validated: true });
-          log(`Match validé (match ${id}).`);
-          await recomputePointsGeneral();
-        }catch(e){
-          console.error(e);
-          log(`Erreur validation (table): ${e?.message || e}`, "bad");
-          alert("Erreur lors de la validation.");
-        }
-      });
-    });
-  }
-
-  // ================================
-  // Classements + Stats (inchangé)
-  // ================================
-  const rankGeneralEl = document.getElementById("rankGeneral");
-  const rankLisaEl = document.getElementById("rankLisa");
-  const rankManonEl = document.getElementById("rankManon");
-
-  const statsMatchesEl = document.getElementById("statsMatches");
-  const statsPartnersEl = document.getElementById("statsPartners");
-  const statsOpponentsEl = document.getElementById("statsOpponents");
-
-  function buildValidatedMatches(){
-    return matchesCache.filter(m=>m.validated === true);
-  }
-
-  function recomputeFromValidated(){
-    const valid = buildValidatedMatches();
-    const pointsByName = {};
-    const matchesPlayedByName = {};
-    const partners = {};
-    const opponents = {};
-
-    const addCount = (obj, a, b) => {
-      obj[a] = obj[a] || {};
-      obj[a][b] = (obj[a][b] || 0) + 1;
-    };
-
-    valid.forEach(m=>{
-      const teamA = m.teamA || [];
-      const teamB = m.teamB || [];
-      const scoreA = (typeof m.scoreA === "number") ? m.scoreA : 0;
-      const scoreB = (typeof m.scoreB === "number") ? m.scoreB : 0;
-
-      teamA.forEach(n=>{
-        pointsByName[n] = (pointsByName[n] || 0) + scoreA;
-        matchesPlayedByName[n] = (matchesPlayedByName[n] || 0) + 1;
-      });
-      teamB.forEach(n=>{
-        pointsByName[n] = (pointsByName[n] || 0) + scoreB;
-        matchesPlayedByName[n] = (matchesPlayedByName[n] || 0) + 1;
-      });
-
-      if(teamA.length===2 && teamB.length===2){
-        addCount(partners, teamA[0], teamA[1]);
-        addCount(partners, teamA[1], teamA[0]);
-        addCount(partners, teamB[0], teamB[1]);
-        addCount(partners, teamB[1], teamB[0]);
-
-        teamA.forEach(a=>{
-          teamB.forEach(b=>{
-            addCount(opponents, a, b);
-            addCount(opponents, b, a);
-          });
-        });
-      }
-    });
-
-    return { pointsByName, matchesPlayedByName, partners, opponents };
-  }
-
-  async function recomputePointsGeneral(){
-    if(!playersCache.length) return;
-    const { pointsByName } = recomputeFromValidated();
-
-    try{
-      for(const p of playersCache){
-        const name = p.name;
-        if(!name) continue;
-        const newPts = pointsByName[name] || 0;
-        const curPts = p.pointsGeneral || 0;
-        if(newPts !== curPts){
-          await updateDoc(doc(db,"players",p.id), { pointsGeneral: newPts });
-        }
-      }
-      log("Points recalculés (pointsGeneral).");
-    }catch(e){
-      console.error(e);
-      log(`Erreur recalcul points: ${e?.message || e}`, "bad");
-      alert("Erreur lors du recalcul des points.");
-    }
-  }
-
-  function renderRankings(){
-    if(!playersCache.length){
-      rankGeneralEl.innerHTML = `<div class="small muted">Aucun joueur.</div>`;
-      rankLisaEl.innerHTML = `<div class="small muted">Aucun joueur.</div>`;
-      rankManonEl.innerHTML = `<div class="small muted">Aucun joueur.</div>`;
-      return;
-    }
-
-    const sorted = [...playersCache].sort((a,b)=>(b.pointsGeneral||0)-(a.pointsGeneral||0));
-
-    const mkTable = (list) => {
-      if(!list.length) return `<div class="small muted">Aucun joueur.</div>`;
-      let html = `<table><thead><tr><th>#</th><th>Nom</th><th>Team</th><th class="right">Points</th></tr></thead><tbody>`;
-      list.forEach((p, idx)=>{
-        const teamBadge = p.team==="Lisa"
-          ? `<span class="badge lisa">🌶️ Lisa</span>`
-          : (p.team==="Manon" ? `<span class="badge manon">🐝 Manon</span>` : `<span class="badge neutral">—</span>`);
-        html += `<tr>
-          <td>${idx+1}</td>
-          <td>${p.name || ""}</td>
-          <td>${teamBadge}</td>
-          <td class="right"><b>${p.pointsGeneral || 0}</b></td>
-        </tr>`;
-      });
-      html += `</tbody></table>`;
-      return html;
-    };
-
-    rankGeneralEl.innerHTML = mkTable(sorted);
-    rankLisaEl.innerHTML = mkTable(sorted.filter(p=>p.team==="Lisa"));
-    rankManonEl.innerHTML = mkTable(sorted.filter(p=>p.team==="Manon"));
-  }
-
-  function renderStats(){
-    if(!playersCache.length){
-      statsMatchesEl.innerHTML = `<div class="small muted">Aucun joueur.</div>`;
-      statsPartnersEl.innerHTML = `<div class="small muted">Aucun joueur.</div>`;
-      statsOpponentsEl.innerHTML = `<div class="small muted">Aucun joueur.</div>`;
-      return;
-    }
-
-    const { matchesPlayedByName, partners, opponents } = recomputeFromValidated();
-    const names = sortByName(playersCache.filter(p=>p.name)).map(p=>p.name);
-
-    let htmlM = `<table><thead><tr><th>Joueur</th><th class="right">Matchs validés</th></tr></thead><tbody>`;
-    names.forEach(n=>{
-      htmlM += `<tr><td>${n}</td><td class="right"><b>${matchesPlayedByName[n] || 0}</b></td></tr>`;
-    });
-    htmlM += `</tbody></table>`;
-    statsMatchesEl.innerHTML = htmlM;
-
-    let htmlP = "";
-    names.forEach(n=>{
-      const map = partners[n] || {};
-      const list = Object.keys(map).sort((a,b)=>map[b]-map[a] || a.localeCompare(b,"fr",{sensitivity:"base"}));
-      htmlP += `<div class="panel" style="margin:10px 0 0; background: rgba(255,255,255,.02);">
-        <div class="panelTitle"><h2>${n}</h2><span class="hint">partenaires</span></div>`;
-      if(!list.length){
-        htmlP += `<div class="small muted">Aucun partenaire pour l’instant.</div>`;
-      } else {
-        htmlP += `<table><thead><tr><th>Partenaire</th><th class="right">Matchs ensemble</th></tr></thead><tbody>`;
-        list.forEach(pn=>{
-          htmlP += `<tr><td>${pn}</td><td class="right"><b>${map[pn]}</b></td></tr>`;
-        });
-        htmlP += `</tbody></table>`;
-      }
-      htmlP += `</div>`;
-    });
-    statsPartnersEl.innerHTML = htmlP;
-
-    let htmlO = "";
-    names.forEach(n=>{
-      const map = opponents[n] || {};
-      const list = Object.keys(map).sort((a,b)=>map[b]-map[a] || a.localeCompare(b,"fr",{sensitivity:"base"}));
-      htmlO += `<div class="panel" style="margin:10px 0 0; background: rgba(255,255,255,.02);">
-        <div class="panelTitle"><h2>${n}</h2><span class="hint">adversaires</span></div>`;
-      if(!list.length){
-        htmlO += `<div class="small muted">Aucun adversaire pour l’instant.</div>`;
-      } else {
-        htmlO += `<table><thead><tr><th>Adversaire</th><th class="right">Matchs contre</th></tr></thead><tbody>`;
-        list.forEach(on=>{
-          htmlO += `<tr><td>${on}</td><td class="right"><b>${map[on]}</b></td></tr>`;
-        });
-        htmlO += `</tbody></table>`;
-      }
-      htmlO += `</div>`;
-    });
-    statsOpponentsEl.innerHTML = htmlO;
-  }
-
-  // ================================
-  // Live listeners
+  // Live listeners (Teams only)
   // ================================
   async function init(){
     try{
       await ensureDraftDoc();
       setStatus("ok","Connecté");
-      log("Admin chargé. Étape 1 : ajoute des joueurs, puis définis qui commence.");
+      log("Admin (Teams) chargé. Étape 1 : ajoute des joueurs, puis définis qui commence.");
     }catch(e){
       console.error(e);
       setStatus("bad","Erreur Firestore");
@@ -1638,9 +876,6 @@ Confirmer l’attribution à Team ${team} ?`;
     onSnapshot(query(playersCol, orderBy("createdAt","asc")), (snap)=>{
       playersCache = snap.docs.map(d=>({ id:d.id, ...d.data() }));
       renderDraftUI();
-      refreshAllPlayerSelects();
-      renderRankings();
-      renderStats();
     }, (err)=>{
       console.error(err);
       setStatus("bad","Erreur Firestore");
@@ -1656,18 +891,6 @@ Confirmer l’attribution à Team ${team} ?`;
       console.error(err);
       setStatus("bad","Erreur Firestore");
       log(`onSnapshot draft: ${err?.message || err}`, "bad");
-    });
-
-    onSnapshot(query(matchesCol, orderBy("createdAt","asc")), (snap)=>{
-      matchesCache = snap.docs.map(d=>({ id:d.id, ...d.data() }));
-      refreshMatchSelect();
-      renderMatches();
-      renderRankings();
-      renderStats();
-    }, (err)=>{
-      console.error(err);
-      setStatus("bad","Erreur Firestore");
-      log(`onSnapshot matches: ${err?.message || err}`, "bad");
     });
   }
 
