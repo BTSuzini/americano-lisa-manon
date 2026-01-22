@@ -1,34 +1,283 @@
+<!-- =========================
+     index.html (accueil)
+     Bandeau = même style Admin : fond vert, écriture blanche,
+     logo à gauche + image tournoi à droite (+ statut).
+     Objectif : accès rapide vers Admin / Lisa / Manon / Mobile
+     ========================= -->
 <!doctype html>
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Americano Lisa vs Manon – TC Suzini</title>
+  <title>Americano Lisa vs Manon – Accueil</title>
+
   <style>
-    body{font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;margin:16px;background:#fafafa;color:#111}
-    .wrap{max-width:720px;margin:0 auto}
-    .card{background:#fff;border:1px solid #e8e8e8;border-radius:12px;padding:14px;margin:10px 0}
-    a{display:block;padding:10px 12px;border-radius:10px;border:1px solid #ddd;background:#fff;text-decoration:none;color:#111;margin-top:8px}
-    a:hover{background:#f3f3f3}
-    .muted{color:#666;font-size:13px}
+    :root{
+      --bg:#ffffff;
+      --panel:#ffffff;
+      --text:#111827;
+      --muted:#6b7280;
+      --border:rgba(0,0,0,.10);
+      --shadow: 0 10px 30px rgba(0,0,0,.10);
+
+      --green:#16a34a;
+      --green2:#15803d;
+
+      --ok:#16a34a;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    /* ===== Header (identique Admin) ===== */
+    header{
+      background: linear-gradient(90deg, rgba(22,163,74,1), rgba(21,128,61,1));
+      padding: 12px 14px;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top:0;
+      z-index: 50;
+    }
+    .headRow{
+      max-width: 1100px;
+      margin: 0 auto;
+      display:grid;
+      grid-template-columns: 120px 1fr 120px; /* gauche / centre / droite */
+      align-items:center;
+      gap:10px;
+    }
+    .brandImg{
+      height: 42px;
+      width: auto;
+      object-fit: contain;
+      display:block;
+    }
+    .leftSlot{ display:flex; align-items:center; justify-content:flex-start; }
+    .centerSlot{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      text-align:center;
+      line-height:1.15;
+      color:#fff;
+    }
+    .t1{ font-weight:1000; font-size:16px; color:#fff; }
+    .t2{ font-weight:800; font-size:13px; opacity:.95; color:#fff; }
+
+    .rightSlot{ display:flex; align-items:center; justify-content:flex-end; }
+    .statusPill{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      background: rgba(0,0,0,.25);
+      border: 1px solid rgba(255,255,255,.18);
+      font-size:12px;
+      white-space:nowrap;
+      color:#fff;
+    }
+    .dot{
+      width:10px; height:10px; border-radius:999px;
+      background: var(--warn);
+      box-shadow: 0 0 0 4px rgba(245,158,11,.18);
+    }
+    .dot.ok{ background: var(--ok); box-shadow: 0 0 0 4px rgba(34,197,94,.18); }
+    .dot.bad{ background: var(--bad); box-shadow: 0 0 0 4px rgba(239,68,68,.18); }
+
+    /* ===== Page ===== */
+    .container{
+      max-width: 1100px;
+      margin: 14px auto 40px auto;
+      padding: 0 12px;
+    }
+    .panel{
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+    .panelTitle{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:12px;
+    }
+    .panelTitle h2{
+      margin:0;
+      font-size: 16px;
+      font-weight: 1000;
+      letter-spacing:.2px;
+    }
+    .hint{ color: var(--muted); font-size: 12px; text-align:right; }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 760px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      border: 1px solid rgba(0,0,0,.10);
+      border-radius: 16px;
+      padding: 14px;
+      background: #fafafa;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .card h3{
+      margin:0;
+      font-size: 15px;
+      font-weight: 1000;
+    }
+    .card p{
+      margin:0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height:1.35;
+    }
+
+    .btnRow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .btn{
+      border: 1px solid rgba(0,0,0,.10);
+      background: #ffffff;
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight: 1000;
+      font-size: 13px;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      transition:.15s ease;
+    }
+    .btn:hover{ transform: translateY(-1px); }
+
+    .btn.primary{
+      background: linear-gradient(180deg, rgba(22,163,74,.98), rgba(21,128,61,.98));
+      border-color: rgba(255,255,255,.20);
+      color:#fff;
+    }
+    .btn.secondary{
+      background: rgba(22,163,74,.10);
+      border-color: rgba(22,163,74,.20);
+    }
+
+    .small{ font-size:12px; color: var(--muted); }
+
+    /* Mobile header compact */
+    @media (max-width: 520px){
+      .headRow{ grid-template-columns: 64px 1fr 64px; }
+      .brandImg{ height: 38px; }
+      .t1{ font-size: 14px; }
+      .t2{ font-size: 12px; }
+      .statusPill{ padding: 7px 9px; font-size: 11px; }
+    }
   </style>
 </head>
-<body>
-  <div class="wrap">
-    <div class="card">
-      <h1 style="margin:0 0 6px 0;">Americano « Lisa vs Manon »</h1>
-      <div class="muted">TC Suzini – Beach Tennis • Accès rapide</div>
 
-      <a href="mobile.html">📱 Vue Mobile (joueurs)</a>
-      <a href="tv.html">🖥️ Vue TV</a>
-      <a href="admin.html">🛠️ Admin</a>
+<body>
+<header>
+  <div class="headRow">
+    <!-- GAUCHE : logo Suzini -->
+    <div class="leftSlot">
+      <img src="img/logo-suzini.png" alt="TC Suzini" class="brandImg">
     </div>
 
-    <div class="card">
-      <div class="muted">
-        Si une page affiche “404”, c’est qu’elle n’existe pas encore (on la crée à l’étape suivante).
+    <!-- CENTRE : titre -->
+    <div class="centerSlot">
+      <div class="t1">Americano Lisa vs Manon</div>
+      <div class="t2">Accueil • Liens rapides</div>
+    </div>
+
+    <!-- DROITE : image tournoi + statut -->
+    <div class="rightSlot" style="gap:10px;">
+      <img src="img/tournoi.jpeg" alt="Tournoi" class="brandImg">
+      <div class="statusPill" id="statusPill">
+        <span class="dot" id="statusDot"></span>
+        <span id="statusText">Prêt</span>
       </div>
     </div>
   </div>
+</header>
+
+<div class="container">
+  <div class="panel">
+    <div class="panelTitle">
+      <h2>Choisis une vue</h2>
+      <div class="hint">GitHub Pages / Web</div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h3>🛠️ Admin</h3>
+        <p>Ajout des joueurs, draft (qui commence), gestion des équipes (retraits), et bientôt le reste.</p>
+        <div class="btnRow">
+          <a class="btn primary" href="Admin.html">Ouvrir Admin</a>
+        </div>
+        <div class="small">Fichier : <b>Admin.html</b></div>
+      </div>
+
+      <div class="card">
+        <h3>🌶️ Lisa</h3>
+        <p>Vue capitaine Lisa (choix des équipes / matchs plus tard).</p>
+        <div class="btnRow">
+          <a class="btn secondary" href="Lisa.html">Ouvrir Lisa</a>
+        </div>
+        <div class="small">Fichier : <b>Lisa.html</b></div>
+      </div>
+
+      <div class="card">
+        <h3>🐝 Manon</h3>
+        <p>Vue capitaine Manon (choix des équipes / matchs plus tard).</p>
+        <div class="btnRow">
+          <a class="btn secondary" href="Manon.html">Ouvrir Manon</a>
+        </div>
+        <div class="small">Fichier : <b>Manon.html</b></div>
+      </div>
+
+      <div class="card">
+        <h3>📱 Mobile</h3>
+        <p>Vue mobile public/organisation : onglets, et pour l’instant uniquement l’affichage des équipes + tour.</p>
+        <div class="btnRow">
+          <a class="btn secondary" href="Mobile.html">Ouvrir Mobile</a>
+        </div>
+        <div class="small">Fichier : <b>Mobile.html</b></div>
+      </div>
+    </div>
+
+    <div class="small" style="margin-top:12px;">
+      Images attendues : <b>img/logo-suzini.png</b> et <b>img/tournoi.jpeg</b> (adapte le nom si besoin).
+    </div>
+  </div>
+</div>
+
+<script>
+  // Petit statut visuel (pas de Firebase ici, juste “OK”)
+  const dot = document.getElementById("statusDot");
+  const txt = document.getElementById("statusText");
+  dot.classList.add("ok");
+  txt.textContent = "OK";
+</script>
+
 </body>
 </html>
