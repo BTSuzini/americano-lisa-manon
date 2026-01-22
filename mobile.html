@@ -1,9 +1,16 @@
 <!-- =========================
-     Mobile.html (vue mobile)
+     Mobile.html (vue mobile) – COMPLET + PROPRE
      Bandeau = style Admin : fond vert, écriture blanche,
      logo à gauche + image tournoi à droite (+ statut rond seul).
      Onglets: Équipes / Matchs / Classements / Statistiques / Règlement
-     ✅ Onglet Équipes + ✅ Onglet Matchs (3 encarts : dernier / en cours / à venir)
+
+     ✅ Onglet Équipes
+     ✅ Onglet Matchs (dernier / en cours / à venir)
+     ✅ Onglet Classements (IDENTIQUE admin : Général / Team Lisa / Team Manon)
+     ✅ Onglet Statistiques (IDENTIQUE admin : Matchs joués / Partenaires / Adversaires)
+
+     Assets : img/logo-suzini.jpeg + img/tournoi.jpeg (jpeg)
+     Firebase : mêmes infos que Admin
      ========================= -->
 <!doctype html>
 <html lang="fr">
@@ -47,7 +54,7 @@
       color: var(--text);
     }
 
-    /* ===== Header (identique Admin, ajusté demandes) ===== */
+    /* ===== Header (style Admin) ===== */
     header{
       background: linear-gradient(90deg, rgba(22,163,74,1), rgba(21,128,61,1));
       padding: 12px 14px;
@@ -82,7 +89,6 @@
       line-height:1.15;
       color:#fff;
     }
-
     .t1{ font-weight:1000; font-size:16px; color:#fff; }
     .t2{ font-weight:800; font-size:13px; opacity:.95; color:#fff; }
 
@@ -170,6 +176,32 @@
       text-align:right;
     }
 
+    /* Subtabs (comme admin) */
+    .subtabs{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-bottom:10px;
+    }
+    .subBtn{
+      flex:1;
+      min-width: 150px;
+      padding: 9px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,.10);
+      background: #f3f4f6;
+      color: var(--text);
+      cursor:pointer;
+      font-weight: 1000;
+      font-size: 13px;
+    }
+    .subBtn.active{
+      background: rgba(22,163,74,.12);
+      border-color: rgba(22,163,74,.22);
+    }
+    .subContent{ display:none; }
+    .subContent.active{ display:block; }
+
     .badge{
       display:inline-flex;
       align-items:center;
@@ -187,6 +219,16 @@
     .badge.warn{ background: rgba(245,158,11,.18); border-color: rgba(245,158,11,.35); }
     .badge.bad{ background: rgba(239,68,68,.18); border-color: rgba(239,68,68,.35); }
     .badge.neutral{ background: rgba(0,0,0,.04); }
+    .badge.lisa{
+      background: rgba(239,68,68,.18);
+      border-color: rgba(239,68,68,.35);
+      color:#111827;
+    }
+    .badge.manon{
+      background: rgba(250,204,21,.18);
+      border-color: rgba(250,204,21,.35);
+      color:#111827;
+    }
 
     .turnBox{
       display:flex;
@@ -445,6 +487,54 @@
       white-space:nowrap;
     }
 
+    /* Tables (classements + stats) */
+    table{
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      overflow:hidden;
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,.10);
+      background: #fff;
+    }
+    th, td{
+      padding: 8px 8px;
+      border-bottom: 1px solid rgba(0,0,0,.06);
+      text-align:left;
+      vertical-align: top;
+      font-weight: 900;
+    }
+    th{
+      font-size: 12px;
+      color: #111827;
+      background: #f3f4f6;
+      font-weight: 1000;
+    }
+    tr:hover td{ background: rgba(0,0,0,.02); }
+    .right{ text-align:right; }
+
+    /* Panel-like blocks inside stats (comme admin) */
+    .innerPanel{
+      background:#fff;
+      border: 1px solid rgba(0,0,0,.10);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 12px;
+      margin: 10px 0 0;
+    }
+    .innerTitle{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .innerTitle h3{
+      margin:0;
+      font-size: 14px;
+      font-weight:1000;
+    }
+
     @media (max-width: 520px){
       .headRow{ grid-template-columns: 64px 1fr 64px; }
       .brandImg{ height: 38px; }
@@ -564,24 +654,58 @@
     </div>
   </div>
 
-  <!-- ===================== AUTRES TABS ===================== -->
+  <!-- ===================== TAB CLASSEMENTS (IDENTIQUE ADMIN) ===================== -->
   <div id="rankingsTab" class="tabContent">
     <div class="panel">
-      <div class="panelTitle"><h2>Classements</h2><span class="hint">à venir</span></div>
-      <div class="placeholder">⏳ Contenu à venir.</div>
+      <div class="panelTitle">
+        <h2>Classements</h2>
+        <span class="hint">calculé sur les matchs <b>validés</b></span>
+      </div>
+
+      <div class="subtabs">
+        <button class="subBtn active" data-subtab="rankGeneral">Général</button>
+        <button class="subBtn" data-subtab="rankLisa">Team Lisa</button>
+        <button class="subBtn" data-subtab="rankManon">Team Manon</button>
+      </div>
+
+      <div id="rankGeneral" class="subContent active"></div>
+      <div id="rankLisa" class="subContent"></div>
+      <div id="rankManon" class="subContent"></div>
+
+      <div class="small" style="margin-top:10px;">
+        Points affichés = <b>pointsGeneral</b> dans Firestore (recalcul auto après validation / modification de score).
+      </div>
     </div>
   </div>
 
+  <!-- ===================== TAB STATS (IDENTIQUE ADMIN) ===================== -->
   <div id="statsTab" class="tabContent">
     <div class="panel">
-      <div class="panelTitle"><h2>Statistiques</h2><span class="hint">à venir</span></div>
-      <div class="placeholder">⏳ Contenu à venir.</div>
+      <div class="panelTitle">
+        <h2>Statistiques</h2>
+        <span class="hint">sur les matchs <b>validés</b></span>
+      </div>
+
+      <div class="subtabs">
+        <button class="subBtn active" data-subtab="statsMatches">Matchs joués</button>
+        <button class="subBtn" data-subtab="statsPartners">Partenaires</button>
+        <button class="subBtn" data-subtab="statsOpponents">Adversaires</button>
+      </div>
+
+      <div id="statsMatches" class="subContent active"></div>
+      <div id="statsPartners" class="subContent"></div>
+      <div id="statsOpponents" class="subContent"></div>
+
+      <div class="small" style="margin-top:10px;">
+        Les stats sont recalculées en temps réel à chaque validation / modification de match.
+      </div>
     </div>
   </div>
 
+  <!-- ===================== TAB RÈGLEMENT ===================== -->
   <div id="rulesTab" class="tabContent">
     <div class="panel">
-      <div class="panelTitle"><h2>Règlement</h2><span class="hint">à venir</span></div>
+      <div class="panelTitle"><h2>Règlement</h2><span class="hint">à compléter</span></div>
       <div class="placeholder">⏳ Contenu à venir.</div>
     </div>
   </div>
@@ -624,7 +748,7 @@
     else if(state==="bad") statusDot.classList.add("bad");
   }
 
-  // Tabs
+  // Tabs (principaux)
   const tabBtns = document.querySelectorAll(".tabBtn");
   const tabContents = document.querySelectorAll(".tabContent");
   tabBtns.forEach(btn=>{
@@ -632,6 +756,20 @@
       const target = btn.dataset.tab;
       tabBtns.forEach(b=>b.classList.remove("active"));
       tabContents.forEach(c=>c.classList.remove("active"));
+      btn.classList.add("active");
+      document.getElementById(target).classList.add("active");
+    });
+  });
+
+  // Subtabs (à l'intérieur d'un panel)
+  document.querySelectorAll(".subBtn").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const panel = btn.closest(".panel");
+      const target = btn.dataset.subtab;
+
+      panel.querySelectorAll(".subBtn").forEach(b=>b.classList.remove("active"));
+      panel.querySelectorAll(".subContent").forEach(c=>c.classList.remove("active"));
+
       btn.classList.add("active");
       document.getElementById(target).classList.add("active");
     });
@@ -646,7 +784,6 @@
   function teamIcon(team){
     return team === "Lisa" ? "🌶️" : (team === "Manon" ? "🐝" : "•");
   }
-
   function pillForPlayer(p){
     const name = typeof p === "string" ? p : (p?.name || "");
     if(!name) return "";
@@ -657,15 +794,16 @@
   // Firestore refs
   // ================================
   const playersCol = collection(db, "players");
-  const draftRef = doc(db, "meta", "draft");
+  const draftRef   = doc(db, "meta", "draft");
   const matchesCol = collection(db, "matches");
 
+  // Caches
   let playersCache = [];
   let draftCache = { starter:"Lisa", turn:null, initialized:false };
   let matchesCache = [];
 
   // ================================
-  // Render Teams
+  // TEAMS (vue)
   // ================================
   const draftTurnLine = document.getElementById("draftTurnLine");
   const draftStatePill = document.getElementById("draftStatePill");
@@ -721,7 +859,7 @@
   }
 
   // ================================
-  // Matchs helpers (dernier / en cours / à venir)
+  // MATCHES (dernier / en cours / à venir) – identique logique admin
   // ================================
   const lastMeta = document.getElementById("lastMeta");
   const curMeta  = document.getElementById("curMeta");
@@ -763,8 +901,7 @@
     return bench.sort((a,b)=>a.localeCompare(b,"fr",{sensitivity:"base"}));
   }
 
-  function renderRound(roundObj, mode){
-    // mode: "last" | "current" | "next"
+  function renderRound(roundObj){
     if(!roundObj){
       return `<div class="small muted">Aucun tour.</div>`;
     }
@@ -844,21 +981,180 @@
     curMeta.textContent  = current ? `Tour ${current.round}` : "—";
     nextMeta.textContent = next ? `Tour ${next.round}` : "—";
 
-    lastBody.innerHTML = renderRound(lastValid, "last");
-    curBody.innerHTML  = current ? renderRound(current, "current") : `<div class="small muted">Aucun tour en cours.</div>`;
-    nextBody.innerHTML = next ? renderRound(next, "next") : `<div class="small muted">Aucun tour à venir.</div>`;
+    lastBody.innerHTML = renderRound(lastValid);
+    curBody.innerHTML  = current ? renderRound(current) : `<div class="small muted">Aucun tour en cours.</div>`;
+    nextBody.innerHTML = next ? renderRound(next) : `<div class="small muted">Aucun tour à venir.</div>`;
+  }
+
+  // ================================
+  // CLASSEMENTS + STATS (STRICTEMENT IDENTIQUES ADMIN)
+  // ================================
+  const rankGeneralEl = document.getElementById("rankGeneral");
+  const rankLisaEl = document.getElementById("rankLisa");
+  const rankManonEl = document.getElementById("rankManon");
+
+  const statsMatchesEl = document.getElementById("statsMatches");
+  const statsPartnersEl = document.getElementById("statsPartners");
+  const statsOpponentsEl = document.getElementById("statsOpponents");
+
+  function buildValidatedMatches(){
+    return matchesCache.filter(m=>m.validated === true);
+  }
+
+  function recomputeFromValidated(){
+    const valid = buildValidatedMatches();
+    const pointsByName = {};
+    const matchesPlayedByName = {};
+    const partners = {};
+    const opponents = {};
+
+    const addCount = (obj, a, b) => {
+      obj[a] = obj[a] || {};
+      obj[a][b] = (obj[a][b] || 0) + 1;
+    };
+
+    valid.forEach(m=>{
+      const teamA = m.teamA || [];
+      const teamB = m.teamB || [];
+      const scoreA = (typeof m.scoreA === "number") ? m.scoreA : 0;
+      const scoreB = (typeof m.scoreB === "number") ? m.scoreB : 0;
+
+      teamA.forEach(n=>{
+        pointsByName[n] = (pointsByName[n] || 0) + scoreA;
+        matchesPlayedByName[n] = (matchesPlayedByName[n] || 0) + 1;
+      });
+      teamB.forEach(n=>{
+        pointsByName[n] = (pointsByName[n] || 0) + scoreB;
+        matchesPlayedByName[n] = (matchesPlayedByName[n] || 0) + 1;
+      });
+
+      if(teamA.length===2 && teamB.length===2){
+        addCount(partners, teamA[0], teamA[1]);
+        addCount(partners, teamA[1], teamA[0]);
+        addCount(partners, teamB[0], teamB[1]);
+        addCount(partners, teamB[1], teamB[0]);
+
+        teamA.forEach(a=>{
+          teamB.forEach(b=>{
+            addCount(opponents, a, b);
+            addCount(opponents, b, a);
+          });
+        });
+      }
+    });
+
+    return { pointsByName, matchesPlayedByName, partners, opponents };
+  }
+
+  function renderRankings(){
+    if(!playersCache.length){
+      rankGeneralEl.innerHTML = `<div class="small muted">Aucun joueur.</div>`;
+      rankLisaEl.innerHTML = `<div class="small muted">Aucun joueur.</div>`;
+      rankManonEl.innerHTML = `<div class="small muted">Aucun joueur.</div>`;
+      return;
+    }
+
+    const sorted = [...playersCache].sort((a,b)=>(Number(b.pointsGeneral)||0)-(Number(a.pointsGeneral)||0));
+
+    const mkTable = (list) => {
+      if(!list.length) return `<div class="small muted">Aucun joueur.</div>`;
+      let html = `<table><thead><tr><th>#</th><th>Nom</th><th>Team</th><th class="right">Points</th></tr></thead><tbody>`;
+      list.forEach((p, idx)=>{
+        const teamBadge = p.team==="Lisa"
+          ? `<span class="badge lisa">🌶️ Lisa</span>`
+          : (p.team==="Manon" ? `<span class="badge manon">🐝 Manon</span>` : `<span class="badge neutral">—</span>`);
+        html += `<tr>
+          <td>${idx+1}</td>
+          <td>${p.name || ""}</td>
+          <td>${teamBadge}</td>
+          <td class="right"><b>${Number(p.pointsGeneral)||0}</b></td>
+        </tr>`;
+      });
+      html += `</tbody></table>`;
+      return html;
+    };
+
+    rankGeneralEl.innerHTML = mkTable(sorted);
+    rankLisaEl.innerHTML = mkTable(sorted.filter(p=>p.team==="Lisa"));
+    rankManonEl.innerHTML = mkTable(sorted.filter(p=>p.team==="Manon"));
+  }
+
+  function renderStats(){
+    if(!playersCache.length){
+      statsMatchesEl.innerHTML = `<div class="small muted">Aucun joueur.</div>`;
+      statsPartnersEl.innerHTML = `<div class="small muted">Aucun joueur.</div>`;
+      statsOpponentsEl.innerHTML = `<div class="small muted">Aucun joueur.</div>`;
+      return;
+    }
+
+    const { matchesPlayedByName, partners, opponents } = recomputeFromValidated();
+    const names = sortByName(playersCache.filter(p=>p.name)).map(p=>p.name);
+
+    // Matchs joués
+    let htmlM = `<table><thead><tr><th>Joueur</th><th class="right">Matchs validés</th></tr></thead><tbody>`;
+    names.forEach(n=>{
+      htmlM += `<tr><td>${n}</td><td class="right"><b>${matchesPlayedByName[n] || 0}</b></td></tr>`;
+    });
+    htmlM += `</tbody></table>`;
+    statsMatchesEl.innerHTML = htmlM;
+
+    // Partenaires (comme admin : un bloc par joueur)
+    let htmlP = "";
+    names.forEach(n=>{
+      const map = partners[n] || {};
+      const list = Object.keys(map).sort((a,b)=>map[b]-map[a] || a.localeCompare(b,"fr",{sensitivity:"base"}));
+      htmlP += `<div class="innerPanel">
+        <div class="innerTitle"><h3>${n}</h3><span class="hint">partenaires</span></div>`;
+      if(!list.length){
+        htmlP += `<div class="small muted">Aucun partenaire pour l’instant.</div>`;
+      } else {
+        htmlP += `<table><thead><tr><th>Partenaire</th><th class="right">Matchs ensemble</th></tr></thead><tbody>`;
+        list.forEach(pn=>{
+          htmlP += `<tr><td>${pn}</td><td class="right"><b>${map[pn]}</b></td></tr>`;
+        });
+        htmlP += `</tbody></table>`;
+      }
+      htmlP += `</div>`;
+    });
+    statsPartnersEl.innerHTML = htmlP;
+
+    // Adversaires (comme admin : un bloc par joueur)
+    let htmlO = "";
+    names.forEach(n=>{
+      const map = opponents[n] || {};
+      const list = Object.keys(map).sort((a,b)=>map[b]-map[a] || a.localeCompare(b,"fr",{sensitivity:"base"}));
+      htmlO += `<div class="innerPanel">
+        <div class="innerTitle"><h3>${n}</h3><span class="hint">adversaires</span></div>`;
+      if(!list.length){
+        htmlO += `<div class="small muted">Aucun adversaire pour l’instant.</div>`;
+      } else {
+        htmlO += `<table><thead><tr><th>Adversaire</th><th class="right">Matchs contre</th></tr></thead><tbody>`;
+        list.forEach(on=>{
+          htmlO += `<tr><td>${on}</td><td class="right"><b>${map[on]}</b></td></tr>`;
+        });
+        htmlO += `</tbody></table>`;
+      }
+      htmlO += `</div>`;
+    });
+    statsOpponentsEl.innerHTML = htmlO;
   }
 
   // ================================
   // Live listeners
   // ================================
+  function refreshAll(){
+    renderTeams();
+    renderMatches();
+    renderRankings();
+    renderStats();
+  }
+
   function init(){
     setStatus("warn");
 
     onSnapshot(query(playersCol, orderBy("createdAt","asc")), (snap)=>{
       playersCache = snap.docs.map(d=>({ id:d.id, ...d.data() }));
-      renderTeams();
-      renderMatches();
+      refreshAll();
       setStatus("ok");
     }, (err)=>{
       console.error(err);
@@ -871,17 +1167,16 @@
       } else {
         draftCache = { starter:"Lisa", turn:null, initialized:false };
       }
-      renderTeams();
+      refreshAll();
       setStatus("ok");
     }, (err)=>{
       console.error(err);
       setStatus("bad");
     });
 
-    // Matches (nouveau)
     onSnapshot(query(matchesCol, orderBy("createdAt","asc")), (snap)=>{
       matchesCache = snap.docs.map(d=>({ id:d.id, ...d.data() }));
-      renderMatches();
+      refreshAll();
       setStatus("ok");
     }, (err)=>{
       console.error(err);
