@@ -1,9 +1,16 @@
-<!DOCTYPE html>
+<!-- =========================
+     Admin.html — SIMPLE (Rouge vs Jaune)
+     - Chaque tour = 2 matchs : Rouge 1 vs Jaune 1, Rouge 2 vs Jaune 2
+     - Saisie scores + Validation
+     - À la validation : calcul des points (3/1, 2/2) + génération automatique du tour suivant
+     - Classement cumulé Rouge vs Jaune (points)
+     ========================= -->
+<!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <title>Admin – Americano Lisa vs Manon</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin — Rouge vs Jaune</title>
 
   <style>
     :root{
@@ -13,22 +20,20 @@
       --text:#111827;
       --muted:#6b7280;
       --border:rgba(0,0,0,.10);
-      --shadow: 0 10px 30px rgba(0,0,0,.10);
+      --shadow: 0 10px 26px rgba(0,0,0,.10);
 
       --green:#16a34a;
       --green2:#15803d;
 
-      --lisa:#ef4444;
-      --lisa2:#b91c1c;
+      --red:#ef4444;
+      --red2:#b91c1c;
 
-      --manon:#facc15;
-      --manon2:#ca8a04;
+      --yellow:#facc15;
+      --yellow2:#ca8a04;
 
       --ok:#16a34a;
       --warn:#f59e0b;
       --bad:#ef4444;
-
-      --btnText:#ffffff;
     }
 
     *{ box-sizing:border-box; }
@@ -40,36 +45,25 @@
     }
 
     header{
-      background: linear-gradient(90deg, rgba(22,163,74,1), rgba(21,128,61,1));
+      background: linear-gradient(90deg, var(--green), var(--green2));
       padding: 12px 14px;
       box-shadow: var(--shadow);
       position: sticky;
       top:0;
       z-index: 50;
+      color:#fff;
     }
-
-    /* bandeau centré + 3 zones */
     .headRow{
       max-width: 1100px;
       margin: 0 auto;
-      display:grid;
-      grid-template-columns: 120px 1fr 120px; /* gauche / centre / droite */
+      display:flex;
       align-items:center;
-      gap:10px;
+      justify-content:space-between;
+      gap:12px;
     }
-
-    .brandImg{
-      height: 42px;
-      width: auto;
-      object-fit: contain;
-      display:block;
-    }
-    .leftSlot{ display:flex; align-items:center; justify-content:flex-start; }
-    .centerSlot{ display:flex; flex-direction:column; align-items:center; text-align:center; line-height:1.15; color:#fff; }
-    .rightSlot{ display:flex; align-items:center; justify-content:flex-end; }
-
-    .t1{ font-weight:1000; font-size:16px; color:#fff; }
-    .t2{ font-weight:800; font-size:13px; opacity:.95; color:#fff; }
+    .titleWrap{ line-height:1.12; }
+    .t1{ font-weight:1000; font-size:16px; }
+    .t2{ font-weight:800; font-size:12px; opacity:.95; }
 
     .statusPill{
       display:flex;
@@ -77,68 +71,37 @@
       gap:8px;
       padding:8px 10px;
       border-radius:999px;
-      background: rgba(0,0,0,.25);
+      background: rgba(0,0,0,.22);
       border: 1px solid rgba(255,255,255,.18);
       font-size:12px;
       white-space:nowrap;
-      color:#fff;
     }
     .dot{
       width:10px; height:10px; border-radius:999px;
       background: var(--warn);
       box-shadow: 0 0 0 4px rgba(245,158,11,.18);
     }
-    .dot.ok{ background: var(--ok); box-shadow: 0 0 0 4px rgba(34,197,94,.18); }
+    .dot.ok{ background: var(--ok); box-shadow: 0 0 0 4px rgba(22,163,74,.18); }
     .dot.bad{ background: var(--bad); box-shadow: 0 0 0 4px rgba(239,68,68,.18); }
 
     .container{
       max-width: 1100px;
-      margin: 14px auto 40px auto;
+      margin: 14px auto 40px;
       padding: 0 12px;
     }
 
-    /* Tabs */
-    .tabs{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      margin: 12px 0 10px;
-    }
-    .tabBtn{
-      flex: 1;
-      min-width: 160px;
-      border:1px solid var(--border);
-      background: #f3f4f6;
-      color: var(--text);
-      padding: 10px 12px;
-      border-radius: 12px;
-      cursor:pointer;
-      font-weight:900;
-      font-size:14px;
-      transition: .15s ease;
-    }
-    .tabBtn:hover{ transform: translateY(-1px); }
-    .tabBtn.active{
-      border-color: rgba(255,255,255,.22);
-      background: rgba(22,163,74,.20);
-      box-shadow: 0 12px 25px rgba(0,0,0,.22);
-    }
-    .tabContent{ display:none; }
-    .tabContent.active{ display:block; }
-
-    /* Panels */
     .grid{
       display:grid;
       grid-template-columns: 2fr 1fr;
       gap: 12px;
+      align-items:start;
     }
     @media (max-width: 920px){
       .grid{ grid-template-columns: 1fr; }
-      .tabBtn{ min-width: 130px; }
     }
 
     .panel{
-      background: #ffffff;
+      background: var(--panel);
       border: 1px solid var(--border);
       border-radius: 16px;
       box-shadow: var(--shadow);
@@ -147,7 +110,7 @@
 
     .panelTitle{
       display:flex;
-      align-items:center;
+      align-items:flex-start;
       justify-content:space-between;
       gap:10px;
       margin-bottom:10px;
@@ -158,11 +121,7 @@
       font-weight: 1000;
       letter-spacing:.2px;
     }
-    .hint{
-      color: var(--muted);
-      font-size: 12px;
-      text-align:right;
-    }
+    .hint{ color: var(--muted); font-size: 12px; text-align:right; }
 
     .row{
       display:flex;
@@ -170,19 +129,6 @@
       flex-wrap:wrap;
       align-items:center;
     }
-
-    input, select, textarea{
-      background: #ffffff;
-      border: 1px solid rgba(0,0,0,.15);
-      color: var(--text);
-      padding: 10px 10px;
-      border-radius: 10px;
-      outline:none;
-      font-size: 14px;
-    }
-    input::placeholder{ color: rgba(17,24,39,.45); }
-    select{ cursor:pointer; }
-    textarea{ resize: vertical; min-height: 80px; }
 
     .btn{
       border: 1px solid rgba(0,0,0,.10);
@@ -202,16 +148,17 @@
       border-color: rgba(255,255,255,.20);
       color: #fff;
     }
-    .btn.secondary{
-      background: rgba(0,0,0,.04);
-      color: var(--text);
-    }
     .btn.danger{
       background: rgba(239,68,68,.12);
       border-color: rgba(239,68,68,.25);
       color: #7f1d1d;
     }
-    .btn.small{ padding: 7px 10px; border-radius: 10px; font-size: 12px; }
+    .btn.secondary{
+      background: rgba(0,0,0,.04);
+      color: var(--text);
+    }
+
+    .divider{ height:1px; background: rgba(0,0,0,.06); margin: 10px 0; }
 
     .badge{
       display:inline-flex;
@@ -226,259 +173,47 @@
       color: var(--text);
       white-space:nowrap;
     }
-    .badge.lisa{
-      background: rgba(239,68,68,.18);
-      border-color: rgba(239,68,68,.35);
-      color:#111827;
-    }
-    .badge.manon{
-      background: rgba(250,204,21,.18);
-      border-color: rgba(250,204,21,.35);
-      color: #111827;
-    }
+    .badge.red{ background: rgba(239,68,68,.14); border-color: rgba(239,68,68,.28); }
+    .badge.yellow{ background: rgba(250,204,21,.18); border-color: rgba(250,204,21,.35); }
+    .badge.ok{ background: rgba(22,163,74,.14); border-color: rgba(22,163,74,.28); }
     .badge.neutral{ background: rgba(0,0,0,.04); }
-    .badge.ok{ background: rgba(34,197,94,.18); border-color: rgba(34,197,94,.35); }
-    .badge.warn{ background: rgba(245,158,11,.18); border-color: rgba(245,158,11,.35); }
-    .badge.bad{ background: rgba(239,68,68,.18); border-color: rgba(239,68,68,.35); }
 
-    .chips{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      padding: 8px;
-      border-radius: 14px;
-      border: 1px dashed rgba(0,0,0,.12);
-      background: #fafafa;
-      min-height: 54px;
-    }
-    .chip{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding: 8px 10px;
-      border-radius: 999px;
-      background: rgba(31,41,55,.08);
-      border: 1px solid rgba(0,0,0,.10);
-      cursor:pointer;
-      font-weight:1000;
-      font-size: 12px;
-      user-select:none;
-    }
-    .chip small{
-      font-weight:1000;
-      opacity:.95;
-      padding: 2px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,.10);
-      background: rgba(255,255,255,.70);
-      color: #111827;
-    }
-    .chip.lisa{ background: rgba(239,68,68,.14); border-color: rgba(239,68,68,.28); }
-    .chip.lisa small{ background: rgba(185,28,28,.10); border-color: rgba(185,28,28,.18); }
-    .chip.manon{ background: rgba(250,204,21,.16); border-color: rgba(250,204,21,.30); }
-    .chip.manon small{ background: rgba(202,138,4,.10); border-color: rgba(202,138,4,.18); }
-
-    /* bouton suppression dans chip SOLO */
-    .chip .delBtn{
-      margin-left: 6px;
-      border: 1px solid rgba(239,68,68,.25);
-      background: rgba(239,68,68,.10);
-      color:#7f1d1d;
-      border-radius: 999px;
-      padding: 4px 8px;
-      font-weight: 1000;
-      font-size: 11px;
-      cursor:pointer;
-    }
-    .chip .delBtn:hover{ transform: translateY(-1px); }
-
-
-
-    /* ===== Présence (Teams) ===== */
-.chip.absent{
-  opacity: .45;
-  filter: grayscale(.2);
-  text-decoration: line-through;
-}
-
-.chip .presBtn{
-  margin-left: 6px;
-  border: 1px solid rgba(0,0,0,.12);
-  background: rgba(0,0,0,.04);
-  color:#111827;
-  border-radius: 999px;
-  padding: 4px 8px;
-  font-weight: 1000;
-  font-size: 11px;
-  cursor:pointer;
-}
-.chip .presBtn:hover{ transform: translateY(-1px); }
-
-.chip .presBtn.abs{
-  border-color: rgba(239,68,68,.25);
-  background: rgba(239,68,68,.10);
-  color:#7f1d1d;
-}
-    
-    .divider{
-      height:1px;
-      background: rgba(0,0,0,.06);
-      margin: 10px 0;
-    }
-
-    .log{
-      background: #0b1220;
-      border: 1px solid rgba(255,255,255,.10);
-      border-radius: 14px;
-      padding: 10px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      font-size: 12px;
-      color: rgba(229,231,235,.92);
-      max-height: 380px;
-      overflow:auto;
-      white-space: pre-wrap;
-    }
-
-    /* Subtabs (Matchs) */
-    .subtabs{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      margin-bottom:10px;
-    }
-    .subBtn{
-      flex:1;
-      min-width: 240px;
-      padding: 9px 10px;
-      border-radius: 12px;
-      border: 1px solid rgba(0,0,0,.10);
-      background: #f3f4f6;
-      color: var(--text);
-      cursor:pointer;
-      font-weight: 1000;
-      font-size: 13px;
-    }
-    .subBtn.active{
-      background: rgba(22,163,74,.12);
-      border-color: rgba(22,163,74,.22);
-    }
-    .subContent{ display:none; }
-    .subContent.active{ display:block; }
-
-    .warnBox{
-      border: 1px solid rgba(245,158,11,.35);
-      background: rgba(245,158,11,.18);
-      color: #111827; /* demandé : texte noir */
-      border-radius: 14px;
-      padding: 10px;
-      font-size: 12px;
-      margin-top:10px;
-      font-weight: 800;
-    }
-
-    /* Match cards */
-    .tourGrid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-    @media (max-width: 920px){
-      .tourGrid{ grid-template-columns: 1fr; }
-    }
-
-    .tourCard{
+    .matchCard{
       border: 1px solid rgba(0,0,0,.10);
       border-radius: 16px;
       background:#fff;
       box-shadow: var(--shadow);
       padding: 12px;
+      margin-top: 10px;
     }
-    .tourCard .head{
+    .matchHead{
       display:flex;
-      align-items:flex-start;
+      align-items:center;
       justify-content:space-between;
       gap:10px;
       margin-bottom:10px;
     }
-    .tourCard .head .title{
-      font-weight: 1000;
-      font-size: 14px;
-    }
-    .tourCard .head .meta{
-      color: var(--muted);
-      font-size: 12px;
-      text-align:right;
-      font-weight: 800;
-    }
-
-    .courtBlock{
-      border: 1px solid rgba(0,0,0,.08);
-      border-radius: 14px;
-      background:#fafafa;
-      padding: 10px;
-      margin-top: 10px;
-    }
-    .courtTop{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      margin-bottom:8px;
-    }
-    .courtTop .cTitle{ font-weight: 1000; font-size: 12px; }
-    .matchLine{
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-      font-size: 13px;
-      font-weight: 900;
-    }
-    .teamLine{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      align-items:center;
-    }
+    .matchTitle{ font-weight:1000; font-size: 14px; }
+    .matchMeta{ color: var(--muted); font-size: 12px; font-weight:900; text-align:right; }
 
     .scoreRow{
       display:flex;
-      gap:8px;
       align-items:center;
+      gap:10px;
       flex-wrap:wrap;
       margin-top: 8px;
     }
     .scoreRow input{
-      width: 88px;
+      width: 92px;
       text-align:center;
       font-weight: 1000;
+      padding: 10px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,.15);
+      outline:none;
+      font-size: 14px;
     }
-
-    .benchBox{
-      margin-top: 10px;
-      padding: 10px;
-      border-radius: 14px;
-      border: 1px dashed rgba(0,0,0,.14);
-      background: #fff;
-    }
-    .benchBox .bTitle{ font-weight: 1000; font-size: 12px; margin-bottom: 6px; }
-    .benchList{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-    }
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,.10);
-      background: #f3f4f6;
-      font-size: 12px;
-      font-weight: 1000;
-      color: var(--text);
-      white-space:nowrap;
-    }
+    .mini{ font-size: 12px; color: var(--muted); font-weight: 800; }
 
     table{
       width: 100%;
@@ -496,397 +231,104 @@
       vertical-align: top;
     }
     th{
-      font-size: 12px;
       color: #111827;
       background: #f3f4f6;
       font-weight: 1000;
     }
-    tr:hover td{ background: rgba(0,0,0,.02); }
-
-    .small{ font-size: 12px; color: var(--muted); }
-    .muted{ color: var(--muted); }
     .right{ text-align:right; }
+
+    .log{
+      background: #0b1220;
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 14px;
+      padding: 10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      color: rgba(229,231,235,.92);
+      max-height: 320px;
+      overflow:auto;
+      white-space: pre-wrap;
+    }
   </style>
 </head>
 
 <body>
 <header>
   <div class="headRow">
-    <div class="leftSlot">
-      <!-- ✅ jpeg -->
-      <img src="img/logo-suzini.jpeg" alt="TC Suzini" class="brandImg">
+    <div class="titleWrap">
+      <div class="t1">Admin — Rouge vs Jaune</div>
+      <div class="t2">2 matchs par tour • points 3/1 • 2/2 si égalité</div>
     </div>
 
-    <div class="centerSlot">
-      <div class="t1">Admin – Americano Lisa vs Manon</div>
-      <div class="t2">BT Suzini</div>
-    </div>
-
-    <div class="rightSlot" style="gap:10px;">
-      <!-- ✅ jpeg -->
-      <img src="img/tournoi.jpeg" alt="Tournoi" class="brandImg">
-      <div class="statusPill" id="statusPill" title="Statut Firestore">
-        <span class="dot" id="statusDot"></span>
-        <span id="statusText">Connexion…</span>
-      </div>
+    <div class="statusPill" title="Statut Firestore">
+      <span class="dot" id="statusDot"></span>
+      <span id="statusText">Connexion…</span>
     </div>
   </div>
 </header>
 
-<script>
-  // ========= SÉCURITÉ SIMPLE (localStorage) =========
-  const ADMIN_PIN = "211189";
-  const STORAGE_KEY = "admin_access_ok_v1";
-
-  if (localStorage.getItem(STORAGE_KEY) !== "yes") {
-    const pwd = prompt("Accès Admin – PIN :");
-    if (pwd !== ADMIN_PIN) {
-      alert("Accès refusé");
-      window.location.href = "index.html";
-    } else {
-      localStorage.setItem(STORAGE_KEY, "yes");
-    }
-  }
-</script>
-
-
-<script>
-  // ========= Tabs & Subtabs (NE DOIT PAS dépendre de Firebase) =========
-  function bindTabs(){
-    const tabBtns = document.querySelectorAll(".tabBtn");
-    const tabContents = document.querySelectorAll(".tabContent");
-
-    tabBtns.forEach(btn=>{
-      btn.addEventListener("click", (ev)=>{
-        ev.preventDefault();
-        const target = btn.dataset.tab;
-        if(!target) return;
-
-        tabBtns.forEach(b=>b.classList.remove("active"));
-        tabContents.forEach(c=>c.classList.remove("active"));
-
-        btn.classList.add("active");
-        const el = document.getElementById(target);
-        if(el) el.classList.add("active");
-      }, { passive:false });
-    });
-  }
-
-  function bindSubtabs(){
-    document.querySelectorAll(".subBtn").forEach(btn=>{
-      btn.addEventListener("click", (ev)=>{
-        ev.preventDefault();
-        const parent = btn.closest(".panel");
-        const target = btn.dataset.subtab;
-        if(!parent || !target) return;
-
-        parent.querySelectorAll(".subBtn").forEach(b=>b.classList.remove("active"));
-        parent.querySelectorAll(".subContent").forEach(c=>c.classList.remove("active"));
-
-        btn.classList.add("active");
-        const el = document.getElementById(target);
-        if(el) el.classList.add("active");
-      }, { passive:false });
-    });
-  }
-
-  // ========= Watchdog : si le module Firebase ne démarre pas =========
-  window.__fbModuleOk = false;
-
-  function setHeaderStatusFallback(state, text){
-    const dot = document.getElementById("statusDot");
-    const label = document.getElementById("statusText");
-    if(label) label.textContent = text || "";
-    if(dot){
-      dot.classList.remove("ok","bad");
-      if(state==="ok") dot.classList.add("ok");
-      if(state==="bad") dot.classList.add("bad");
-    }
-  }
-
-  document.addEventListener("DOMContentLoaded", ()=>{
-    bindTabs();
-    bindSubtabs();
-
-    // au bout de 2s, si le module n’a pas confirmé → erreur de chargement
-    setTimeout(()=>{
-      if(!window.__fbModuleOk){
-        setHeaderStatusFallback("bad", "Erreur chargement Firebase (module)");
-        // astuce : ouvre la console Safari pour voir l’erreur d’import
-      }
-    }, 2000);
-  });
-</script>  
-
-
 <div class="container">
-  <div class="tabs">
-    <button class="tabBtn active" data-tab="teamsTab">Teams Lisa/Manon</button>
-    <button class="tabBtn" data-tab="matchesTab">Matchs</button>
-    <button class="tabBtn" data-tab="rankingsTab">Classements</button>
-    <button class="tabBtn" data-tab="statsTab">Statistiques</button>
-  </div>
-
-  <!-- ===================== TAB TEAMS ===================== -->
-  <div id="teamsTab" class="tabContent active">
-    <div class="grid">
-      <div class="panel">
-        <div class="panelTitle">
-          <h2>1) Ajout de joueurs (sans équipe)</h2>
-          <span class="hint">Firestore: <b>players</b></span>
-        </div>
-
-        <div class="row">
-          <input id="newPlayerName" type="text" placeholder="Nom / Prénom (ex: Jules P.)" style="flex:2; min-width:220px;">
-          <select id="newPlayerGender" style="flex:1; min-width:160px;">
-            <option value="">Sexe (obligatoire)</option>
-            <option value="H">Homme</option>
-            <option value="F">Femme</option>
-          </select>
-          <button class="btn primary" id="btnAddPlayer">Ajouter le joueur</button>
-
-          <!-- ✅ demandé : supprimer tous les joueurs -->
-          <button class="btn danger" id="btnResetPlayers">⚠️ Réinitialiser joueurs</button>
-        </div>
-
-        <div class="small" style="margin-top:8px;">
-          Sexe obligatoire. Les joueurs ajoutés ici n’ont pas d’équipe tant que Lisa/Manon (ou l’admin) ne les choisissent pas.
-          <br>Tu peux aussi supprimer un joueur <b>sans équipe</b> directement dans la liste “Sans équipe” (bouton 🗑).
-        </div>
-
-        <div class="divider"></div>
-
-        <div class="panelTitle">
-          <h2>2) Réglage du draft (qui commence ?)</h2>
-          <span class="hint">Firestore: <b>meta/draft</b></span>
-        </div>
-
-        <div class="row" style="justify-content:space-between; align-items:flex-start;">
-          <div style="min-width:220px;">
-            <div class="badge neutral" style="margin-bottom:8px;">
-              Au tour de : <span id="draftTurn" style="margin-left:6px;">—</span>
-            </div>
-
-            <div class="small" style="margin:6px 0 6px;">Qui commence ?</div>
-            <select id="selectStarter" style="min-width:200px;">
-              <option value="Lisa">Lisa 🌶️</option>
-              <option value="Manon">Manon 🐝</option>
-            </select>
-          </div>
-
-          <div class="row">
-            <button class="btn primary" id="btnSetStarter">Définir "qui commence"</button>
-            <button class="btn secondary" id="btnResetDraft">Réinitialiser</button>
-          </div>
-        </div>
-
-        <div class="small" style="margin-top:8px;">
-          - “Définir” fixe le premier choix et met “Au tour de” sur la même personne.<br>
-          - “Réinitialiser” remet tout à zéro (utile si tu recommences).<br>
-          - Règle draft : choix alterné + contrainte H/F (équilibrage) avec popup de confirmation.
-        </div>
-
-        <div class="divider"></div>
-
-        <div class="panelTitle">
-          <h2>3) Listes</h2>
-          <span class="hint">choix alterné + contrainte H/F</span>
-        </div>
-
-        <div class="small" style="margin-bottom:8px;">
-          Astuce : clique un joueur dans <b>Sans équipe</b> pour l’attribuer à la personne dont c’est le tour (popup).
-          Clique dans une team pour retirer le joueur (retour “Sans équipe”).
-        </div>
-
-        <div class="grid" style="grid-template-columns: 1fr 1fr 1fr; gap:10px;">
-          <div>
-            <div class="row" style="justify-content:space-between; margin-bottom:6px;">
-              <span class="badge neutral">Sans équipe</span>
-              <span class="badge neutral" id="countSolo">0</span>
-            </div>
-            <div class="chips" id="soloList"></div>
-          </div>
-
-          <div>
-            <div class="row" style="justify-content:space-between; margin-bottom:6px;">
-              <span class="badge lisa">🌶️ Team Lisa</span>
-              <span class="badge lisa" id="countLisa">0</span>
-            </div>
-            <div class="chips" id="lisaList"></div>
-          </div>
-
-          <div>
-            <div class="row" style="justify-content:space-between; margin-bottom:6px;">
-              <span class="badge manon">🐝 Team Manon</span>
-              <span class="badge manon" id="countManon">0</span>
-            </div>
-            <div class="chips" id="manonList"></div>
-          </div>
-        </div>
-
-        <div class="warnBox">
-          ⚠️ Onglet “Teams” = draft Lisa/Manon (choix alterné + équilibrage H/F).<br>
-          Les onglets Matchs / Classements / Stats sont gérés à part.
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="panelTitle">
-          <h2>Journal</h2>
-          <span class="hint">utile si ça bloque</span>
-        </div>
-        <div class="log" id="logBox"></div>
-        <div class="small" style="margin-top:8px;">
-          Si tu vois “Missing or insufficient permissions”, ce sont les règles Firestore.
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===================== TAB MATCHES ===================== -->
-  <div id="matchesTab" class="tabContent">
+  <div class="grid">
+    <!-- LEFT -->
     <div class="panel">
       <div class="panelTitle">
-        <h2>Matchs</h2>
-        <span class="hint">Firestore: <b>matches</b> (par match, groupés par Tour)</span>
+        <h2>Tour en cours</h2>
+        <span class="hint" id="curHint">—</span>
       </div>
 
-      <div class="subtabs">
-        <button class="subBtn active" data-subtab="tourView">Tours (Dernier / En cours / À venir)</button>
-        <button class="subBtn" data-subtab="tourHistory">Historique des matchs</button>
+      <div class="row">
+        <button class="btn danger" id="btnNew">⚠️ Nouveau tournoi</button>
+        <button class="btn secondary" id="btnForceNext" title="Optionnel : génère un tour suivant sans valider (debug)">Générer tour suivant (debug)</button>
       </div>
 
-      <!-- ====== SUBTAB TOURS ====== -->
-      <div id="tourView" class="subContent active">
-        <div class="tourGrid">
-          <div class="tourCard" id="cardLast">
-            <div class="head">
-              <div class="title">Dernier tour (validé)</div>
-              <div class="meta" id="lastMeta">—</div>
-            </div>
-            <div id="lastBody" class="small muted">Chargement…</div>
-          </div>
+      <div class="divider"></div>
 
-          <div class="tourCard" id="cardCurrent">
-            <div class="head">
-              <div class="title">Tour en cours (à valider)</div>
-              <div class="meta" id="curMeta">—</div>
-            </div>
-            <div id="curBody" class="small muted">Chargement…</div>
-          </div>
-
-          <div class="tourCard" id="cardNext">
-            <div class="head">
-              <div class="title">Tour à venir</div>
-              <div class="meta" id="nextMeta">—</div>
-            </div>
-            <div id="nextBody" class="small muted">Chargement…</div>
-          </div>
-
-          <div class="tourCard" id="cardManage">
-            <div class="head">
-              <div class="title">Gestion des tours</div>
-              <div class="meta">2 terrains</div>
-            </div>
-
-            <div class="small" style="margin-bottom:10px;">
-              - “Lancer un nouveau tournoi” : efface tous les tours et génère <b>Tour en cours</b> + <b>Tour à venir</b>.<br>
-              - “Générer le tour suivant” : autorisé uniquement si le tour <b>N-2</b> est validé.
-            </div>
-
-            <div class="row">
-              <button class="btn danger" id="btnNewTournament">⚠️ Lancer un nouveau tournoi</button>
-              <button class="btn primary" id="btnGenerateNext">Générer le tour suivant</button>
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="small">
-              Règles génération :
-              <ul style="margin:8px 0 0 18px;">
-                <li>Lisa avec Lisa, Manon avec Manon (jamais mix de teams).</li>
-                <li>Tours impairs : <b>2 mixtes</b> (1H + 1F par équipe).</li>
-                <li>Tours pairs : <b>HH / FF</b> (peut être HH sur un terrain et FF sur l’autre, selon équilibrage global).</li>
-                <li>Priorités : (1) joueurs ayant joué le moins, (2) banc équilibré, (3) rotation partenaires.</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ====== SUBTAB HISTORIQUE ====== -->
-      <div id="tourHistory" class="subContent">
-        <div id="historyWrap" class="small muted">Chargement…</div>
+      <div id="currentWrap">
+        <div class="mini">Chargement…</div>
       </div>
     </div>
-  </div>
 
-  <!-- ===================== TAB RANKINGS ===================== -->
-  <div id="rankingsTab" class="tabContent">
+    <!-- RIGHT -->
     <div class="panel">
       <div class="panelTitle">
-        <h2>Classements</h2>
-        <span class="hint">calculé sur les matchs <b>validés</b></span>
+        <h2>Classement cumulé</h2>
+        <span class="hint">sur tours validés</span>
       </div>
 
-     <div class="subtabs">
-  <button class="subBtn active" data-subtab="rankGeneral">Général</button>
-  <button class="subBtn" data-subtab="rankLisa">Team Lisa</button>
-  <button class="subBtn" data-subtab="rankManon">Team Manon</button>
-  <button class="subBtn" data-subtab="rankDuel">Lisa vs Manon</button> <!-- ✅ nouveau -->
-</div>
-
-<div id="rankGeneral" class="subContent active"></div>
-<div id="rankLisa" class="subContent"></div>
-<div id="rankManon" class="subContent"></div>
-<div id="rankDuel" class="subContent"></div> <!-- ✅ nouveau -->
-      
-      <div class="small" style="margin-top:10px;">
-        Points affichés = <b>pointsGeneral</b> dans Firestore (recalcul auto après validation / modification de score).
+      <div id="scoreBox" style="margin-bottom:10px;">
+        <div class="mini">Chargement…</div>
       </div>
-    </div>
-  </div>
 
-  <!-- ===================== TAB STATS ===================== -->
-  <div id="statsTab" class="tabContent">
-    <div class="panel">
+      <div class="divider"></div>
+
       <div class="panelTitle">
-        <h2>Statistiques</h2>
-        <span class="hint">sur les matchs <b>validés</b></span>
+        <h2>Historique</h2>
+        <span class="hint">tous les tours</span>
       </div>
+      <div id="historyWrap" class="mini">Chargement…</div>
 
-      <div class="subtabs">
-        <button class="subBtn active" data-subtab="statsMatches">Matchs joués</button>
-        <button class="subBtn" data-subtab="statsPartners">Partenaires</button>
-        <button class="subBtn" data-subtab="statsOpponents">Adversaires</button>
+      <div class="divider"></div>
+
+      <div class="panelTitle">
+        <h2>Journal</h2>
+        <span class="hint">utile si ça bloque</span>
       </div>
-
-      <div id="statsMatches" class="subContent active"></div>
-      <div id="statsPartners" class="subContent"></div>
-      <div id="statsOpponents" class="subContent"></div>
-
-      <div class="small" style="margin-top:10px;">
-        Les stats sont recalculées en temps réel à chaque validation / modification de match.
-      </div>
+      <div class="log" id="logBox"></div>
     </div>
   </div>
 </div>
 
 <script type="module">
-  window.__fbModuleOk = true;
   // ================================
-  // Firebase
+  // Firebase (Firestore)
   // ================================
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
   import {
     getFirestore,
     collection,
     addDoc,
     deleteDoc,
     doc,
-    getDoc,
-    setDoc,
     updateDoc,
     onSnapshot,
     query,
@@ -904,16 +346,25 @@
   };
 
   const app = initializeApp(firebaseConfig);
-  try { getAnalytics(app); } catch(e) {}
   const db = getFirestore(app);
 
   // ================================
-  // UI Helpers
+  // UI
   // ================================
-  const statusDot = document.getElementById("statusDot");
+  const statusDot  = document.getElementById("statusDot");
   const statusText = document.getElementById("statusText");
-  const logBox = document.getElementById("logBox");
+  const logBox     = document.getElementById("logBox");
+  const curHint    = document.getElementById("curHint");
+  const currentWrap = document.getElementById("currentWrap");
+  const scoreBox    = document.getElementById("scoreBox");
+  const historyWrap = document.getElementById("historyWrap");
 
+  function setStatus(state, text){
+    statusText.textContent = text || "";
+    statusDot.classList.remove("ok","bad");
+    if(state==="ok") statusDot.classList.add("ok");
+    if(state==="bad") statusDot.classList.add("bad");
+  }
   function log(msg, kind="ok"){
     const now = new Date();
     const hh = String(now.getHours()).padStart(2,"0");
@@ -923,1338 +374,370 @@
     logBox.textContent = `[${hh}:${mm}:${ss}] ${icon} ${msg}\n` + logBox.textContent;
   }
 
-  function setStatus(state, text){
-    statusText.textContent = text;
-    statusDot.classList.remove("ok","bad");
-    if(state==="ok") statusDot.classList.add("ok");
-    else if(state==="bad") statusDot.classList.add("bad");
+  // ================================
+  // Data model (ultra simple)
+  // Collection: rounds
+  // doc:
+  // {
+  //   roundNumber: 1,
+  //   validated: false,
+  //   matches: [
+  //     { idx: 1, scoreR: null, scoreJ: null, ptsR: 0, ptsJ: 0 },
+  //     { idx: 2, scoreR: null, scoreJ: null, ptsR: 0, ptsJ: 0 }
+  //   ],
+  //   createdAt: Date.now()
+  // }
+  // ================================
+  const roundsCol = collection(db, "rounds");
+  let roundsCache = []; // ordered by roundNumber asc
+
+  function pointsFromScores(scoreR, scoreJ){
+    // win: 3/1, draw 2/2
+    if(scoreR > scoreJ) return { ptsR: 3, ptsJ: 1 };
+    if(scoreJ > scoreR) return { ptsR: 1, ptsJ: 3 };
+    return { ptsR: 2, ptsJ: 2 };
   }
 
-  // ================================
-  // Tabs
-  // ================================
-  const tabBtns = document.querySelectorAll(".tabBtn");
-  const tabContents = document.querySelectorAll(".tabContent");
+  function computeTotalsFromValidated(){
+    let totalR = 0;
+    let totalJ = 0;
+    let tours = 0;
 
-  tabBtns.forEach(btn=>{
-    btn.addEventListener("click", ()=>{
-      const target = btn.dataset.tab;
-      tabBtns.forEach(b=>b.classList.remove("active"));
-      tabContents.forEach(c=>c.classList.remove("active"));
-      btn.classList.add("active");
-      document.getElementById(target).classList.add("active");
-    });
-  });
-
-  // Subtabs
-  document.querySelectorAll(".subBtn").forEach(btn=>{
-    btn.addEventListener("click", ()=>{
-      const parent = btn.closest(".panel");
-      const target = btn.dataset.subtab;
-      parent.querySelectorAll(".subBtn").forEach(b=>b.classList.remove("active"));
-      parent.querySelectorAll(".subContent").forEach(c=>c.classList.remove("active"));
-      btn.classList.add("active");
-      document.getElementById(target).classList.add("active");
-    });
-  });
-
-  // ================================
-  // Firestore refs
-  // ================================
-  const playersCol = collection(db, "players");
-  const matchesCol = collection(db, "matches");
-  const draftRef = doc(db, "meta", "draft");
-
-  // Caches
-  let playersCache = [];
-  let matchesCache = [];
-  let draftCache = { starter: "Lisa", turn: null, initialized: false };
-
-  // ================================
-  // Draft helpers
-  // ================================
-  async function ensureDraftDoc(){
-    const snap = await getDoc(draftRef);
-    if(!snap.exists()){
-      await setDoc(draftRef, {
-        starter: "Lisa",
-        turn: null,
-        initialized: false,
-        updatedAt: Date.now()
+    roundsCache.forEach(r=>{
+      if(r.validated !== true) return;
+      tours += 1;
+      (r.matches || []).slice(0,2).forEach(m=>{
+        totalR += Number(m.ptsR || 0);
+        totalJ += Number(m.ptsJ || 0);
       });
-      log("Draft initialisé (doc meta/draft créé).");
-    }
-  }
-
-  function otherTeam(team){ return team==="Lisa" ? "Manon" : "Lisa"; }
-  function normalizeName(s){ return (s || "").trim().replace(/\s+/g," "); }
-  function sortByName(list){
-    return [...list].sort((a,b)=>(a.name||"").localeCompare((b.name||""),"fr",{sensitivity:"base"}));
-  }
-  function teamIcon(team){ return team === "Lisa" ? "🌶️" : (team === "Manon" ? "🐝" : "•"); }
-
-  function countGenderInTeam(team){
-    const list = playersCache.filter(p => p.team === team);
-    let h = 0, f = 0;
-    list.forEach(p=>{
-      if(p.gender === "H") h++;
-      else if(p.gender === "F") f++;
     });
-    return { h, f };
-  }
-  function hasSoloGender(g){
-    return playersCache.some(p => !p.team && p.gender === g);
-  }
-  function requiredGenderForTeam(team){
-    const { h, f } = countGenderInTeam(team);
-    let req = null;
-    if(h > f) req = "F";
-    else if(f > h) req = "H";
-    if(req && !hasSoloGender(req)) req = null; // exception
-    return req; // "H" | "F" | null
-  }
-  function genderLabel(g){
-    if(g === "H") return "Homme";
-    if(g === "F") return "Femme";
-    return "Non renseigné";
-  }
-  function confirmDraftPopup({ playerName, playerGender, team, requiredGender }){
-    const icon = teamIcon(team);
-    const reqTxt = requiredGender ? `${genderLabel(requiredGender)} (${requiredGender})` : "Aucune (choix libre)";
-    const pTxt = playerGender ? `${genderLabel(playerGender)} (${playerGender})` : "Non renseigné";
-    const msg =
-`${icon} Draft – Team ${team}
 
-Joueur sélectionné : ${playerName}
-Sexe du joueur : ${pTxt}
-
-Contrainte actuelle (Team ${team}) : ${reqTxt}
-
-Confirmer l’attribution à Team ${team} ?`;
-    return window.confirm(msg);
+    return { totalR, totalJ, tours };
   }
 
-  // ================================
-  // TEAMS UI (modifs demandées localisées ici)
-  // ================================
-  function renderDraftUI(){
-    document.getElementById("draftTurn").textContent = draftCache.turn
-      ? `${draftCache.turn} ${teamIcon(draftCache.turn)}`
-      : "—";
+  function getCurrentRound(){
+    // current = first non validated; if none and at least 1 exists => null
+    return roundsCache.find(r=>r.validated !== true) || null;
+  }
 
-    const solo = sortByName(playersCache.filter(p=>!p.team));
-    const lisa = sortByName(playersCache.filter(p=>p.team==="Lisa"));
-    const manon = sortByName(playersCache.filter(p=>p.team==="Manon"));
-
-    document.getElementById("countSolo").textContent = String(solo.length);
-    document.getElementById("countLisa").textContent = String(lisa.length);
-    document.getElementById("countManon").textContent = String(manon.length);
-
-    const soloList = document.getElementById("soloList");
-    const lisaList = document.getElementById("lisaList");
-    const manonList = document.getElementById("manonList");
-
-    soloList.innerHTML = "";
-    lisaList.innerHTML = "";
-    manonList.innerHTML = "";
-
-    const mkChip = (p, teamClass) => {
-      const chip = document.createElement("div");
-      const isPresent = (p.present !== false); // défaut = présent
-      chip.className = "chip" + (teamClass ? " " + teamClass : "") + (isPresent ? "" : " absent");
-      const initial = (p.gender || "").toUpperCase() || "•";
-      const icon = p.team ? teamIcon(p.team) + " " : "";
-      chip.innerHTML = `<span>${icon}${p.name || "(sans nom)"}</span><small>${initial}</small>`;
-
-      // ✅ Suppression SOLO uniquement (bouton dans le chip)
-      if(!p.team){
-        const del = document.createElement("button");
-        del.className = "delBtn";
-        del.textContent = "🗑";
-        del.title = "Supprimer ce joueur (Sans équipe)";
-        del.addEventListener("click", async (ev)=>{
-          ev.stopPropagation();
-          if(!p.id) return;
-          if(!confirm(`Supprimer définitivement le joueur "${p.name}" ?\n(Seulement possible s'il est Sans équipe)`)) return;
-          try{
-            await deleteDoc(doc(db,"players",p.id));
-            log(`Joueur supprimé: ${p.name}`, "warn");
-          }catch(e){
-            console.error(e);
-            log(`Erreur suppression joueur: ${e?.message || e}`, "bad");
-            alert("Erreur lors de la suppression du joueur.");
-          }
-        });
-        chip.appendChild(del);
-      }
-
-      // ✅ Présent / Absent (toggle)
-        const presBtn = document.createElement("button");
-        presBtn.className = "presBtn" + ((p.present === false) ? " abs" : "");
-        presBtn.textContent = (p.present === false) ? "🚫 Absent" : "✅ Présent";
-        presBtn.title = "Basculer Présent / Absent (autant de fois que nécessaire)";
-
-        presBtn.addEventListener("click", async (ev)=>{
-        ev.stopPropagation();
-        try{
-          const next = !(p.present !== false);
-          await updateDoc(doc(db,"players",p.id), { present: next });
-          log(`Présence modifiée: ${p.name} → ${next ? "Présent" : "Absent"}`, "warn");
-        }
-        catch(e){
-          console.error(e);
-          log(`Erreur présence: ${e?.message || e}`, "bad");
-          alert("Erreur lors du changement de présence.");
-          }
-      });
-
-chip.appendChild(presBtn);
-
-  
-      chip.addEventListener("click", async ()=>{
-        try{
-          if(!p.id) return;
-
-          // Click SOLO -> assign to current turn with constraint + popup
-          if(!p.team){
-            if(!draftCache.turn){
-              alert("Définis d'abord qui commence (bouton Définir).");
-              return;
-            }
-
-            if(p.present === false){
-              alert("Ce joueur est marqué ABSENT. Repasse-le en PRÉSENT pour pouvoir le sélectionner.");
-              return;
-            }
-            
-            const team = draftCache.turn;
-            const req = requiredGenderForTeam(team);
-
-            if(req && p.gender && p.gender !== req){
-              alert(`Contrainte H/F : Team ${team} doit choisir un(e) ${genderLabel(req)} maintenant.\nCe joueur (${genderLabel(p.gender)}) ne peut pas être choisi tant que la contrainte est active.`);
-              return;
-            }
-            if(req && !p.gender){
-              alert(`Contrainte H/F : Team ${team} doit choisir un(e) ${genderLabel(req)} maintenant.\nOr ce joueur n'a pas de sexe renseigné → sélection impossible (tant que la contrainte est active).`);
-              return;
-            }
-
-            const ok = confirmDraftPopup({
-              playerName: p.name || "(sans nom)",
-              playerGender: p.gender || null,
-              team,
-              requiredGender: req
-            });
-            if(!ok) return;
-
-            await updateDoc(doc(db,"players",p.id), { team: team });
-            await updateDoc(draftRef, { turn: otherTeam(team), updatedAt: Date.now() });
-            log(`${teamIcon(team)} ${team} choisit : ${p.name} → tour suivant : ${otherTeam(team)}`);
-            return;
-          }
-
-          // Click in team -> remove back to SOLO (admin only)
-          const was = p.team;
-          if(!confirm(`Retirer "${p.name}" de Team ${was} (retour Sans équipe) ?`)) return;
-          await updateDoc(doc(db,"players",p.id), { team: null });
-          log(`Joueur retiré de Team ${was}: ${p.name}`, "warn");
-
-        }catch(e){
-          console.error(e);
-          log(`Erreur draft: ${e?.message || e}`, "bad");
-          alert("Erreur lors de la mise à jour du draft.");
-        }
-      });
-
-      return chip;
+  async function createRound(roundNumber){
+    const payload = {
+      roundNumber,
+      validated: false,
+      matches: [
+        { idx: 1, scoreR: null, scoreJ: null, ptsR: 0, ptsJ: 0 },
+        { idx: 2, scoreR: null, scoreJ: null, ptsR: 0, ptsJ: 0 },
+      ],
+      createdAt: Date.now()
     };
-
-    if(!solo.length) soloList.innerHTML = `<div class="small muted">Aucun joueur</div>`;
-    else solo.forEach(p=> soloList.appendChild(mkChip(p, "")));
-
-    if(!lisa.length) lisaList.innerHTML = `<div class="small muted">Aucun joueur</div>`;
-    else lisa.forEach(p=> lisaList.appendChild(mkChip(p, "lisa")));
-
-    if(!manon.length) manonList.innerHTML = `<div class="small muted">Aucun joueur</div>`;
-    else manon.forEach(p=> manonList.appendChild(mkChip(p, "manon")));
+    await addDoc(roundsCol, payload);
+    log(`Tour ${roundNumber} créé.`);
   }
 
-  // Add Player (✅ sexe obligatoire)
-  const newPlayerName = document.getElementById("newPlayerName");
-  const newPlayerGender = document.getElementById("newPlayerGender");
-
-  document.getElementById("btnAddPlayer").addEventListener("click", async ()=>{
-    const name = normalizeName(newPlayerName.value);
-    const gender = (newPlayerGender.value || "").trim();
-
-    if(!name){
-      alert("Saisis un nom/prénom.");
-      return;
-    }
-    if(!gender){
-      alert("Sexe obligatoire (H/F).");
-      return;
-    }
-
-    try{
-      await addDoc(playersCol, {
-  name,
-  gender,
-  team: null,
-  present: true,
-  pointsGeneral: 0,
-  createdAt: Date.now()
-});
-      newPlayerName.value = "";
-      newPlayerGender.value = "";
-      log(`Joueur ajouté : ${name} (${gender})`);
-    }catch(e){
-      console.error(e);
-      log(`Erreur ajout joueur: ${e?.message || e}`, "bad");
-      alert("Erreur lors de l'ajout du joueur.");
-    }
-  });
-
-  // ✅ Réinitialiser joueurs = supprimer tous les joueurs
-  document.getElementById("btnResetPlayers").addEventListener("click", async ()=>{
-    if(!confirm("⚠️ Supprimer TOUS les joueurs ?\nCette action est irréversible.")) return;
-    try{
-      const snap = await getDocs(query(playersCol));
-      for(const d of snap.docs){
-        await deleteDoc(doc(db,"players",d.id));
-      }
-      log("Tous les joueurs ont été supprimés.", "warn");
-
-      // on reset aussi le draft (sans toucher au reste)
-      await setDoc(draftRef, {
-        starter: "Lisa",
-        turn: null,
-        initialized: false,
-        updatedAt: Date.now()
-      }, { merge:true });
-      log("Draft remis à zéro.", "warn");
-
-    }catch(e){
-      console.error(e);
-      log(`Erreur reset joueurs: ${e?.message || e}`, "bad");
-      alert("Erreur lors de la suppression des joueurs.");
-    }
-  });
-
-  // Set starter / reset draft
-  const selectStarter = document.getElementById("selectStarter");
-  document.getElementById("btnSetStarter").addEventListener("click", async ()=>{
-    try{
-      const starter = selectStarter.value || "Lisa";
-      await setDoc(draftRef, {
-        starter,
-        turn: starter,
-        initialized: true,
-        updatedAt: Date.now()
-      }, { merge:true });
-      log(`Draft initialisé – ${starter} commence (${teamIcon(starter)})`);
-    }catch(e){
-      console.error(e);
-      log(`Erreur set starter: ${e?.message || e}`, "bad");
-      alert("Erreur lors de l'initialisation du draft.");
-    }
-  });
-
-  document.getElementById("btnResetDraft").addEventListener("click", async ()=>{
-    if(!confirm("Réinitialiser le draft ? (Ne supprime pas les joueurs, remet juste le tour + enlève les teams.)")) return;
-    try{
-      for(const p of playersCache){
-        if(p.team){
-          await updateDoc(doc(db,"players",p.id), { team: null });
-        }
-      }
-      await setDoc(draftRef, {
-        starter: "Lisa",
-        turn: null,
-        initialized: false,
-        updatedAt: Date.now()
-      }, { merge:true });
-      log("Draft réinitialisé.", "warn");
-    }catch(e){
-      console.error(e);
-      log(`Erreur reset draft: ${e?.message || e}`, "bad");
-      alert("Erreur lors de la réinitialisation du draft.");
-    }
-  });
-
-  // ================================
-  // MATCHES (Tours / Historique) – COMPLET
-  // ================================
-  const lastMeta = document.getElementById("lastMeta");
-  const curMeta = document.getElementById("curMeta");
-  const nextMeta = document.getElementById("nextMeta");
-
-  const lastBody = document.getElementById("lastBody");
-  const curBody = document.getElementById("curBody");
-  const nextBody = document.getElementById("nextBody");
-
-  const historyWrap = document.getElementById("historyWrap");
-
-  const btnNewTournament = document.getElementById("btnNewTournament");
-  const btnGenerateNext = document.getElementById("btnGenerateNext");
-
-  function groupMatchesByRound(list){
-    const map = new Map();
-    list.forEach(m=>{
-      const r = Number(m.roundNumber || 0);
-      if(!r) return;
-      if(!map.has(r)) map.set(r, []);
-      map.get(r).push(m);
-    });
-    // normalize courts order
-    const rounds = [...map.entries()].map(([round, matches])=>{
-      const mm = [...matches].sort((a,b)=>(a.court||0)-(b.court||0));
-      return { round, matches: mm };
-    }).sort((a,b)=>a.round-b.round);
-    return rounds;
+  async function ensureTournamentInitialized(){
+    if(roundsCache.length) return;
+    await createRound(1);
   }
 
-  function isRoundFullyValidated(roundObj){
-    if(!roundObj || !roundObj.matches?.length) return false;
-    // un tour = 2 terrains => on exige les 2 matches validés
-    if(roundObj.matches.length < 2) return false;
-    return roundObj.matches.every(m => m.validated === true);
-  }
+  function renderScoreboard(){
+    const { totalR, totalJ, tours } = computeTotalsFromValidated();
+    const lead = totalR === totalJ ? "Égalité" : (totalR > totalJ ? "Rouge devant" : "Jaune devant");
 
-  function buildBenchForRound(roundObj){
-    const playing = new Set();
-    (roundObj.matches || []).forEach(m=>{
-      (m.teamA||[]).forEach(n=>playing.add(n));
-      (m.teamB||[]).forEach(n=>playing.add(n));
-    });
-    const allNames = playersCache.map(p=>p.name).filter(Boolean);
-    const bench = allNames.filter(n=>!playing.has(n));
-    return bench.sort((a,b)=>a.localeCompare(b,"fr",{sensitivity:"base"}));
-  }
+    scoreBox.innerHTML = `
+      <div class="matchCard" style="margin-top:0;">
+        <div class="matchHead">
+          <div class="matchTitle">Total points</div>
+          <div class="matchMeta">${tours} tour(s) validé(s)</div>
+        </div>
 
-  function pillForPlayerName(name){
-    const p = playersCache.find(x=>x.name===name);
-    if(p?.team==="Lisa") return `<span class="pill" style="background: rgba(239,68,68,.14); border-color: rgba(239,68,68,.28);">🌶️ ${name}</span>`;
-    if(p?.team==="Manon") return `<span class="pill" style="background: rgba(250,204,21,.16); border-color: rgba(250,204,21,.30);">🐝 ${name}</span>`;
-    return `<span class="pill">${name}</span>`;
-  }
+        <div class="row" style="justify-content:space-between;">
+          <span class="badge red">🔴 Rouge</span>
+          <span class="badge red" style="font-size:14px;">${totalR}</span>
+        </div>
 
-  function renderRoundCard(roundObj, mode){
-    // mode: "last" | "current" | "next" | "history"
-    if(!roundObj){
-      return `<div class="small muted">Aucun tour.</div>`;
-    }
+        <div class="divider"></div>
 
-    const r = roundObj.round;
-    const matches = (roundObj.matches||[]).slice(0,2);
+        <div class="row" style="justify-content:space-between;">
+          <span class="badge yellow">🟡 Jaune</span>
+          <span class="badge yellow" style="font-size:14px;">${totalJ}</span>
+        </div>
 
-    if(matches.length < 2){
-      return `<div class="small muted">Tour ${r} incomplet (il faut 2 terrains).</div>`;
-    }
+        <div class="divider"></div>
 
-    const bench = buildBenchForRound(roundObj);
-    const typeLabel = (matches[0].type || matches[1].type || "—");
+        <div class="row" style="justify-content:space-between;">
+          <span class="badge neutral">Statut</span>
+          <span class="badge ok">${lead}</span>
+        </div>
 
-    let html = `<div class="small" style="margin-bottom:8px;"><b>Tour ${r}</b> • Type: <b>${typeLabel}</b></div>`;
-
-    matches.forEach((m, idx)=>{
-      const court = m.court || (idx+1);
-      const a = (m.teamA||[]);
-      const b = (m.teamB||[]);
-      const scoreA = (typeof m.scoreA==="number") ? m.scoreA : "";
-      const scoreB = (typeof m.scoreB==="number") ? m.scoreB : "";
-
-      html += `
-        <div class="courtBlock">
-          <div class="courtTop">
-            <div class="cTitle">Terrain ${court}</div>
-            <div class="small muted">${m.validated ? "✅ Validé" : "⏳ À valider"}</div>
-          </div>
-
-          <div class="matchLine">
-            <div class="teamLine">
-              <span class="badge lisa">🌶️ Lisa</span>
-              <span>${(a[0]||"—")} &amp; ${(a[1]||"—")}</span>
-            </div>
-            <div class="teamLine">
-              <span class="badge manon">🐝 Manon</span>
-              <span>${(b[0]||"—")} &amp; ${(b[1]||"—")}</span>
-            </div>
-          </div>`;
-
-      if(mode==="current"){
-        html += `
-          <div class="scoreRow">
-            <input type="number" min="0" placeholder="Score Lisa" value="${scoreA}" data-round="${r}" data-court="${court}" data-k="a">
-            <input type="number" min="0" placeholder="Score Manon" value="${scoreB}" data-round="${r}" data-court="${court}" data-k="b">
-            <button class="btn small secondary" data-act="saveScore" data-id="${m.id}">Modifier</button>
-          </div>
-          <div class="small muted" style="margin-top:6px;">
-            “Modifier” enregistre le score (même si le tour n’est pas validé).
-          </div>`;
-      } else if(mode==="last" || mode==="history"){
-        html += `
-          <div class="scoreRow">
-            <span class="badge neutral">Score</span>
-            <span style="font-weight:1000;">${(scoreA===""||scoreB==="") ? "—" : `${scoreA} - ${scoreB}`}</span>
-          </div>`;
-      } else {
-        html += `
-          <div class="scoreRow">
-            <span class="badge neutral">Score</span>
-            <span class="muted">—</span>
-          </div>`;
-      }
-
-      html += `</div>`;
-    });
-
-    html += `
-      <div class="benchBox">
-        <div class="bTitle">Banc</div>
-        <div class="benchList">
-          ${bench.length ? bench.map(pillForPlayerName).join("") : `<span class="small muted">Personne</span>`}
+        <div class="mini" style="margin-top:8px;">
+          Rappel points (par match) : victoire = 3 / 1 • égalité = 2 / 2
         </div>
       </div>
     `;
-
-    if(mode==="current"){
-      html += `
-        <div class="divider"></div>
-        <div class="row" style="justify-content:flex-end;">
-          <button class="btn primary" data-act="validateRound" data-round="${r}">Valider le tour</button>
-        </div>
-        <div class="small muted" style="margin-top:6px;">
-          Pour valider, il faut <b>2 scores</b> sur chaque terrain.
-        </div>
-      `;
-    }
-
-    return html;
   }
 
-  function computePlayerStatsFromAllMatches(list){
-    // stats utilisés pour générer les futurs tours
-    const played = {};          // matches joués par joueur (tous matches existants, validés ou non)
-    const playedRounds = {};    // ensemble des rounds joués (pour benchCount)
-    const partners = {};        // partners[player][partner] = count
-    const opponents = {};       // opponents[player][opponent] = count
-
-    const addCount = (obj, a, b) => {
-      obj[a] = obj[a] || {};
-      obj[a][b] = (obj[a][b] || 0) + 1;
-    };
-
-    list.forEach(m=>{
-      const r = Number(m.roundNumber||0);
-      const A = m.teamA || [];
-      const B = m.teamB || [];
-      const all = [...A, ...B];
-
-      all.forEach(n=>{
-        if(!n) return;
-        played[n] = (played[n] || 0) + 1;
-        playedRounds[n] = playedRounds[n] || new Set();
-        if(r) playedRounds[n].add(r);
-      });
-
-      if(A.length===2){
-        addCount(partners, A[0], A[1]);
-        addCount(partners, A[1], A[0]);
-      }
-      if(B.length===2){
-        addCount(partners, B[0], B[1]);
-        addCount(partners, B[1], B[0]);
-      }
-      if(A.length===2 && B.length===2){
-        A.forEach(a=>{
-          B.forEach(b=>{
-            addCount(opponents, a, b);
-            addCount(opponents, b, a);
-          });
-        });
-      }
-    });
-
-    const playedRoundsCount = {};
-    Object.keys(playedRounds).forEach(k=> playedRoundsCount[k] = playedRounds[k].size);
-
-    return { played, playedRoundsCount, partners, opponents };
-  }
-
-  function getTeamPlayers(team){
-  return playersCache
-    .filter(p => p.team === team && p.name && (p.present !== false)) // ✅ absents exclus
-    .map(p => p);
-}
-
-  function pickBestPairsForTeam(teamPlayers, genderPlanPairs, stats, totalRoundsSoFar){
-    // genderPlanPairs: array of pairs, each pair is array ["H","F"] or ["H","H"] or ["F","F"] or null => libre
-    // returns array of pairs of player objects length = 2 pairs (for 2 courts)
-    const byName = new Map(teamPlayers.map(p=>[p.name,p]));
-    const names = teamPlayers.map(p=>p.name);
-
-    const played = stats.played || {};
-    const playedRoundsCount = stats.playedRoundsCount || {};
-    const partners = stats.partners || {};
-
-    const benchCount = (name)=> (totalRoundsSoFar - (playedRoundsCount[name] || 0)); // approximation "temps banc"
-
-    const partnerCount = (a,b)=> (partners[a]?.[b] || 0);
-
-    function matchesGender(name, g){
-      if(!g) return true;
-      const p = byName.get(name);
-      return p && p.gender === g;
-    }
-
-    // Build candidate lists per required gender
-    function filterNamesForPair(req){
-      if(!req) return names.slice();
-      return names.filter(n=> matchesGender(n, req[0]) || matchesGender(n, req[1]) ? true : true);
-    }
-
-    // brute force choose 4 players meeting constraints (small N typically)
-    let best = null;
-
-    const allNames = names.slice();
-
-    for(let i=0;i<allNames.length;i++){
-      for(let j=i+1;j<allNames.length;j++){
-        for(let k=0;k<allNames.length;k++){
-          if(k===i || k===j) continue;
-          for(let l=k+1;l<allNames.length;l++){
-            if(l===i || l===j) continue;
-            const sel = [allNames[i], allNames[j], allNames[k], allNames[l]];
-
-            // need partition into 2 pairs; we test both partitions:
-            const partitions = [
-              [[sel[0],sel[1]],[sel[2],sel[3]]],
-              [[sel[0],sel[2]],[sel[1],sel[3]]],
-              [[sel[0],sel[3]],[sel[1],sel[2]]],
-            ];
-
-            for(const part of partitions){
-              let ok = true;
-              for(let pIdx=0;pIdx<2;pIdx++){
-                const req = genderPlanPairs[pIdx]; // ["H","F"] etc or null
-                if(req){
-                  const a = part[pIdx][0], b = part[pIdx][1];
-                  if(req[0]===req[1]){
-                    // HH or FF
-                    if(!(matchesGender(a, req[0]) && matchesGender(b, req[0]))) { ok=false; break; }
-                  } else {
-                    // HF in any order
-                    const cond = (matchesGender(a, req[0]) && matchesGender(b, req[1])) || (matchesGender(a, req[1]) && matchesGender(b, req[0]));
-                    if(!cond){ ok=false; break; }
-                  }
-                }
-              }
-              if(!ok) continue;
-
-              // score this solution
-              const playScore = sel.reduce((s,n)=> s + (played[n]||0), 0);
-              const benchScore = sel.reduce((s,n)=> s + benchCount(n), 0);
-              const partnerScore =
-                partnerCount(part[0][0], part[0][1]) +
-                partnerCount(part[1][0], part[1][1]);
-
-              // lower is better for playScore+partnerScore, higher is better for benchScore
-              // => combine: playScore*100 + partnerScore*20 - benchScore*10
-              const score = (playScore*100) + (partnerScore*20) - (benchScore*10);
-
-              if(best===null || score < best.score){
-                best = { score, pairs: part };
-              }
-            }
-          }
-        }
-      }
-    }
-
-    if(!best){
-      // fallback: take first 4 (or less) as libre
-      const sorted = [...teamPlayers].sort((a,b)=> (played[a.name]||0)-(played[b.name]||0));
-      const pick = sorted.slice(0,4).map(p=>p.name);
-      const pairs = [[pick[0],pick[1]],[pick[2],pick[3]]].filter(x=>x[0]&&x[1]);
-      return pairs.map(pair=>pair.map(n=>byName.get(n)));
-    }
-
-    return best.pairs.map(pair=>pair.map(n=>byName.get(n)));
-  }
-
-  function assignPairsToCourts(teamPairsLisa, teamPairsManon, stats){
-    // choose permutation of Manon pairs that minimizes opponent repeats
-    const opp = stats.opponents || {};
-    const oppCount = (a,b)=> (opp[a]?.[b] || 0);
-
-    const cost = (pairL, pairM)=>{
-      const L = pairL.map(p=>p.name);
-      const M = pairM.map(p=>p.name);
-      let c = 0;
-      L.forEach(l=> M.forEach(m=> c += oppCount(l,m)));
-      return c;
-    };
-
-    const perm1 = [teamPairsManon[0], teamPairsManon[1]];
-    const perm2 = [teamPairsManon[1], teamPairsManon[0]];
-
-    const c1 = cost(teamPairsLisa[0], perm1[0]) + cost(teamPairsLisa[1], perm1[1]);
-    const c2 = cost(teamPairsLisa[0], perm2[0]) + cost(teamPairsLisa[1], perm2[1]);
-
-    return (c2 < c1) ? perm2 : perm1;
-  }
-
-  function buildGenderPlanForRound(roundNumber, teamLisaPlayers, teamManonPlayers){
-    // odd => 2 MIXTES
-    // even => choose among HH+FF / HH+HH / FF+FF to balance matches played (handled later),
-    // but here we provide feasible options.
-    const isOdd = roundNumber % 2 === 1;
-
-    const countTeam = (list, g)=> list.filter(p=>p.gender===g).length;
-
-    const Lh = countTeam(teamLisaPlayers,"H"), Lf = countTeam(teamLisaPlayers,"F");
-    const Mh = countTeam(teamManonPlayers,"H"), Mf = countTeam(teamManonPlayers,"F");
-
-    if(isOdd){
-      // Need 2 mixed pairs per team => requires at least 2H and 2F in each team
-      if(Lh>=2 && Lf>=2 && Mh>=2 && Mf>=2){
-        return { type:"MIXTE", pairs: [["H","F"],["H","F"]] };
-      }
-      // fallback libre
-      return { type:"LIBRE", pairs: [null, null] };
-    }
-
-    // Even rounds: candidates in order (prefer HH+FF if possible)
-    const candidates = [];
-    // HH + FF
-    if(Lh>=2 && Lf>=2 && Mh>=2 && Mf>=2) candidates.push({ type:"HH+FF", pairs: [["H","H"],["F","F"]] });
-    // HH + HH
-    if(Lh>=4 && Mh>=4) candidates.push({ type:"HH", pairs: [["H","H"],["H","H"]] });
-    // FF + FF
-    if(Lf>=4 && Mf>=4) candidates.push({ type:"FF", pairs: [["F","F"],["F","F"]] });
-
-    if(!candidates.length){
-      return { type:"LIBRE", pairs: [null,null] };
-    }
-
-    // selection among candidates will be done by global balancing heuristic outside
-    return { type:"EVEN", candidates };
-  }
-
-  function variance(arr){
-    if(!arr.length) return 0;
-    const mean = arr.reduce((s,x)=>s+x,0)/arr.length;
-    return arr.reduce((s,x)=>s + (x-mean)*(x-mean), 0)/arr.length;
-  }
-
-  function chooseBestEvenCandidate(cands, stats, playersAll){
-    // choose candidate that best equalizes total matches played after selecting 4+4 players
-    const played = stats.played || {};
-    const totalRoundsSoFar = groupMatchesByRound(matchesCache).length;
-
-    let best = null;
-
-    // For each candidate, we simulate picking pairs for Lisa/Manon then compute variance of played counts among all players
-    for(const cand of cands){
-      const lisaPlayers = getTeamPlayers("Lisa");
-      const manonPlayers = getTeamPlayers("Manon");
-
-      const lisaPairs = pickBestPairsForTeam(lisaPlayers, cand.pairs, stats, totalRoundsSoFar);
-      const manonPairs = pickBestPairsForTeam(manonPlayers, cand.pairs, stats, totalRoundsSoFar);
-
-      const pickedNames = [
-        ...lisaPairs.flat().map(p=>p?.name).filter(Boolean),
-        ...manonPairs.flat().map(p=>p?.name).filter(Boolean),
-      ];
-
-      const after = playersAll.map(p=>{
-        const base = played[p.name] || 0;
-        return pickedNames.includes(p.name) ? base+1 : base;
-      });
-
-      const v = variance(after);
-      const score = v; // lower is better
-      if(!best || score < best.score){
-        best = { score, cand, lisaPairs, manonPairs };
-      }
-    }
-
-    return best;
-  }
-
-  async function generateRound(roundNumber){
-    // Preconditions: need at least 4 players per team to make 2 courts
-    const lisaPlayers = getTeamPlayers("Lisa");
-    const manonPlayers = getTeamPlayers("Manon");
-
-    if(lisaPlayers.length < 4 || manonPlayers.length < 4){
-      alert("Il faut au moins 4 joueurs dans Team Lisa ET 4 joueurs dans Team Manon pour générer un tour (2 terrains).");
-      return null;
-    }
-
-    const roundsSoFar = groupMatchesByRound(matchesCache).length;
-    const stats = computePlayerStatsFromAllMatches(matchesCache);
-
-    // decide plan
-    const plan = buildGenderPlanForRound(roundNumber, lisaPlayers, manonPlayers);
-
-    let type = plan.type;
-    let genderPairs = plan.pairs;
-
-    if(plan.type === "EVEN"){
-      const allTeamPlayers = [...lisaPlayers, ...manonPlayers];
-      const best = chooseBestEvenCandidate(plan.candidates, stats, allTeamPlayers);
-      if(best){
-        type = best.cand.type;
-        genderPairs = best.cand.pairs;
-
-        // Use precomputed pairs to avoid recomputing differently
-        var lisaPairs = best.lisaPairs;
-        var manonPairs = best.manonPairs;
-      } else {
-        type = "LIBRE";
-        genderPairs = [null,null];
-      }
-    }
-
-    // pick pairs if not already chosen
-    if(!lisaPairs){
-      lisaPairs = pickBestPairsForTeam(lisaPlayers, genderPairs, stats, roundsSoFar);
-    }
-    if(!manonPairs){
-      manonPairs = pickBestPairsForTeam(manonPlayers, genderPairs, stats, roundsSoFar);
-    }
-
-    // ensure we have 2 pairs each side
-    if(lisaPairs.length < 2 || manonPairs.length < 2 || !lisaPairs[0] || !lisaPairs[1] || !manonPairs[0] || !manonPairs[1]){
-      alert("Impossible de générer 2 matchs complets (vérifie les sexes / effectifs).");
-      return null;
-    }
-
-    // assign courts to minimize opponent repeats
-    const orderedManonPairs = assignPairsToCourts(lisaPairs, manonPairs, stats);
-
-    // create 2 match docs (court 1 and 2)
-    const payloads = [
-      {
-        roundNumber,
-        court: 1,
-        type,
-        teamA: [lisaPairs[0][0].name, lisaPairs[0][1].name],
-        teamB: [orderedManonPairs[0][0].name, orderedManonPairs[0][1].name],
-        scoreA: null,
-        scoreB: null,
-        validated: false,
-        createdAt: Date.now()
-      },
-      {
-        roundNumber,
-        court: 2,
-        type,
-        teamA: [lisaPairs[1][0].name, lisaPairs[1][1].name],
-        teamB: [orderedManonPairs[1][0].name, orderedManonPairs[1][1].name],
-        scoreA: null,
-        scoreB: null,
-        validated: false,
-        createdAt: Date.now()
-      }
-    ];
-
-    try{
-      await addDoc(matchesCol, payloads[0]);
-      await addDoc(matchesCol, payloads[1]);
-      log(`Tour ${roundNumber} généré (${type}).`);
-      return true;
-    }catch(e){
-      console.error(e);
-      log(`Erreur génération tour ${roundNumber}: ${e?.message || e}`, "bad");
-      alert("Erreur lors de la génération du tour.");
-      return null;
-    }
-  }
-
-  async function deleteAllMatches(){
-    for(const m of matchesCache){
-      await deleteDoc(doc(db,"matches",m.id));
-    }
-  }
-
-  async function setMatchScore(matchId, scoreA, scoreB){
-    await updateDoc(doc(db,"matches",matchId), { scoreA, scoreB });
-  }
-
-  async function validateRound(roundNumber){
-    const round = groupMatchesByRound(matchesCache).find(r=>r.round===roundNumber);
-    if(!round || round.matches.length < 2){
-      alert("Tour introuvable ou incomplet.");
+  function renderHistory(){
+    if(!roundsCache.length){
+      historyWrap.innerHTML = `<div class="mini">Aucun tour.</div>`;
       return;
     }
 
-    // need both scores on both courts
+    const rows = [...roundsCache].slice().reverse().map(r=>{
+      const m1 = (r.matches||[])[0] || {};
+      const m2 = (r.matches||[])[1] || {};
+      const st = r.validated ? "✅ Validé" : "⏳ En cours";
+      const s1 = (typeof m1.scoreR === "number" && typeof m1.scoreJ === "number") ? `${m1.scoreR}-${m1.scoreJ}` : "—";
+      const s2 = (typeof m2.scoreR === "number" && typeof m2.scoreJ === "number") ? `${m2.scoreR}-${m2.scoreJ}` : "—";
 
-  const roster = playersCache.filter(p => (p.team === "Lisa" || p.team === "Manon") && p.name);
-const presentNames = roster.filter(p => p.present !== false).map(p => p.name);
-const absentNames  = roster.filter(p => p.present === false).map(p => p.name);
-    for(const m of round.matches.slice(0,2)){
-      if(typeof m.scoreA !== "number" || typeof m.scoreB !== "number"){
-        alert("Il faut saisir les deux scores pour chaque terrain avant de valider.");
+      return `
+        <tr>
+          <td><b>Tour ${r.roundNumber}</b></td>
+          <td>${st}</td>
+          <td class="right">${s1}</td>
+          <td class="right">${s2}</td>
+        </tr>
+      `;
+    }).join("");
+
+    historyWrap.innerHTML = `
+      <table>
+        <thead>
+          <tr>
+            <th>Tour</th><th>Statut</th>
+            <th class="right">Match 1</th>
+            <th class="right">Match 2</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    `;
+  }
+
+  function renderCurrent(){
+    const cur = getCurrentRound();
+
+    if(!cur){
+      curHint.textContent = "—";
+      currentWrap.innerHTML = `
+        <div class="mini">Aucun tour en cours (tout est validé).</div>
+        <div class="row" style="margin-top:10px;">
+          <button class="btn primary" id="btnCreateNext">Créer un nouveau tour</button>
+        </div>
+      `;
+
+      const btn = document.getElementById("btnCreateNext");
+      btn?.addEventListener("click", async ()=>{
+        const max = roundsCache.length ? Math.max(...roundsCache.map(r=>Number(r.roundNumber||0))) : 0;
+        await createRound(max+1);
+      });
+      return;
+    }
+
+    curHint.textContent = `Tour ${cur.roundNumber}`;
+
+    const m1 = (cur.matches||[])[0] || { idx:1, scoreR:null, scoreJ:null };
+    const m2 = (cur.matches||[])[1] || { idx:2, scoreR:null, scoreJ:null };
+
+    currentWrap.innerHTML = `
+      <div class="matchCard">
+        <div class="matchHead">
+          <div class="matchTitle">Match 1</div>
+          <div class="matchMeta">🔴 Rouge 1 vs 🟡 Jaune 1</div>
+        </div>
+
+        <div class="row">
+          <span class="badge red">🔴 Rouge 1</span>
+          <span class="badge yellow">🟡 Jaune 1</span>
+        </div>
+
+        <div class="scoreRow">
+          <input id="m1r" type="number" min="0" placeholder="Score Rouge" value="${(typeof m1.scoreR==="number")?m1.scoreR:""}">
+          <input id="m1j" type="number" min="0" placeholder="Score Jaune" value="${(typeof m1.scoreJ==="number")?m1.scoreJ:""}">
+          <span class="mini">Ex: 4 - 2</span>
+        </div>
+      </div>
+
+      <div class="matchCard">
+        <div class="matchHead">
+          <div class="matchTitle">Match 2</div>
+          <div class="matchMeta">🔴 Rouge 2 vs 🟡 Jaune 2</div>
+        </div>
+
+        <div class="row">
+          <span class="badge red">🔴 Rouge 2</span>
+          <span class="badge yellow">🟡 Jaune 2</span>
+        </div>
+
+        <div class="scoreRow">
+          <input id="m2r" type="number" min="0" placeholder="Score Rouge" value="${(typeof m2.scoreR==="number")?m2.scoreR:""}">
+          <input id="m2j" type="number" min="0" placeholder="Score Jaune" value="${(typeof m2.scoreJ==="number")?m2.scoreJ:""}">
+          <span class="mini">Ex: 3 - 3</span>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="row" style="justify-content:flex-end;">
+        <button class="btn primary" id="btnSave">Enregistrer</button>
+        <button class="btn primary" id="btnValidate">Valider le tour & générer le suivant</button>
+      </div>
+
+      <div class="mini" style="margin-top:8px;">
+        “Enregistrer” sauvegarde les scores sans valider. “Valider” calcule les points + crée le tour suivant.
+      </div>
+    `;
+
+    const curId = cur.id;
+
+    function readScores(){
+      const a1 = document.getElementById("m1r").value;
+      const b1 = document.getElementById("m1j").value;
+      const a2 = document.getElementById("m2r").value;
+      const b2 = document.getElementById("m2j").value;
+
+      const s = {
+        m1r: a1==="" ? null : Number(a1),
+        m1j: b1==="" ? null : Number(b1),
+        m2r: a2==="" ? null : Number(a2),
+        m2j: b2==="" ? null : Number(b2),
+      };
+
+      // basic validation
+      for(const k of Object.keys(s)){
+        if(s[k] === null) continue;
+        if(Number.isNaN(s[k]) || s[k] < 0) return { ok:false, msg:"Saisis des scores valides (>=0)." };
+      }
+      return { ok:true, s };
+    }
+
+    async function saveScoresOnly(){
+      const { ok, msg, s } = readScores();
+      if(!ok){ alert(msg); return; }
+
+      const matches = [
+        { idx: 1, scoreR: s.m1r, scoreJ: s.m1j, ptsR: 0, ptsJ: 0 },
+        { idx: 2, scoreR: s.m2r, scoreJ: s.m2j, ptsR: 0, ptsJ: 0 },
+      ];
+      await updateDoc(doc(db,"rounds",curId), { matches });
+      log(`Scores enregistrés (Tour ${cur.roundNumber}).`);
+    }
+
+    async function validateAndGenerateNext(){
+      const { ok, msg, s } = readScores();
+      if(!ok){ alert(msg); return; }
+
+      // require all 4 scores to validate
+      if([s.m1r,s.m1j,s.m2r,s.m2j].some(v => typeof v !== "number")){
+        alert("Pour valider, il faut saisir les 4 scores (2 matchs).");
         return;
       }
-    
-    }
-    
-    try{
-        for(const m of round.matches.slice(0,2)){
-        await updateDoc(doc(db,"matches",m.id), {
+
+      const p1 = pointsFromScores(s.m1r, s.m1j);
+      const p2 = pointsFromScores(s.m2r, s.m2j);
+
+      const matches = [
+        { idx: 1, scoreR: s.m1r, scoreJ: s.m1j, ptsR: p1.ptsR, ptsJ: p1.ptsJ },
+        { idx: 2, scoreR: s.m2r, scoreJ: s.m2j, ptsR: p2.ptsR, ptsJ: p2.ptsJ },
+      ];
+
+      // validate current
+      await updateDoc(doc(db,"rounds",curId), {
+        matches,
         validated: true,
-        presentNamesSnapshot: presentNames, // ✅ nouveau
-        absentNamesSnapshot: absentNames    // ✅ nouveau
-        });
-      }
-      }
-      log(`Tour ${roundNumber} validé.`);
-      await recomputePointsGeneral();
-    }catch(e){
-      console.error(e);
-      log(`Erreur validation tour: ${e?.message || e}`, "bad");
-      alert("Erreur lors de la validation du tour.");
-    }
-  }
-
-  function renderTours(){
-    const rounds = groupMatchesByRound(matchesCache);
-
-    const lastValid = [...rounds].reverse().find(r=>isRoundFullyValidated(r)) || null;
-    const current = rounds.find(r=>!isRoundFullyValidated(r)) || null;
-    let next = null;
-    if(current){
-      next = rounds.find(r=>r.round === current.round + 1) || null;
-    } else if(lastValid){
-      next = rounds.find(r=>r.round === lastValid.round + 1) || null;
-    }
-
-    // meta lines
-    lastMeta.textContent = lastValid ? `Tour ${lastValid.round}` : "—";
-    curMeta.textContent  = current ? `Tour ${current.round}` : "—";
-    nextMeta.textContent = next ? `Tour ${next.round}` : "—";
-
-    lastBody.innerHTML = renderRoundCard(lastValid, "last");
-    curBody.innerHTML  = current ? renderRoundCard(current, "current") : `<div class="small muted">Aucun tour en cours (tout est validé ou aucun tour).</div>`;
-    nextBody.innerHTML = next ? renderRoundCard(next, "next") : `<div class="small muted">Aucun tour à venir (génère le suivant).</div>`;
-
-    // bind actions in current card
-    curBody.querySelectorAll('button[data-act="saveScore"]').forEach(btn=>{
-      btn.addEventListener("click", async ()=>{
-        const id = btn.getAttribute("data-id");
-        const block = btn.closest(".courtBlock");
-        const aIn = block.querySelector('input[data-k="a"]');
-        const bIn = block.querySelector('input[data-k="b"]');
-
-        const a = aIn.value === "" ? null : Number(aIn.value);
-        const b = bIn.value === "" ? null : Number(bIn.value);
-        if(a === null || b === null || isNaN(a) || isNaN(b) || a<0 || b<0){
-          alert("Saisis 2 scores valides (>=0).");
-          return;
-        }
-        if(!confirm("Confirmer la modification du score ?")){
-          return;
-        }
-        try{
-          await setMatchScore(id, a, b);
-          log(`Score modifié (match ${id}) : ${a} - ${b}`);
-          await recomputePointsGeneral(); // admin veut que toute modif score soit prise en compte
-        }catch(e){
-          console.error(e);
-          log(`Erreur modification score: ${e?.message || e}`, "bad");
-          alert("Erreur lors de la modification du score.");
-        }
+        validatedAt: Date.now()
       });
+
+      log(`Tour ${cur.roundNumber} validé : points Rouge +${p1.ptsR + p2.ptsR}, Jaune +${p1.ptsJ + p2.ptsJ}.`, "ok");
+
+      // generate next
+      const nextRound = Number(cur.roundNumber || 0) + 1;
+      await createRound(nextRound);
+    }
+
+    document.getElementById("btnSave").addEventListener("click", async ()=>{
+      try{
+        await saveScoresOnly();
+      }catch(e){
+        console.error(e);
+        log(`Erreur enregistrement: ${e?.message || e}`, "bad");
+        alert("Erreur Firestore lors de l'enregistrement.");
+      }
     });
 
-    curBody.querySelectorAll('button[data-act="validateRound"]').forEach(btn=>{
-      btn.addEventListener("click", async ()=>{
-        const r = Number(btn.getAttribute("data-round"));
-        if(!r) return;
-        if(!confirm(`Valider le Tour ${r} ?`)) return;
-        await validateRound(r);
-      });
+    document.getElementById("btnValidate").addEventListener("click", async ()=>{
+      if(!confirm("Valider ce tour ? (Calcul points + génération du tour suivant)")) return;
+      try{
+        await validateAndGenerateNext();
+      }catch(e){
+        console.error(e);
+        log(`Erreur validation: ${e?.message || e}`, "bad");
+        alert("Erreur Firestore lors de la validation.");
+      }
     });
-
-    // render history (validated rounds, newest first)
-    const validatedRounds = rounds.filter(isRoundFullyValidated).sort((a,b)=>b.round-a.round);
-
-    if(!validatedRounds.length){
-      historyWrap.innerHTML = `<div class="small muted">Aucun match validé.</div>`;
-    } else {
-      historyWrap.innerHTML = validatedRounds.map(r=>{
-        return `
-          <div class="tourCard" style="margin-bottom:12px;">
-            <div class="head">
-              <div class="title">Tour ${r.round}</div>
-              <div class="meta">✅ Validé</div>
-            </div>
-            ${renderRoundCard(r, "history")}
-          </div>
-        `;
-      }).join("");
-    }
   }
 
-  btnNewTournament.addEventListener("click", async ()=>{
-    if(!confirm("⚠️ Lancer un nouveau tournoi ?\nTous les tours/matchs seront supprimés puis Tour 1 + Tour 2 seront générés.")) return;
-
+  // ================================
+  // Actions
+  // ================================
+  document.getElementById("btnNew").addEventListener("click", async ()=>{
+    if(!confirm("⚠️ Nouveau tournoi : supprimer TOUS les tours puis recréer Tour 1. Continuer ?")) return;
     try{
-      await deleteAllMatches();
-      log("Tous les matchs supprimés (nouveau tournoi).", "warn");
-
-      // Génère tour 1 (en cours) + tour 2 (à venir)
-      await generateRound(1);
-      await generateRound(2);
-
-      await recomputePointsGeneral();
-      log("Nouveau tournoi prêt : Tour 1 + Tour 2 générés.", "ok");
+      const snap = await getDocs(query(roundsCol));
+      for(const d of snap.docs){
+        await deleteDoc(doc(db,"rounds",d.id));
+      }
+      log("Tous les tours supprimés (nouveau tournoi).", "warn");
+      await createRound(1);
     }catch(e){
       console.error(e);
       log(`Erreur nouveau tournoi: ${e?.message || e}`, "bad");
-      alert("Erreur lors du lancement du nouveau tournoi.");
+      alert("Erreur Firestore lors du nouveau tournoi.");
     }
   });
 
-  btnGenerateNext.addEventListener("click", async ()=>{
-    // règle: générer tour suivant seulement si tour N-2 validé
-    const rounds = groupMatchesByRound(matchesCache);
-    const maxRound = rounds.length ? Math.max(...rounds.map(r=>r.round)) : 0;
-    const nextRound = maxRound + 1;
-
-    if(nextRound >= 3){
-      const need = nextRound - 2;
-      const needObj = rounds.find(r=>r.round===need);
-      if(!needObj || !isRoundFullyValidated(needObj)){
-        alert(`Impossible : pour générer le Tour ${nextRound}, le Tour ${need} (N-2) doit être validé.`);
-        return;
-      }
+  document.getElementById("btnForceNext").addEventListener("click", async ()=>{
+    const max = roundsCache.length ? Math.max(...roundsCache.map(r=>Number(r.roundNumber||0))) : 0;
+    if(!confirm(`Générer Tour ${max+1} (debug) ?`)) return;
+    try{
+      await createRound(max+1);
+    }catch(e){
+      console.error(e);
+      log(`Erreur génération: ${e?.message || e}`, "bad");
+      alert("Erreur Firestore lors de la génération.");
     }
-
-    if(!confirm(`Générer le Tour ${nextRound} ?`)) return;
-    await generateRound(nextRound);
   });
 
   // ================================
-  // Classements + Stats (inchangé)
+  // Live listener
   // ================================
-  const rankGeneralEl = document.getElementById("rankGeneral");
-  const rankLisaEl = document.getElementById("rankLisa");
-  const rankManonEl = document.getElementById("rankManon");
-  const rankDuelEl = document.getElementById("rankDuel");
+  setStatus("warn","Connexion…");
 
-  const statsMatchesEl = document.getElementById("statsMatches");
-  const statsPartnersEl = document.getElementById("statsPartners");
-  const statsOpponentsEl = document.getElementById("statsOpponents");
-
-  function buildValidatedMatches(){
-    return matchesCache.filter(m=>m.validated === true);
-  }
-
-  function recomputeFromValidated(){
-    const valid = buildValidatedMatches();
-    const pointsByName = {};
-    const matchesPlayedByName = {};
-    const partners = {};
-    const opponents = {};
-
-    const addCount = (obj, a, b) => {
-      obj[a] = obj[a] || {};
-      obj[a][b] = (obj[a][b] || 0) + 1;
-    };
-
-    // ✅ Regroupement par Tour (roundNumber)
-const byRound = new Map();
-valid.forEach(m=>{
-  const r = Number(m.roundNumber || 0);
-  if(!r) return;
-  if(!byRound.has(r)) byRound.set(r, []);
-  byRound.get(r).push(m);
-});
-    
-    valid.forEach(m=>{
-      const teamA = m.teamA || [];
-      const teamB = m.teamB || [];
-      const scoreA = (typeof m.scoreA === "number") ? m.scoreA : 0;
-      const scoreB = (typeof m.scoreB === "number") ? m.scoreB : 0;
-
-     
-
-      if(teamA.length===2 && teamB.length===2){
-        addCount(partners, teamA[0], teamA[1]);
-        addCount(partners, teamA[1], teamA[0]);
-        addCount(partners, teamB[0], teamB[1]);
-        addCount(partners, teamB[1], teamB[0]);
-
-        teamA.forEach(a=>{
-          teamB.forEach(b=>{
-            addCount(opponents, a, b);
-            addCount(opponents, b, a);
-          });
-        });
-      }
-
-      
-    });
-
-// ✅ Points + matchs joués, calculés PAR TOUR (terrain / banc / absents)
-for(const [r, matches] of byRound.entries()){
-  const ms = [...matches].sort((a,b)=>(a.court||0)-(b.court||0)).slice(0,2);
-  if(ms.length < 2) continue;
-
-  const m1 = ms[0];
-  const m2 = ms[1];
-
-  // scores (si validé, ils doivent exister, mais on sécurise)
-  const sA1 = (typeof m1.scoreA === "number") ? m1.scoreA : 0;
-  const sB1 = (typeof m1.scoreB === "number") ? m1.scoreB : 0;
-  const sA2 = (typeof m2.scoreA === "number") ? m2.scoreA : 0;
-  const sB2 = (typeof m2.scoreB === "number") ? m2.scoreB : 0;
-
-  // joueurs sur le terrain (8)
-  const playing = [
-    ...(m1.teamA||[]), ...(m1.teamB||[]),
-    ...(m2.teamA||[]), ...(m2.teamB||[])
-  ].filter(Boolean);
-
-  // snapshots présence/absence (au moment de la validation)
-  const presentSnap = (m1.presentNamesSnapshot || []).filter(Boolean);
-  const absentSnap  = (m1.absentNamesSnapshot  || []).filter(Boolean);
-
-  // banc = présents - joueurs sur le terrain
-  const playingSet = new Set(playing);
-  const bench = presentSnap.filter(n=>!playingSet.has(n));
-
-  // moyenne points "sur le terrain"
-  // chaque Lisa prend scoreA, chaque Manon scoreB, donc moyenne = (scoreLisa + scoreManon)/2 par match,
-  // mais on a 2 terrains donc on moyenne sur les 2 matchs :
-  const avgCourtPoints = ((sA1 + sB1)/2 + (sA2 + sB2)/2) / 2;
-
-  // min points sur le terrain (pour absents) : min des 4 scores d’équipes sur les 2 terrains
-  const minCourtPoints = Math.min(sA1, sB1, sA2, sB2);
-
-  // "matchs joués moyen des présents durant ce tour" = 8 / nbPrésents
-  const presentCount = Math.max(1, presentSnap.length);
-  const avgMatchesPresent = 8 / presentCount;
-
-  // 1) joueurs sur le terrain : points = score de leur team, matchs +1
-  function addPlayer(name, pts, mp){
-    if(!name) return;
-    pointsByName[name] = (pointsByName[name] || 0) + pts;
-    matchesPlayedByName[name] = (matchesPlayedByName[name] || 0) + mp;
-  }
-
-  // Terrain 1
-  (m1.teamA||[]).forEach(n=> addPlayer(n, sA1, 1));
-  (m1.teamB||[]).forEach(n=> addPlayer(n, sB1, 1));
-  // Terrain 2
-  (m2.teamA||[]).forEach(n=> addPlayer(n, sA2, 1));
-  (m2.teamB||[]).forEach(n=> addPlayer(n, sB2, 1));
-
-  // 2) banc : points = moyenne terrain, matchs +0
-  bench.forEach(n=> addPlayer(n, avgCourtPoints, 0));
-
-  // 3) absents : points = min-2, matchs + avgMatchesPresent
-  absentSnap.forEach(n=> addPlayer(n, (minCourtPoints - 2), avgMatchesPresent));
-}
-    
-    return { pointsByName, matchesPlayedByName, partners, opponents };
-  }
-
-  async function recomputePointsGeneral(){
-    if(!playersCache.length) return;
-    const { pointsByName } = recomputeFromValidated();
+  onSnapshot(query(roundsCol, orderBy("roundNumber","asc")), async (snap)=>{
+    roundsCache = snap.docs.map(d=>({ id:d.id, ...d.data() }));
 
     try{
-      for(const p of playersCache){
-        const name = p.name;
-        if(!name) continue;
-        const newPts = pointsByName[name] || 0;
-        const curPts = p.pointsGeneral || 0;
-        if(newPts !== curPts){
-          await updateDoc(doc(db,"players",p.id), { pointsGeneral: newPts });
-        }
+      // init if empty
+      if(!roundsCache.length){
+        await createRound(1);
+        // snapshot will re-fire
       }
-      log("Points recalculés (pointsGeneral).");
     }catch(e){
       console.error(e);
-      log(`Erreur recalcul points: ${e?.message || e}`, "bad");
-      alert("Erreur lors du recalcul des points.");
-    }
-  }
-
-  function renderRankings(){
-    const sorted = [...playersCache].sort((a,b)=>(b.pointsGeneral||0)-(a.pointsGeneral||0));
-    if(!playersCache.length){
-      rankGeneralEl.innerHTML = `<div class="small muted">Aucun joueur.</div>`;
-      rankLisaEl.innerHTML = `<div class="small muted">Aucun joueur.</div>`;
-      rankManonEl.innerHTML = `<div class="small muted">Aucun joueur.</div>`;
-      
-      const sumLisa = sorted.filter(p=>p.team==="Lisa").reduce((s,p)=> s + (Number(p.pointsGeneral)||0), 0);
-      const sumManon = sorted.filter(p=>p.team==="Manon").reduce((s,p)=> s + (Number(p.pointsGeneral)||0), 0);
-
-rankDuelEl.innerHTML = `
-  <div class="tourCard" style="box-shadow: var(--shadow);">
-    <div class="head">
-      <div class="title">Score cumulé des teams</div>
-      <div class="meta">Somme des points (pointsGeneral)</div>
-    </div>
-
-    <div class="row" style="justify-content:space-between;">
-      <span class="badge lisa">🌶️ Team Lisa</span>
-      <span class="badge lisa" style="font-size:14px;">${sumLisa}</span>
-    </div>
-
-    <div class="divider"></div>
-
-    <div class="row" style="justify-content:space-between;">
-      <span class="badge manon">🐝 Team Manon</span>
-      <span class="badge manon" style="font-size:14px;">${sumManon}</span>
-    </div>
-  </div>
-`;
-
-      
-      return;
+      log(`Init rounds erreur: ${e?.message || e}`, "bad");
     }
 
-    const mkTable = (list) => {
-      if(!list.length) return `<div class="small muted">Aucun joueur.</div>`;
-      let html = `<table><thead><tr><th>#</th><th>Nom</th><th>Team</th><th class="right">Points</th></tr></thead><tbody>`;
-      list.forEach((p, idx)=>{
-        const teamBadge = p.team==="Lisa"
-          ? `<span class="badge lisa">🌶️ Lisa</span>`
-          : (p.team==="Manon" ? `<span class="badge manon">🐝 Manon</span>` : `<span class="badge neutral">—</span>`);
-        html += `<tr>
-          <td>${idx+1}</td>
-          <td>${p.name || ""}</td>
-          <td>${teamBadge}</td>
-          <td class="right"><b>${p.pointsGeneral || 0}</b></td>
-        </tr>`;
-      });
-      html += `</tbody></table>`;
-      return html;
-    };
+    renderScoreboard();
+    renderHistory();
+    renderCurrent();
 
-    rankGeneralEl.innerHTML = mkTable(sorted);
-    rankLisaEl.innerHTML = mkTable(sorted.filter(p=>p.team==="Lisa"));
-    rankManonEl.innerHTML = mkTable(sorted.filter(p=>p.team==="Manon"));
-  }
+    setStatus("ok","Connecté");
+  }, (err)=>{
+    console.error(err);
+    setStatus("bad","Erreur Firestore");
+    log(`onSnapshot rounds: ${err?.message || err}`, "bad");
+    currentWrap.innerHTML = `<div class="mini">Erreur Firestore. Vérifie les Rules (permissions).</div>`;
+  });
 
-  function renderStats(){
-    if(!playersCache.length){
-      statsMatchesEl.innerHTML = `<div class="small muted">Aucun joueur.</div>`;
-      statsPartnersEl.innerHTML = `<div class="small muted">Aucun joueur.</div>`;
-      statsOpponentsEl.innerHTML = `<div class="small muted">Aucun joueur.</div>`;
-      return;
-    }
-
-    const { matchesPlayedByName, partners, opponents } = recomputeFromValidated();
-    const names = sortByName(playersCache.filter(p=>p.name)).map(p=>p.name);
-
-    let htmlM = `<table><thead><tr><th>Joueur</th><th class="right">Matchs validés</th></tr></thead><tbody>`;
-    names.forEach(n=>{
-      htmlM += `<tr><td>${n}</td><td class="right"><b>${matchesPlayedByName[n] || 0}</b></td></tr>`;
-    });
-    htmlM += `</tbody></table>`;
-    statsMatchesEl.innerHTML = htmlM;
-
-    let htmlP = "";
-    names.forEach(n=>{
-      const map = partners[n] || {};
-      const list = Object.keys(map).sort((a,b)=>map[b]-map[a] || a.localeCompare(b,"fr",{sensitivity:"base"}));
-      htmlP += `<div class="panel" style="margin:10px 0 0; background: #fff;">
-        <div class="panelTitle"><h2>${n}</h2><span class="hint">partenaires</span></div>`;
-      if(!list.length){
-        htmlP += `<div class="small muted">Aucun partenaire pour l’instant.</div>`;
-      } else {
-        htmlP += `<table><thead><tr><th>Partenaire</th><th class="right">Matchs ensemble</th></tr></thead><tbody>`;
-        list.forEach(pn=>{
-          htmlP += `<tr><td>${pn}</td><td class="right"><b>${map[pn]}</b></td></tr>`;
-        });
-        htmlP += `</tbody></table>`;
-      }
-      htmlP += `</div>`;
-    });
-    statsPartnersEl.innerHTML = htmlP;
-
-    let htmlO = "";
-    names.forEach(n=>{
-      const map = opponents[n] || {};
-      const list = Object.keys(map).sort((a,b)=>map[b]-map[a] || a.localeCompare(b,"fr",{sensitivity:"base"}));
-      htmlO += `<div class="panel" style="margin:10px 0 0; background: #fff;">
-        <div class="panelTitle"><h2>${n}</h2><span class="hint">adversaires</span></div>`;
-      if(!list.length){
-        htmlO += `<div class="small muted">Aucun adversaire pour l’instant.</div>`;
-      } else {
-        htmlO += `<table><thead><tr><th>Adversaire</th><th class="right">Matchs contre</th></tr></thead><tbody>`;
-        list.forEach(on=>{
-          htmlO += `<tr><td>${on}</td><td class="right"><b>${map[on]}</b></td></tr>`;
-        });
-        htmlO += `</tbody></table>`;
-      }
-      htmlO += `</div>`;
-    });
-    statsOpponentsEl.innerHTML = htmlO;
-  }
-
-  // ================================
-  // Live listeners
-  // ================================
-  async function init(){
-    try{
-      await ensureDraftDoc();
-      setStatus("ok","Connecté");
-      log("Admin chargé. Étape 1 : ajoute des joueurs, puis définis qui commence.");
-    }catch(e){
-      console.error(e);
-      setStatus("bad","Erreur Firestore");
-      log(`Erreur init: ${e?.message || e}`, "bad");
-      return;
-    }
-
-    onSnapshot(query(playersCol, orderBy("createdAt","asc")), (snap)=>{
-      playersCache = snap.docs.map(d=>({ id:d.id, ...d.data() }));
-      renderDraftUI();
-      renderRankings();
-      renderStats();
-      renderTours();
-    }, (err)=>{
-      console.error(err);
-      setStatus("bad","Erreur Firestore");
-      log(`onSnapshot players: ${err?.message || err}`, "bad");
-    });
-
-    onSnapshot(draftRef, (snap)=>{
-      if(snap.exists()){
-        draftCache = snap.data() || draftCache;
-        renderDraftUI();
-      }
-    }, (err)=>{
-      console.error(err);
-      setStatus("bad","Erreur Firestore");
-      log(`onSnapshot draft: ${err?.message || err}`, "bad");
-    });
-
-    onSnapshot(query(matchesCol, orderBy("createdAt","asc")), (snap)=>{
-      matchesCache = snap.docs.map(d=>({ id:d.id, ...d.data() }));
-      renderTours();
-      renderRankings();
-      renderStats();
-    }, (err)=>{
-      console.error(err);
-      setStatus("bad","Erreur Firestore");
-      log(`onSnapshot matches: ${err?.message || err}`, "bad");
-    });
-  }
-
-  init();
 </script>
-
 </body>
 </html>
