@@ -1,7 +1,7 @@
 <!-- =========================
      Mobile.html (vue mobile)
-     Bandeau = EXACTEMENT style Admin : fond vert, écriture blanche,
-     logo à gauche + image tournoi à droite (+ statut).
+     Bandeau = style Admin : fond vert, écriture blanche,
+     logo à gauche + image tournoi à droite (+ statut rond seul).
      Onglets: Équipes / Matchs / Classements / Statistiques / Règlement
      ✅ Seul l’onglet Équipes est fonctionnel pour l’instant
      ========================= -->
@@ -10,7 +10,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Americano Lisa vs Manon – Mobile</title>
+  <title>Americano Lisa vs Manon</title>
 
   <style>
     :root{
@@ -27,12 +27,16 @@
 
       --lisa:#ef4444;
       --lisa2:#b91c1c;
+
       --manon:#facc15;
       --manon2:#ca8a04;
 
       --ok:#16a34a;
       --warn:#f59e0b;
       --bad:#ef4444;
+
+      --neutralBar:#eef2f7;
+      --neutralBarText:#111827;
     }
 
     *{ box-sizing:border-box; }
@@ -43,7 +47,7 @@
       color: var(--text);
     }
 
-    /* ===== Header (identique Admin) ===== */
+    /* ===== Header (identique Admin, ajusté demandes) ===== */
     header{
       background: linear-gradient(90deg, rgba(22,163,74,1), rgba(21,128,61,1));
       padding: 12px 14px;
@@ -86,25 +90,21 @@
 
     .rightSlot{ display:flex; align-items:center; justify-content:flex-end; }
 
-    .statusPill{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      padding:8px 10px;
-      border-radius:999px;
-      background: rgba(0,0,0,.25);
-      border: 1px solid rgba(255,255,255,.18);
-      font-size:12px;
-      white-space:nowrap;
-      color:#fff;
-    }
-    .dot{
-      width:10px; height:10px; border-radius:999px;
+    /* statut : rond seul (pas de texte) */
+    .statusDotOnly{
+      width:12px; height:12px; border-radius:999px;
       background: var(--warn);
       box-shadow: 0 0 0 4px rgba(245,158,11,.18);
+      border: 1px solid rgba(255,255,255,.35);
     }
-    .dot.ok{ background: var(--ok); box-shadow: 0 0 0 4px rgba(34,197,94,.18); }
-    .dot.bad{ background: var(--bad); box-shadow: 0 0 0 4px rgba(239,68,68,.18); }
+    .statusDotOnly.ok{
+      background: var(--ok);
+      box-shadow: 0 0 0 4px rgba(34,197,94,.18);
+    }
+    .statusDotOnly.bad{
+      background: var(--bad);
+      box-shadow: 0 0 0 4px rgba(239,68,68,.18);
+    }
 
     /* ===== Layout ===== */
     .container{
@@ -185,12 +185,10 @@
       color: var(--text);
       white-space:nowrap;
     }
-    .badge.lisa{ background: rgba(239,68,68,.18); border-color: rgba(239,68,68,.35); }
-    .badge.manon{ background: rgba(250,204,21,.18); border-color: rgba(250,204,21,.35); color:#111827; }
-    .badge.neutral{ background: rgba(0,0,0,.04); }
     .badge.ok{ background: rgba(34,197,94,.18); border-color: rgba(34,197,94,.35); }
     .badge.warn{ background: rgba(245,158,11,.18); border-color: rgba(245,158,11,.35); }
     .badge.bad{ background: rgba(239,68,68,.18); border-color: rgba(239,68,68,.35); }
+    .badge.neutral{ background: rgba(0,0,0,.04); }
 
     .turnBox{
       display:flex;
@@ -218,6 +216,69 @@
       font-weight: 1000;
     }
 
+    /* ===== Sections Teams : bandeau pleine largeur ===== */
+    .teamBar{
+      width:100%;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(0,0,0,.10);
+      margin: 12px 0 8px;
+      font-weight: 1000;
+    }
+    .teamBar .title{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      line-height:1.1;
+      flex-wrap:wrap;
+    }
+    .teamBar .count{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width: 34px;
+      height: 26px;
+      padding: 0 10px;
+      border-radius: 999px;
+      font-weight: 1000;
+      border: 1px solid rgba(0,0,0,.10);
+      background: rgba(255,255,255,.65);
+      color: var(--text);
+    }
+
+    .teamBar.neutral{
+      background: var(--neutralBar);
+      color: var(--neutralBarText);
+      border-color: rgba(0,0,0,.10);
+    }
+
+    .teamBar.lisa{
+      background: linear-gradient(180deg, rgba(185,28,28,.98), rgba(127,29,29,.98));
+      color: #fff;
+      border-color: rgba(255,255,255,.20);
+    }
+    .teamBar.lisa .count{
+      background: rgba(255,255,255,.18);
+      border-color: rgba(255,255,255,.25);
+      color:#fff;
+    }
+
+    .teamBar.manon{
+      background: linear-gradient(180deg, rgba(250,204,21,.98), rgba(202,138,4,.98));
+      color: #111827;
+      border-color: rgba(0,0,0,.10);
+    }
+    .teamBar.manon .count{
+      background: rgba(255,255,255,.55);
+      border-color: rgba(0,0,0,.10);
+      color:#111827;
+    }
+
+    /* Chips */
     .chips{
       display:flex;
       flex-wrap:wrap;
@@ -251,17 +312,8 @@
     }
     .chip.lisa{ background: rgba(239,68,68,.14); border-color: rgba(239,68,68,.28); }
     .chip.lisa small{ background: rgba(185,28,28,.12); border-color: rgba(185,28,28,.22); }
-
     .chip.manon{ background: rgba(250,204,21,.16); border-color: rgba(250,204,21,.30); }
     .chip.manon small{ background: rgba(202,138,4,.12); border-color: rgba(202,138,4,.22); }
-
-    .sectionHead{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      margin: 10px 0 8px;
-    }
 
     .small{ font-size: 12px; color: var(--muted); }
     .muted{ color: var(--muted); }
@@ -274,13 +326,12 @@
       font-weight: 900;
     }
 
-    /* Mobile : bandeau compact sans casser l’admin */
+    /* Mobile : bandeau compact */
     @media (max-width: 520px){
       .headRow{ grid-template-columns: 64px 1fr 64px; }
       .brandImg{ height: 38px; }
       .t1{ font-size: 14px; }
       .t2{ font-size: 12px; }
-      .statusPill{ padding: 7px 9px; font-size: 11px; }
     }
   </style>
 </head>
@@ -288,24 +339,21 @@
 <body>
 <header>
   <div class="headRow">
-    <!-- GAUCHE : logo Suzini -->
+    <!-- GAUCHE : logo Suzini (jpeg) -->
     <div class="leftSlot">
-      <img src="img/logo-suzini.png" alt="TC Suzini" class="brandImg">
+      <img src="img/logo-suzini.jpeg" alt="TC Suzini" class="brandImg">
     </div>
 
     <!-- CENTRE : titre -->
     <div class="centerSlot">
-      <div class="t1">Mobile – Americano Lisa vs Manon</div>
-      <div class="t2">BT Suzini • Firestore en temps réel</div>
+      <div class="t1">Americano Lisa vs Manon</div>
+      <div class="t2">BT Suzini</div>
     </div>
 
-    <!-- DROITE : image tournoi + statut -->
+    <!-- DROITE : image tournoi + statut (rond seul) -->
     <div class="rightSlot" style="gap:10px;">
       <img src="img/tournoi.jpeg" alt="Tournoi" class="brandImg">
-      <div class="statusPill" id="statusPill">
-        <span class="dot" id="statusDot"></span>
-        <span id="statusText">Connexion…</span>
-      </div>
+      <span class="statusDotOnly" id="statusDot" aria-label="statut connexion"></span>
     </div>
   </div>
 </header>
@@ -336,27 +384,27 @@
       </div>
 
       <div class="small" style="margin-bottom:10px;">
-        Vue mobile : affichage des joueurs <b>Sans équipe</b>, <b>Team Lisa</b>, <b>Team Manon</b>, et indication du tour.
+        Vue mobile : joueurs <b>Sans équipe</b>, <b>Team Lisa</b>, <b>Team Manon</b>, et indication du tour.
       </div>
 
       <!-- Sans équipe -->
-      <div class="sectionHead">
-        <span class="badge neutral">Sans équipe</span>
-        <span class="badge neutral" id="countSolo">0</span>
+      <div class="teamBar neutral">
+        <div class="title">Sans équipe</div>
+        <div class="count" id="countSolo">0</div>
       </div>
       <div class="chips" id="soloList"></div>
 
       <!-- Lisa -->
-      <div class="sectionHead" style="margin-top:12px;">
-        <span class="badge lisa">🌶️ Team Lisa</span>
-        <span class="badge lisa" id="countLisa">0</span>
+      <div class="teamBar lisa">
+        <div class="title">🌶️🌶️🌶️ Team Lisa « L’os pimientoooooos » 🌶️🌶️🌶️</div>
+        <div class="count" id="countLisa">0</div>
       </div>
       <div class="chips" id="lisaList"></div>
 
       <!-- Manon -->
-      <div class="sectionHead" style="margin-top:12px;">
-        <span class="badge manon">🐝 Team Manon</span>
-        <span class="badge manon" id="countManon">0</span>
+      <div class="teamBar manon">
+        <div class="title">🐝🐝🐝 Team Manon « Honey smash » 🐝🐝🐝</div>
+        <div class="count" id="countManon">0</div>
       </div>
       <div class="chips" id="manonList"></div>
     </div>
@@ -422,11 +470,10 @@
   // UI
   // ================================
   const statusDot = document.getElementById("statusDot");
-  const statusText = document.getElementById("statusText");
 
-  function setStatus(state, text){
-    statusText.textContent = text;
+  function setStatus(state){
     statusDot.classList.remove("ok","bad");
+    // ok = vert (par défaut warn = orange)
     if(state==="ok") statusDot.classList.add("ok");
     else if(state==="bad") statusDot.classList.add("bad");
   }
@@ -523,14 +570,16 @@
   // Live listeners
   // ================================
   function init(){
-    setStatus("ok","Connecté");
+    // On passe vert dès qu’on reçoit un snapshot OK
+    setStatus("warn");
 
     onSnapshot(query(playersCol, orderBy("createdAt","asc")), (snap)=>{
       playersCache = snap.docs.map(d=>({ id:d.id, ...d.data() }));
       renderTeams();
+      setStatus("ok");
     }, (err)=>{
       console.error(err);
-      setStatus("bad","Erreur Firestore");
+      setStatus("bad");
     });
 
     onSnapshot(draftRef, (snap)=>{
@@ -540,9 +589,10 @@
         draftCache = { starter:"Lisa", turn:null, initialized:false };
       }
       renderTeams();
+      setStatus("ok");
     }, (err)=>{
       console.error(err);
-      setStatus("bad","Erreur Firestore");
+      setStatus("bad");
     });
   }
 
