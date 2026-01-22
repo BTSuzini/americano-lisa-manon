@@ -1,8 +1,9 @@
 <!-- =========================
-     TV.html (vue TV)
+     TV.html (vue TV) — v2
      - 3 bandeaux en haut (Vert Admin + Rouge Lisa + Jaune Manon)
-     - Layout 2/3 gauche : Dernier / En cours / À venir
+     - Layout 2/3 gauche : Tour en cours / Tour à venir (✅ plus de “Dernier tour”)
      - Layout 1/3 droite : Classement équipes + Classement général
+     - Sur chaque tour : Terrain 1 et Terrain 2 côte à côte (✅)
      - Optimisé écran TV (grandes typos, cartes larges)
      - Assets : img/logo-suzini.jpeg + img/tournoi.jpeg (jpeg)
      ========================= -->
@@ -133,7 +134,7 @@
 
     .grid{
       display:grid;
-      grid-template-columns: 2fr 1fr; /* ✅ 2/3 gauche */
+      grid-template-columns: 2fr 1fr; /* 2/3 gauche */
       gap: 16px;
       align-items: start;
     }
@@ -179,12 +180,23 @@
       margin-bottom: 8px;
     }
 
+    /* ✅ Terrains côte à côte */
+    .courtsGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+    @media (max-width: 1200px){
+      .grid{ grid-template-columns: 1fr; }
+      .courtsGrid{ grid-template-columns: 1fr; } /* si écran plus petit */
+    }
+
     .courtBlock{
       border: 1px solid rgba(255,255,255,.10);
       border-radius: 16px;
       background: rgba(255,255,255,.04);
       padding: 12px;
-      margin-top: 10px;
     }
     .courtTop{
       display:flex;
@@ -235,9 +247,7 @@
       text-align:right;
       flex:1;
     }
-    .names.dark{
-      color:#111827;
-    }
+    .names.dark{ color:#111827; }
 
     .scoreRow{
       display:flex;
@@ -333,11 +343,6 @@
       font-size: 28px;
       letter-spacing:.5px;
     }
-
-    /* TV safety (no tiny text) */
-    @media (max-width: 1200px){
-      .grid{ grid-template-columns: 1fr; }
-    }
   </style>
 </head>
 
@@ -371,14 +376,7 @@
     <div class="grid">
       <!-- ===================== GAUCHE (2/3) ===================== -->
       <div class="col">
-        <div class="card">
-          <div class="cardHead">
-            <div class="cardTitle">Dernier tour (validé)</div>
-            <div class="cardMeta" id="lastMeta">—</div>
-          </div>
-          <div id="lastBody" class="miniInfo">Chargement…</div>
-        </div>
-
+        <!-- ✅ Plus de "Dernier tour" -->
         <div class="card">
           <div class="cardHead">
             <div class="cardTitle">Tour en cours</div>
@@ -404,7 +402,6 @@
             <div class="cardTitle">Classement par équipe</div>
             <div class="cardMeta">Somme pointsGeneral</div>
           </div>
-
           <div id="teamRankBox">
             <div class="miniInfo">Chargement…</div>
           </div>
@@ -416,7 +413,6 @@
             <div class="cardTitle">Classement individuel (général)</div>
             <div class="cardMeta">pointsGeneral</div>
           </div>
-
           <div id="indRankBox">
             <div class="miniInfo">Chargement…</div>
           </div>
@@ -433,7 +429,6 @@
   import {
     getFirestore,
     collection,
-    doc,
     onSnapshot,
     query,
     orderBy
@@ -471,11 +466,9 @@
     else if(state==="bad") statusDot.classList.add("bad");
   }
 
-  const lastMeta = document.getElementById("lastMeta");
   const curMeta  = document.getElementById("curMeta");
   const nextMeta = document.getElementById("nextMeta");
 
-  const lastBody = document.getElementById("lastBody");
   const curBody  = document.getElementById("curBody");
   const nextBody = document.getElementById("nextBody");
 
@@ -485,10 +478,6 @@
   // ================================
   // Helpers
   // ================================
-  function sortByName(list){
-    return [...list].sort((a,b)=>(a.name||"").localeCompare((b.name||""),"fr",{sensitivity:"base"}));
-  }
-
   function groupMatchesByRound(list){
     const map = new Map();
     list.forEach(m=>{
@@ -529,10 +518,11 @@
   }
 
   function renderRoundCardTV(roundObj, mode){
-    // mode: "last" | "current" | "next"
+    // mode: "current" | "next"
     if(!roundObj){
       return `<div class="miniInfo">Aucun tour.</div>`;
     }
+
     const r = roundObj.round;
     const matches = (roundObj.matches||[]).slice(0,2);
     if(matches.length < 2){
@@ -544,13 +534,15 @@
 
     let html = `<div class="miniInfo"><b>Tour ${r}</b> • Type: <b>${typeLabel}</b></div>`;
 
+    // ✅ terrains côte à côte
+    html += `<div class="courtsGrid">`;
+
     matches.forEach((m, idx)=>{
       const court = m.court || (idx+1);
       const A = (m.teamA||[]);
       const B = (m.teamB||[]);
       const validated = (m.validated===true);
 
-      // Sur TV : on affiche toujours un score (— si absent)
       const sc = (mode==="next") ? "—" : scoreText(m);
 
       html += `
@@ -578,6 +570,8 @@
       `;
     });
 
+    html += `</div>`; // courtsGrid
+
     html += `
       <div class="benchBox">
         <div class="benchTitle">Banc</div>
@@ -603,11 +597,9 @@
       next = rounds.find(r=>r.round === lastValid.round + 1) || null;
     }
 
-    lastMeta.textContent = lastValid ? `Tour ${lastValid.round}` : "—";
-    curMeta.textContent  = current  ? `Tour ${current.round}`  : "—";
-    nextMeta.textContent = next     ? `Tour ${next.round}`     : "—";
+    curMeta.textContent  = current ? `Tour ${current.round}` : "—";
+    nextMeta.textContent = next    ? `Tour ${next.round}`    : "—";
 
-    lastBody.innerHTML = renderRoundCardTV(lastValid, "last");
     curBody.innerHTML  = current ? renderRoundCardTV(current, "current") : `<div class="miniInfo">Aucun tour en cours.</div>`;
     nextBody.innerHTML = next ? renderRoundCardTV(next, "next") : `<div class="miniInfo">Aucun tour à venir.</div>`;
   }
@@ -619,12 +611,10 @@
       return;
     }
 
-    // Classement général (comme admin)
     const sorted = [...playersCache]
       .filter(p=>p.name)
       .sort((a,b)=>(Number(b.pointsGeneral)||0) - (Number(a.pointsGeneral)||0));
 
-    // Classement équipes : somme des pointsGeneral
     const sumLisa  = sorted.filter(p=>p.team==="Lisa").reduce((s,p)=> s + (Number(p.pointsGeneral)||0), 0);
     const sumManon = sorted.filter(p=>p.team==="Manon").reduce((s,p)=> s + (Number(p.pointsGeneral)||0), 0);
 
@@ -639,7 +629,6 @@
       </div>
     `;
 
-    // Table top 20 (TV)
     const top = sorted.slice(0, 20);
     let html = `<table>
       <thead>
@@ -670,7 +659,7 @@
     onSnapshot(query(playersCol, orderBy("createdAt","asc")), (snap)=>{
       playersCache = snap.docs.map(d=>({ id:d.id, ...d.data() }));
       renderRankings();
-      renderTours(); // pour recalculer banc / pills
+      renderTours(); // recalcul banc
       setStatus("ok");
     }, (err)=>{
       console.error(err);
