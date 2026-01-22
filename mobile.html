@@ -1,151 +1,537 @@
+<!-- =========================
+     Mobile.html (vue mobile)
+     Charte graphique = Admin (vert)
+     Onglets: Équipes / Matchs / Classements / Statistiques / Règlement
+     ✅ Seul l’onglet Équipes est fonctionnel pour l’instant
+     ========================= -->
 <!doctype html>
 <html lang="fr">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Americano Lisa vs Manon</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Americano Lisa vs Manon – Mobile</title>
 
-<style>
-body{
-  font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;
-  margin:0;
-  background:#f4f4f4;
-}
-header{
-  background:#111;
-  color:#fff;
-  padding:12px;
-  text-align:center;
-  font-weight:700;
-}
-.container{
-  padding:10px;
-  max-width:900px;
-  margin:auto;
-}
-.tabs{
-  display:flex;
-  gap:6px;
-  margin-bottom:10px;
-}
-.tab{
-  flex:1;
-  padding:8px;
-  border:none;
-  border-radius:6px;
-  background:#ddd;
-  font-size:14px;
-}
-.tab.active{
-  background:#111;
-  color:#fff;
-}
-.section{
-  display:none;
-  background:#fff;
-  border-radius:8px;
-  padding:10px;
-}
-.section.active{display:block;}
-.match{
-  border:1px solid #ddd;
-  border-radius:6px;
-  padding:8px;
-  margin-bottom:6px;
-}
-.small{font-size:12px;color:#555;}
-table{
-  width:100%;
-  border-collapse:collapse;
-  font-size:13px;
-}
-th,td{
-  border:1px solid #ddd;
-  padding:6px;
-}
-th{background:#f0f0f0;}
-</style>
+  <style>
+    :root{
+      --bg:#ffffff;
+      --panel:#ffffff;
+      --panel2:#f8fafc;
+      --text:#111827;
+      --muted:#6b7280;
+      --border:rgba(0,0,0,.10);
+      --shadow: 0 10px 30px rgba(0,0,0,.10);
+
+      --green:#16a34a;
+      --green2:#15803d;
+
+      --lisa:#ef4444;
+      --lisa2:#b91c1c;
+      --manon:#facc15;
+      --manon2:#ca8a04;
+
+      --ok:#16a34a;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    /* ===== Header (Admin style) ===== */
+    header{
+      background: linear-gradient(90deg, rgba(22,163,74,1), rgba(21,128,61,1));
+      padding: 10px 12px;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top:0;
+      z-index: 50;
+    }
+    .headRow{
+      max-width: 1100px;
+      margin: 0 auto;
+      display:grid;
+      grid-template-columns: 44px 1fr 44px;
+      align-items:center;
+      gap:10px;
+    }
+    .brandImg{
+      height: 40px;
+      width: 40px;
+      object-fit: contain;
+      display:block;
+      border-radius: 10px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.18);
+    }
+    .title{
+      text-align:center;
+      line-height:1.1;
+    }
+    .title .t1{
+      font-weight: 1000;
+      font-size: 14px;
+      color:#fff;
+      letter-spacing:.3px;
+    }
+    .title .t2{
+      font-weight: 800;
+      font-size: 12px;
+      color: rgba(255,255,255,.92);
+      margin-top:2px;
+    }
+
+    .statusPill{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+      padding:8px 10px;
+      border-radius:999px;
+      background: rgba(0,0,0,.22);
+      border: 1px solid rgba(255,255,255,.18);
+      font-size:12px;
+      color:#fff;
+      white-space:nowrap;
+    }
+    .dot{
+      width:10px; height:10px; border-radius:999px;
+      background: var(--warn);
+      box-shadow: 0 0 0 4px rgba(245,158,11,.18);
+    }
+    .dot.ok{ background: var(--ok); box-shadow: 0 0 0 4px rgba(34,197,94,.18); }
+    .dot.bad{ background: var(--bad); box-shadow: 0 0 0 4px rgba(239,68,68,.18); }
+
+    /* ===== Layout ===== */
+    .container{
+      max-width: 1100px;
+      margin: 12px auto 28px auto;
+      padding: 0 12px;
+    }
+
+    /* ===== Tabs (mobile friendly) ===== */
+    .tabs{
+      display:flex;
+      gap:8px;
+      overflow:auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 6px;
+      margin: 10px 0 10px;
+    }
+    .tabBtn{
+      flex: 0 0 auto;
+      border:1px solid var(--border);
+      background: #f3f4f6;
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight: 900;
+      font-size: 13px;
+      transition: .15s ease;
+      white-space: nowrap;
+    }
+    .tabBtn.active{
+      border-color: rgba(255,255,255,.22);
+      background: rgba(22,163,74,.20);
+      box-shadow: 0 12px 25px rgba(0,0,0,.12);
+    }
+
+    .tabContent{ display:none; }
+    .tabContent.active{ display:block; }
+
+    .panel{
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 12px;
+    }
+    .panel + .panel{ margin-top: 12px; }
+
+    .panelTitle{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .panelTitle h2{
+      margin:0;
+      font-size: 14px;
+      font-weight: 1000;
+      letter-spacing:.2px;
+    }
+    .hint{
+      color: var(--muted);
+      font-size: 12px;
+      text-align:right;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.10);
+      background: #f3f4f6;
+      font-size: 12px;
+      font-weight: 1000;
+      color: var(--text);
+      white-space:nowrap;
+    }
+    .badge.lisa{ background: rgba(239,68,68,.18); border-color: rgba(239,68,68,.35); }
+    .badge.manon{ background: rgba(250,204,21,.18); border-color: rgba(250,204,21,.35); color:#111827; }
+    .badge.neutral{ background: rgba(0,0,0,.04); }
+    .badge.ok{ background: rgba(34,197,94,.18); border-color: rgba(34,197,94,.35); }
+    .badge.warn{ background: rgba(245,158,11,.18); border-color: rgba(245,158,11,.35); }
+    .badge.bad{ background: rgba(239,68,68,.18); border-color: rgba(239,68,68,.35); }
+
+    .turnBox{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(0,0,0,.10);
+      background: #fafafa;
+      margin-bottom: 12px;
+    }
+    .turnMain{
+      display:flex;
+      flex-direction:column;
+      gap:3px;
+    }
+    .turnMain .label{
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+    .turnMain .value{
+      font-size: 13px;
+      font-weight: 1000;
+    }
+
+    .chips{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      padding: 8px;
+      border-radius: 14px;
+      border: 1px dashed rgba(0,0,0,.12);
+      background: #fafafa;
+      min-height: 54px;
+    }
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(31,41,55,.08);
+      border: 1px solid rgba(0,0,0,.10);
+      font-weight: 1000;
+      font-size: 12px;
+      user-select:none;
+    }
+    .chip small{
+      font-weight: 1000;
+      opacity:.95;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.10);
+      background: rgba(255,255,255,.70);
+      color: #111827;
+    }
+    .chip.lisa{ background: rgba(239,68,68,.14); border-color: rgba(239,68,68,.28); }
+    .chip.lisa small{ background: rgba(185,28,28,.12); border-color: rgba(185,28,28,.22); }
+
+    .chip.manon{ background: rgba(250,204,21,.16); border-color: rgba(250,204,21,.30); }
+    .chip.manon small{ background: rgba(202,138,4,.12); border-color: rgba(202,138,4,.22); }
+
+    .sectionHead{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin: 10px 0 8px;
+    }
+
+    .small{ font-size: 12px; color: var(--muted); }
+    .muted{ color: var(--muted); }
+
+    .placeholder{
+      padding: 14px;
+      border: 1px dashed rgba(0,0,0,.18);
+      border-radius: 14px;
+      background: #fafafa;
+      font-weight: 900;
+    }
+  </style>
 </head>
 
 <body>
+<header>
+  <div class="headRow">
+    <!-- adapte les noms de fichiers si besoin -->
+    <img src="img/logo-suzini.png" alt="TC Suzini" class="brandImg" onerror="this.style.display='none'">
 
-<header>Americano Lisa vs Manon – Mobile</header>
+    <div class="title">
+      <div class="t1">Americano Lisa vs Manon</div>
+      <div class="t2">Vue mobile • Firestore</div>
+    </div>
+
+    <div class="statusPill" title="Etat Firestore">
+      <span class="dot" id="statusDot"></span>
+      <span id="statusText">Connexion…</span>
+    </div>
+  </div>
+</header>
 
 <div class="container">
+
   <div class="tabs">
-    <button class="tab active" data-tab="matches">Matchs</button>
-    <button class="tab" data-tab="ranking">Classement</button>
+    <button class="tabBtn active" data-tab="teamsTab">Équipes</button>
+    <button class="tabBtn" data-tab="matchesTab">Matchs</button>
+    <button class="tabBtn" data-tab="rankingsTab">Classements</button>
+    <button class="tabBtn" data-tab="statsTab">Statistiques</button>
+    <button class="tabBtn" data-tab="rulesTab">Règlement</button>
   </div>
 
-  <div id="matches" class="section active">
-    <h3>Matchs</h3>
-    <div id="matchesContainer" class="small">Chargement…</div>
+  <!-- ===================== TAB ÉQUIPES ===================== -->
+  <div id="teamsTab" class="tabContent active">
+    <div class="panel">
+      <div class="panelTitle">
+        <h2>Équipes</h2>
+        <span class="hint">players + meta/draft</span>
+      </div>
+
+      <div class="turnBox">
+        <div class="turnMain">
+          <div class="label">Au tour de</div>
+          <div class="value" id="draftTurnLine">—</div>
+        </div>
+        <span class="badge neutral" id="draftStatePill">Draft</span>
+      </div>
+
+      <div class="small" style="margin-bottom:10px;">
+        Vue mobile : affichage des joueurs <b>Sans équipe</b>, <b>Team Lisa</b>, <b>Team Manon</b>, et indication du tour.
+      </div>
+
+      <!-- Sans équipe -->
+      <div class="sectionHead">
+        <span class="badge neutral">Sans équipe</span>
+        <span class="badge neutral" id="countSolo">0</span>
+      </div>
+      <div class="chips" id="soloList"></div>
+
+      <!-- Lisa -->
+      <div class="sectionHead" style="margin-top:12px;">
+        <span class="badge lisa">🌶️ Team Lisa</span>
+        <span class="badge lisa" id="countLisa">0</span>
+      </div>
+      <div class="chips" id="lisaList"></div>
+
+      <!-- Manon -->
+      <div class="sectionHead" style="margin-top:12px;">
+        <span class="badge manon">🐝 Team Manon</span>
+        <span class="badge manon" id="countManon">0</span>
+      </div>
+      <div class="chips" id="manonList"></div>
+    </div>
   </div>
 
-  <div id="ranking" class="section">
-    <h3>Classement individuel</h3>
-    <div id="rankingContainer" class="small">Chargement…</div>
+  <!-- ===================== TABS VIDES POUR L’INSTANT ===================== -->
+  <div id="matchesTab" class="tabContent">
+    <div class="panel">
+      <div class="panelTitle"><h2>Matchs</h2><span class="hint">à venir</span></div>
+      <div class="placeholder">⏳ Contenu à venir.</div>
+    </div>
+  </div>
+
+  <div id="rankingsTab" class="tabContent">
+    <div class="panel">
+      <div class="panelTitle"><h2>Classements</h2><span class="hint">à venir</span></div>
+      <div class="placeholder">⏳ Contenu à venir.</div>
+    </div>
+  </div>
+
+  <div id="statsTab" class="tabContent">
+    <div class="panel">
+      <div class="panelTitle"><h2>Statistiques</h2><span class="hint">à venir</span></div>
+      <div class="placeholder">⏳ Contenu à venir.</div>
+    </div>
+  </div>
+
+  <div id="rulesTab" class="tabContent">
+    <div class="panel">
+      <div class="panelTitle"><h2>Règlement</h2><span class="hint">à venir</span></div>
+      <div class="placeholder">⏳ Contenu à venir.</div>
+    </div>
   </div>
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-import { getFirestore, collection, onSnapshot, query, orderBy } 
-  from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
+  // ================================
+  // Firebase (mêmes infos que l’admin)
+  // ================================
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    doc,
+    onSnapshot,
+    query,
+    orderBy
+  } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyB8BS8_Z7-vUVkVZcHhWxUzP62KkB1I4M4",
-  authDomain: "americano-noel-suzini.firebaseapp.com",
-  projectId: "americano-noel-suzini"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-const playersCol = collection(db,"players");
-const matchesCol = collection(db,"matches");
-
-const matchesEl = document.getElementById("matchesContainer");
-const rankingEl = document.getElementById("rankingContainer");
-
-document.querySelectorAll(".tab").forEach(btn=>{
-  btn.onclick=()=>{
-    document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));
-    document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
-    btn.classList.add("active");
-    document.getElementById(btn.dataset.tab).classList.add("active");
+  const firebaseConfig = {
+    apiKey: "AIzaSyD7-WLKEmajFSh4INdTCVpPvF2hv_jPQm8",
+    authDomain: "americano-lisa-manon.firebaseapp.com",
+    projectId: "americano-lisa-manon",
+    storageBucket: "americano-lisa-manon.firebasestorage.app",
+    messagingSenderId: "98885291802",
+    appId: "1:98885291802:web:6aff774b8f8df14db226a3"
   };
-});
 
-onSnapshot(query(matchesCol,orderBy("createdAt","asc")),snap=>{
-  matchesEl.innerHTML = snap.empty ? "Aucun match." : "";
-  snap.docs.forEach(d=>{
-    const m=d.data();
-    const div=document.createElement("div");
-    div.className="match";
-    div.innerHTML=`
-      <strong>Tour ${m.roundNumber ?? "-"}</strong><br>
-      ${(m.teamA||[]).join(" & ")} vs ${(m.teamB||[]).join(" & ")}<br>
-      <span class="small">Score : ${m.scoreA ?? "-"} – ${m.scoreB ?? "-"}</span>
-    `;
-    matchesEl.appendChild(div);
-  });
-});
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
-onSnapshot(query(playersCol,orderBy("pointsGeneral","desc")),snap=>{
-  if(snap.empty){
-    rankingEl.textContent="Aucun joueur.";
-    return;
+  // ================================
+  // UI
+  // ================================
+  const statusDot = document.getElementById("statusDot");
+  const statusText = document.getElementById("statusText");
+
+  function setStatus(state, text){
+    statusText.textContent = text;
+    statusDot.classList.remove("ok","bad");
+    if(state==="ok") statusDot.classList.add("ok");
+    else if(state==="bad") statusDot.classList.add("bad");
   }
-  let html="<table><tr><th>#</th><th>Nom</th><th>Points</th></tr>";
-  snap.docs.forEach((d,i)=>{
-    const p=d.data();
-    html+=`<tr><td>${i+1}</td><td>${p.name||""}</td><td>${p.pointsGeneral||0}</td></tr>`;
-  });
-  html+="</table>";
-  rankingEl.innerHTML=html;
-});
-</script>
 
+  // Tabs
+  const tabBtns = document.querySelectorAll(".tabBtn");
+  const tabContents = document.querySelectorAll(".tabContent");
+  tabBtns.forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const target = btn.dataset.tab;
+      tabBtns.forEach(b=>b.classList.remove("active"));
+      tabContents.forEach(c=>c.classList.remove("active"));
+      btn.classList.add("active");
+      document.getElementById(target).classList.add("active");
+    });
+  });
+
+  // ================================
+  // Helpers
+  // ================================
+  function sortByName(list){
+    return [...list].sort((a,b)=>(a.name||"").localeCompare((b.name||""),"fr",{sensitivity:"base"}));
+  }
+  function teamIcon(team){
+    return team === "Lisa" ? "🌶️" : (team === "Manon" ? "🐝" : "•");
+  }
+
+  // ================================
+  // Firestore refs
+  // ================================
+  const playersCol = collection(db, "players");
+  const draftRef = doc(db, "meta", "draft");
+
+  let playersCache = [];
+  let draftCache = { starter:"Lisa", turn:null, initialized:false };
+
+  // ================================
+  // Render
+  // ================================
+  const draftTurnLine = document.getElementById("draftTurnLine");
+  const draftStatePill = document.getElementById("draftStatePill");
+
+  function renderTurn(){
+    if(!draftCache.turn){
+      draftTurnLine.textContent = "— (draft non initialisé)";
+      draftStatePill.className = "badge warn";
+      draftStatePill.textContent = "Non initialisé";
+      return;
+    }
+    draftTurnLine.textContent = `${draftCache.turn} ${teamIcon(draftCache.turn)}`;
+    draftStatePill.className = "badge ok";
+    draftStatePill.textContent = "En cours";
+  }
+
+  function mkChip(p, cls){
+    const chip = document.createElement("div");
+    chip.className = "chip" + (cls ? " " + cls : "");
+    const initial = (p.gender || "").toUpperCase() || "•";
+    const icon = p.team ? teamIcon(p.team) + " " : "";
+    chip.innerHTML = `<span>${icon}${p.name || "(sans nom)"}</span><small>${initial}</small>`;
+    return chip;
+  }
+
+  function renderTeams(){
+    renderTurn();
+
+    const solo = sortByName(playersCache.filter(p=>!p.team));
+    const lisa = sortByName(playersCache.filter(p=>p.team==="Lisa"));
+    const manon = sortByName(playersCache.filter(p=>p.team==="Manon"));
+
+    document.getElementById("countSolo").textContent = String(solo.length);
+    document.getElementById("countLisa").textContent = String(lisa.length);
+    document.getElementById("countManon").textContent = String(manon.length);
+
+    const soloList = document.getElementById("soloList");
+    const lisaList = document.getElementById("lisaList");
+    const manonList = document.getElementById("manonList");
+
+    soloList.innerHTML = "";
+    lisaList.innerHTML = "";
+    manonList.innerHTML = "";
+
+    if(!solo.length) soloList.innerHTML = `<div class="small muted">Aucun joueur</div>`;
+    else solo.forEach(p=> soloList.appendChild(mkChip(p, "")));
+
+    if(!lisa.length) lisaList.innerHTML = `<div class="small muted">Aucun joueur</div>`;
+    else lisa.forEach(p=> lisaList.appendChild(mkChip(p, "lisa")));
+
+    if(!manon.length) manonList.innerHTML = `<div class="small muted">Aucun joueur</div>`;
+    else manon.forEach(p=> manonList.appendChild(mkChip(p, "manon")));
+  }
+
+  // ================================
+  // Live listeners
+  // ================================
+  function init(){
+    setStatus("ok","Connecté");
+
+    onSnapshot(query(playersCol, orderBy("createdAt","asc")), (snap)=>{
+      playersCache = snap.docs.map(d=>({ id:d.id, ...d.data() }));
+      renderTeams();
+    }, (err)=>{
+      console.error(err);
+      setStatus("bad","Erreur Firestore");
+    });
+
+    onSnapshot(draftRef, (snap)=>{
+      if(snap.exists()){
+        draftCache = snap.data() || draftCache;
+      } else {
+        draftCache = { starter:"Lisa", turn:null, initialized:false };
+      }
+      renderTeams();
+    }, (err)=>{
+      console.error(err);
+      setStatus("bad","Erreur Firestore");
+    });
+  }
+
+  init();
+</script>
 </body>
 </html>
