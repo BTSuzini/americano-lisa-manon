@@ -1,11 +1,11 @@
 <!-- =========================
-     TV.html (vue TV) — v2
-     - 3 bandeaux en haut (Vert Admin + Rouge Lisa + Jaune Manon)
-     - Layout 2/3 gauche : Tour en cours / Tour à venir (✅ plus de “Dernier tour”)
-     - Layout 1/3 droite : Classement équipes + Classement général
-     - Sur chaque tour : Terrain 1 et Terrain 2 côte à côte (✅)
-     - Optimisé écran TV (grandes typos, cartes larges)
-     - Assets : img/logo-suzini.jpeg + img/tournoi.jpeg (jpeg)
+     TV.html (vue TV) — v3 FIX
+     - Layout FIXE sans scroll (100vh, overflow hidden)
+     - 3 bandeaux en haut
+     - Layout 2/3 gauche : Tour en cours / Tour à venir
+     - Layout 1/3 droite : Classement équipes + Classement général (✅ à droite)
+     - Sur chaque tour : Terrain 1 et 2 côte à côte (✅)
+     - AUCUN scroll (✅)
      ========================= -->
 <!doctype html>
 <html lang="fr">
@@ -18,7 +18,6 @@
     :root{
       --bg:#0b1220;
       --panel:#0f172a;
-      --panel2:#111c33;
       --text:#e5e7eb;
       --muted:#9ca3af;
       --border:rgba(255,255,255,.10);
@@ -39,8 +38,12 @@
     }
 
     *{ box-sizing:border-box; }
-    body{
+    html, body{
+      height:100%;
       margin:0;
+      overflow:hidden; /* ✅ aucun scroll */
+    }
+    body{
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       background: radial-gradient(1100px 700px at 15% 10%, rgba(34,197,94,.18), transparent 55%),
                   radial-gradient(1000px 650px at 85% 15%, rgba(250,204,21,.14), transparent 55%),
@@ -49,10 +52,17 @@
       color: var(--text);
     }
 
+    /* ===== Page layout: topBars + main (no scroll) ===== */
+    .page{
+      height:100vh;            /* ✅ fixe */
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;         /* ✅ */
+    }
+
     /* ====== 3 bandeaux ====== */
     .topBars{
-      position: sticky;
-      top:0;
+      flex: 0 0 auto;
       z-index: 50;
       box-shadow: var(--shadow);
     }
@@ -125,32 +135,55 @@
       text-align:center;
     }
 
-    /* ====== Layout ====== */
+    /* ===== Main ===== */
+    main{
+      flex: 1 1 auto;          /* prend tout le reste */
+      overflow:hidden;         /* ✅ aucun scroll */
+      display:flex;
+      justify-content:center;
+      align-items:stretch;
+      padding: 14px 18px 16px;
+    }
+
     .wrap{
+      width:100%;
       max-width: 1800px;
-      margin: 16px auto 26px;
-      padding: 0 18px;
+      overflow:hidden;         /* ✅ */
+      display:flex;
     }
 
     .grid{
+      width:100%;
       display:grid;
-      grid-template-columns: 2fr 1fr; /* 2/3 gauche */
+      grid-template-columns: 2fr 1fr; /* ✅ 2/3 - 1/3 */
       gap: 16px;
-      align-items: start;
+      align-items: stretch;
+      overflow:hidden;         /* ✅ */
+      min-height:0;
     }
 
     .col{
       display:flex;
       flex-direction:column;
       gap:16px;
+      overflow:hidden;         /* ✅ */
+      min-height:0;
     }
+
+    /* chaque colonne se répartit en 2 cartes hauteur égale */
+    .col.left .card{ flex:1 1 0; min-height:0; }
+    .col.right .card{ flex:1 1 0; min-height:0; }
 
     .card{
       background: linear-gradient(180deg, rgba(15,23,42,.96), rgba(15,23,42,.90));
       border: 1px solid var(--border);
       border-radius: 18px;
       box-shadow: var(--shadow);
-      padding: 14px 14px 16px;
+      padding: 14px 14px 14px;
+      overflow:hidden;         /* ✅ */
+      display:flex;
+      flex-direction:column;
+      min-height:0;
     }
 
     .cardHead{
@@ -159,6 +192,7 @@
       justify-content:space-between;
       gap:10px;
       margin-bottom: 10px;
+      flex: 0 0 auto;
     }
     .cardTitle{
       font-weight:1000;
@@ -180,16 +214,19 @@
       margin-bottom: 8px;
     }
 
-    /* ✅ Terrains côte à côte */
+    /* zone contenu dans les cartes = jamais de scroll, doit "tenir" */
+    .cardBody{
+      flex: 1 1 auto;
+      min-height:0;
+      overflow:hidden; /* ✅ pas de scroll interne */
+    }
+
+    /* ✅ Terrains côte à côte (toujours, TV) */
     .courtsGrid{
       display:grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
       align-items: start;
-    }
-    @media (max-width: 1200px){
-      .grid{ grid-template-columns: 1fr; }
-      .courtsGrid{ grid-template-columns: 1fr; } /* si écran plus petit */
     }
 
     .courtBlock{
@@ -197,6 +234,7 @@
       border-radius: 16px;
       background: rgba(255,255,255,.04);
       padding: 12px;
+      overflow:hidden;
     }
     .courtTop{
       display:flex;
@@ -214,6 +252,7 @@
       font-weight:900;
       font-size: 13px;
       color: var(--muted);
+      white-space:nowrap;
     }
 
     .teamLine{
@@ -226,6 +265,7 @@
       border: 1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.22);
       margin-top: 8px;
+      overflow:hidden;
     }
     .badge{
       display:inline-flex;
@@ -237,15 +277,21 @@
       font-size: 13px;
       border: 1px solid rgba(255,255,255,.12);
       white-space:nowrap;
+      flex: 0 0 auto;
     }
     .badge.lisa{ background: rgba(239,68,68,.18); }
     .badge.manon{ background: rgba(250,204,21,.18); color:#111827; border-color: rgba(0,0,0,.12); }
+
     .names{
       font-weight: 1000;
       font-size: 16px;
       color: rgba(229,231,235,.95);
       text-align:right;
-      flex:1;
+      flex: 1 1 auto;
+      min-width:0;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
     }
     .names.dark{ color:#111827; }
 
@@ -267,20 +313,23 @@
       font-weight: 1000;
       font-size: 22px;
       letter-spacing:.5px;
+      white-space:nowrap;
     }
 
     .benchBox{
       margin-top: 12px;
-      padding: 12px;
+      padding: 10px;
       border-radius: 16px;
       border: 1px dashed rgba(255,255,255,.16);
       background: rgba(0,0,0,.18);
+      overflow:hidden;
     }
     .benchTitle{
       font-weight:1000;
       font-size: 14px;
       margin-bottom: 8px;
       color: rgba(229,231,235,.92);
+      white-space:nowrap;
     }
     .benchList{
       display:flex;
@@ -298,35 +347,10 @@
       font-weight: 1000;
       font-size: 14px;
       color: rgba(229,231,235,.92);
+      white-space:nowrap;
     }
 
-    /* Tables rankings */
-    table{
-      width: 100%;
-      border-collapse: collapse;
-      border-radius: 16px;
-      overflow:hidden;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.18);
-      font-size: 14px;
-    }
-    th, td{
-      padding: 10px 10px;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      text-align:left;
-      vertical-align: top;
-      font-weight: 900;
-    }
-    th{
-      background: rgba(255,255,255,.06);
-      color: rgba(229,231,235,.92);
-      font-weight: 1000;
-      font-size: 13px;
-      letter-spacing:.2px;
-    }
-    td b{ font-weight: 1000; }
-    .right{ text-align:right; }
-
+    /* Rankings */
     .duelRow{
       display:flex;
       align-items:center;
@@ -342,83 +366,121 @@
       font-weight:1000;
       font-size: 28px;
       letter-spacing:.5px;
+      white-space:nowrap;
+    }
+
+    table{
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 16px;
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      font-size: 13px; /* un poil plus petit pour tenir sans scroll */
+    }
+    th, td{
+      padding: 8px 10px;       /* ✅ plus compact */
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      text-align:left;
+      vertical-align: top;
+      font-weight: 900;
+      white-space:nowrap;
+    }
+    th{
+      background: rgba(255,255,255,.06);
+      color: rgba(229,231,235,.92);
+      font-weight: 1000;
+      font-size: 12px;
+      letter-spacing:.2px;
+    }
+    td b{ font-weight: 1000; }
+    .right{ text-align:right; }
+    td.nameCell{
+      max-width: 0;
+      overflow:hidden;
+      text-overflow:ellipsis;
     }
   </style>
 </head>
 
 <body>
-  <div class="topBars">
-    <!-- Bandeau vert (Admin) -->
-    <div class="barAdmin">
-      <div class="adminRow">
-        <div>
-          <img src="img/logo-suzini.jpeg" alt="TC Suzini" class="brandImg">
-        </div>
-        <div class="adminCenter">
-          <div class="t1">Americano Lisa vs Manon</div>
-          <div class="t2">BT Suzini</div>
-        </div>
-        <div class="rightPack">
-          <img src="img/tournoi.jpeg" alt="Tournoi" class="brandImg">
-          <span class="statusDotOnly" id="statusDot" aria-label="statut connexion"></span>
+  <div class="page">
+    <div class="topBars">
+      <!-- Bandeau vert (Admin) -->
+      <div class="barAdmin">
+        <div class="adminRow">
+          <div>
+            <img src="img/logo-suzini.jpeg" alt="TC Suzini" class="brandImg">
+          </div>
+          <div class="adminCenter">
+            <div class="t1">Americano Lisa vs Manon</div>
+            <div class="t2">BT Suzini</div>
+          </div>
+          <div class="rightPack">
+            <img src="img/tournoi.jpeg" alt="Tournoi" class="brandImg">
+            <span class="statusDotOnly" id="statusDot" aria-label="statut connexion"></span>
+          </div>
         </div>
       </div>
+
+      <!-- Bandeau rouge Lisa -->
+      <div class="barLisa">🌶️🌶️🌶️ Team LISA « LOS PIMIENTOOOOOOS » 🌶️🌶️🌶️</div>
+
+      <!-- Bandeau jaune Manon -->
+      <div class="barManon">🐝🐝🐝 Team Manon « HONEY SMASH » 🐝🐝🐝</div>
     </div>
 
-    <!-- Bandeau rouge Lisa -->
-    <div class="barLisa">🌶️🌶️🌶️ Team LISA « LOS PIMIENTOOOOOOS » 🌶️🌶️🌶️</div>
+    <main>
+      <div class="wrap">
+        <div class="grid">
+          <!-- ===================== GAUCHE (2/3) ===================== -->
+          <div class="col left">
+            <div class="card">
+              <div class="cardHead">
+                <div class="cardTitle">Tour en cours</div>
+                <div class="cardMeta" id="curMeta">—</div>
+              </div>
+              <div id="curBody" class="cardBody">
+                <div class="miniInfo">Chargement…</div>
+              </div>
+            </div>
 
-    <!-- Bandeau jaune Manon -->
-    <div class="barManon">🐝🐝🐝 Team Manon « HONEY SMASH » 🐝🐝🐝</div>
-  </div>
+            <div class="card">
+              <div class="cardHead">
+                <div class="cardTitle">Tour à venir</div>
+                <div class="cardMeta" id="nextMeta">—</div>
+              </div>
+              <div id="nextBody" class="cardBody">
+                <div class="miniInfo">Chargement…</div>
+              </div>
+            </div>
+          </div>
 
-  <div class="wrap">
-    <div class="grid">
-      <!-- ===================== GAUCHE (2/3) ===================== -->
-      <div class="col">
-        <!-- ✅ Plus de "Dernier tour" -->
-        <div class="card">
-          <div class="cardHead">
-            <div class="cardTitle">Tour en cours</div>
-            <div class="cardMeta" id="curMeta">—</div>
-          </div>
-          <div id="curBody" class="miniInfo">Chargement…</div>
-        </div>
+          <!-- ===================== DROITE (1/3) ===================== -->
+          <div class="col right">
+            <div class="card">
+              <div class="cardHead">
+                <div class="cardTitle">Classement par équipe</div>
+                <div class="cardMeta">Somme pointsGeneral</div>
+              </div>
+              <div id="teamRankBox" class="cardBody">
+                <div class="miniInfo">Chargement…</div>
+              </div>
+            </div>
 
-        <div class="card">
-          <div class="cardHead">
-            <div class="cardTitle">Tour à venir</div>
-            <div class="cardMeta" id="nextMeta">—</div>
-          </div>
-          <div id="nextBody" class="miniInfo">Chargement…</div>
-        </div>
-      </div>
-
-      <!-- ===================== DROITE (1/3) ===================== -->
-      <div class="col">
-        <!-- Classement équipes -->
-        <div class="card">
-          <div class="cardHead">
-            <div class="cardTitle">Classement par équipe</div>
-            <div class="cardMeta">Somme pointsGeneral</div>
-          </div>
-          <div id="teamRankBox">
-            <div class="miniInfo">Chargement…</div>
-          </div>
-        </div>
-
-        <!-- Classement général -->
-        <div class="card">
-          <div class="cardHead">
-            <div class="cardTitle">Classement individuel (général)</div>
-            <div class="cardMeta">pointsGeneral</div>
-          </div>
-          <div id="indRankBox">
-            <div class="miniInfo">Chargement…</div>
+            <div class="card">
+              <div class="cardHead">
+                <div class="cardTitle">Classement individuel (général)</div>
+                <div class="cardMeta">Top (TV)</div>
+              </div>
+              <div id="indRankBox" class="cardBody">
+                <div class="miniInfo">Chargement…</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </main>
   </div>
 
 <script type="module">
@@ -459,7 +521,6 @@
   // UI
   // ================================
   const statusDot = document.getElementById("statusDot");
-
   function setStatus(state){
     statusDot.classList.remove("ok","bad");
     if(state==="ok") statusDot.classList.add("ok");
@@ -533,8 +594,6 @@
     const bench = buildBenchForRound(roundObj);
 
     let html = `<div class="miniInfo"><b>Tour ${r}</b> • Type: <b>${typeLabel}</b></div>`;
-
-    // ✅ terrains côte à côte
     html += `<div class="courtsGrid">`;
 
     matches.forEach((m, idx)=>{
@@ -542,7 +601,6 @@
       const A = (m.teamA||[]);
       const B = (m.teamB||[]);
       const validated = (m.validated===true);
-
       const sc = (mode==="next") ? "—" : scoreText(m);
 
       html += `
@@ -554,12 +612,12 @@
 
           <div class="teamLine">
             <span class="badge lisa">🌶️ Lisa</span>
-            <div class="names">${(A[0]||"—")} &nbsp;•&nbsp; ${(A[1]||"—")}</div>
+            <div class="names">${(A[0]||"—")} • ${(A[1]||"—")}</div>
           </div>
 
           <div class="teamLine" style="background: rgba(250,204,21,.14); border-color: rgba(0,0,0,.10);">
             <span class="badge manon">🐝 Manon</span>
-            <div class="names dark">${(B[0]||"—")} &nbsp;•&nbsp; ${(B[1]||"—")}</div>
+            <div class="names dark">${(B[0]||"—")} • ${(B[1]||"—")}</div>
           </div>
 
           <div class="scoreRow">
@@ -570,7 +628,7 @@
       `;
     });
 
-    html += `</div>`; // courtsGrid
+    html += `</div>`;
 
     html += `
       <div class="benchBox">
@@ -629,10 +687,18 @@
       </div>
     `;
 
-    const top = sorted.slice(0, 20);
+    /* ✅ Important pour "no scroll" : on limite le TOP */
+    const TOP_N = 14; // ajuste si besoin (12/14/16) selon ta TV
+    const top = sorted.slice(0, TOP_N);
+
     let html = `<table>
       <thead>
-        <tr><th style="width:60px;">#</th><th>Joueur</th><th style="width:120px;">Team</th><th class="right" style="width:120px;">Pts</th></tr>
+        <tr>
+          <th style="width:54px;">#</th>
+          <th>Joueur</th>
+          <th style="width:110px;">Team</th>
+          <th class="right" style="width:96px;">Pts</th>
+        </tr>
       </thead>
       <tbody>`;
 
@@ -640,7 +706,7 @@
       const teamTxt = p.team==="Lisa" ? "🌶️ Lisa" : (p.team==="Manon" ? "🐝 Manon" : "—");
       html += `<tr>
         <td>${idx+1}</td>
-        <td><b>${p.name||""}</b></td>
+        <td class="nameCell"><b>${p.name||""}</b></td>
         <td>${teamTxt}</td>
         <td class="right"><b>${Number(p.pointsGeneral)||0}</b></td>
       </tr>`;
