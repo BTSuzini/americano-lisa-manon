@@ -9,6 +9,7 @@
     :root{
       --bg:#ffffff;
       --panel:#ffffff;
+      --panel2:#f8fafc;
       --text:#111827;
       --muted:#6b7280;
       --border:rgba(0,0,0,.10);
@@ -17,15 +18,17 @@
       --green:#16a34a;
       --green2:#15803d;
 
-      --lisa:#ef4444;      /* rouge (chips joueurs) */
-      --lisaDark:#b91c1c;  /* rouge foncé (badge Team Lisa) */
+      --lisa:#ef4444;
+      --lisa2:#b91c1c;
 
-      --manon:#facc15;      /* jaune (chips joueurs) */
-      --manonDark:#ca8a04;  /* jaune foncé (badge Team Manon) */
+      --manon:#facc15;
+      --manon2:#ca8a04;
 
       --ok:#16a34a;
       --warn:#f59e0b;
       --bad:#ef4444;
+
+      --btnText:#ffffff;
     }
 
     *{ box-sizing:border-box; }
@@ -36,7 +39,6 @@
       color: var(--text);
     }
 
-    /* ===== HEADER ===== */
     header{
       background: linear-gradient(90deg, rgba(22,163,74,1), rgba(21,128,61,1));
       padding: 12px 14px;
@@ -45,40 +47,29 @@
       top:0;
       z-index: 50;
     }
+
+    /* bandeau centré + 3 zones */
     .headRow{
       max-width: 1100px;
       margin: 0 auto;
       display:grid;
-      grid-template-columns: 140px 1fr 220px; /* gauche / centre / droite */
+      grid-template-columns: 120px 1fr 120px; /* gauche / centre / droite */
       align-items:center;
       gap:10px;
     }
-    .leftSlot{ display:flex; align-items:center; justify-content:flex-start; }
-    .centerSlot{ display:flex; flex-direction:column; align-items:center; text-align:center; line-height:1.15; }
-    .rightSlot{ display:flex; align-items:center; justify-content:flex-end; gap:10px; }
 
     .brandImg{
-      height: 44px;
+      height: 42px;
       width: auto;
-      max-width: 100%;
       object-fit: contain;
       display:block;
     }
+    .leftSlot{ display:flex; align-items:center; justify-content:flex-start; }
+    .centerSlot{ display:flex; flex-direction:column; align-items:center; text-align:center; line-height:1.15; color:#fff; }
+    .rightSlot{ display:flex; align-items:center; justify-content:flex-end; }
 
-    /* Titre bandeau : blanc, gras, centré */
-    .centerSlot .t1{
-      font-weight: 900;
-      font-size: 16px;
-      color:#fff;
-      letter-spacing:.2px;
-    }
-    .centerSlot .t2{
-      font-weight: 700;
-      font-size: 13px;
-      color: rgba(255,255,255,.92);
-      opacity: 1;
-      margin-top: 2px;
-    }
+    .t1{ font-weight:1000; font-size:16px; color:#fff; }
+    .t2{ font-weight:800; font-size:13px; opacity:.95; color:#fff; }
 
     .statusPill{
       display:flex;
@@ -86,11 +77,11 @@
       gap:8px;
       padding:8px 10px;
       border-radius:999px;
-      background: rgba(0,0,0,.22);
-      border: 1px solid rgba(255,255,255,.20);
+      background: rgba(0,0,0,.25);
+      border: 1px solid rgba(255,255,255,.18);
       font-size:12px;
-      color:#fff;
       white-space:nowrap;
+      color:#fff;
     }
     .dot{
       width:10px; height:10px; border-radius:999px;
@@ -100,7 +91,6 @@
     .dot.ok{ background: var(--ok); box-shadow: 0 0 0 4px rgba(34,197,94,.18); }
     .dot.bad{ background: var(--bad); box-shadow: 0 0 0 4px rgba(239,68,68,.18); }
 
-    /* ===== LAYOUT ===== */
     .container{
       max-width: 1100px;
       margin: 14px auto 40px auto;
@@ -123,20 +113,20 @@
       padding: 10px 12px;
       border-radius: 12px;
       cursor:pointer;
-      font-weight:800;
+      font-weight:900;
       font-size:14px;
       transition: .15s ease;
     }
     .tabBtn:hover{ transform: translateY(-1px); }
     .tabBtn.active{
-      border-color: rgba(22,163,74,.35);
-      background: rgba(22,163,74,.18);
-      box-shadow: 0 12px 25px rgba(0,0,0,.14);
+      border-color: rgba(255,255,255,.22);
+      background: rgba(22,163,74,.20);
+      box-shadow: 0 12px 25px rgba(0,0,0,.22);
     }
-
     .tabContent{ display:none; }
     .tabContent.active{ display:block; }
 
+    /* Panels */
     .grid{
       display:grid;
       grid-template-columns: 2fr 1fr;
@@ -145,17 +135,16 @@
     @media (max-width: 920px){
       .grid{ grid-template-columns: 1fr; }
       .tabBtn{ min-width: 130px; }
-      .headRow{ grid-template-columns: 120px 1fr 200px; }
-      .brandImg{ height: 40px; }
     }
 
     .panel{
-      background: var(--panel);
+      background: #ffffff;
       border: 1px solid var(--border);
       border-radius: 16px;
       box-shadow: var(--shadow);
       padding: 12px;
     }
+
     .panelTitle{
       display:flex;
       align-items:center;
@@ -166,10 +155,14 @@
     .panelTitle h2{
       margin:0;
       font-size: 15px;
-      font-weight: 900;
+      font-weight: 1000;
       letter-spacing:.2px;
     }
-    .hint{ color: var(--muted); font-size: 12px; }
+    .hint{
+      color: var(--muted);
+      font-size: 12px;
+      text-align:right;
+    }
 
     .row{
       display:flex;
@@ -192,36 +185,34 @@
     textarea{ resize: vertical; min-height: 80px; }
 
     .btn{
-      border: 1px solid rgba(0,0,0,.12);
-      background: #ffffff;
+      border: 1px solid rgba(0,0,0,.10);
+      background: #f3f4f6;
       color: var(--text);
       padding: 10px 12px;
       border-radius: 12px;
       cursor:pointer;
-      font-weight: 900;
+      font-weight: 1000;
       font-size: 13px;
       transition:.15s ease;
       white-space:nowrap;
     }
     .btn:hover{ transform: translateY(-1px); }
-
     .btn.primary{
       background: linear-gradient(180deg, rgba(22,163,74,.98), rgba(21,128,61,.98));
-      border-color: rgba(22,163,74,.25);
+      border-color: rgba(255,255,255,.20);
       color: #fff;
     }
     .btn.secondary{
-      background: #f3f4f6;
-      border-color: rgba(0,0,0,.10);
+      background: rgba(0,0,0,.04);
       color: var(--text);
     }
     .btn.danger{
       background: rgba(239,68,68,.12);
-      border-color: rgba(239,68,68,.28);
+      border-color: rgba(239,68,68,.25);
       color: #7f1d1d;
     }
+    .btn.small{ padding: 7px 10px; border-radius: 10px; font-size: 12px; }
 
-    /* ===== BADGES (Team) : même couleur mais plus foncée ===== */
     .badge{
       display:inline-flex;
       align-items:center;
@@ -231,23 +222,25 @@
       border: 1px solid rgba(0,0,0,.10);
       background: #f3f4f6;
       font-size: 12px;
-      font-weight: 900;
+      font-weight: 1000;
       color: var(--text);
       white-space:nowrap;
     }
     .badge.lisa{
-      background: rgba(185,28,28,.18);
-      border-color: rgba(185,28,28,.35);
-      color: #111827;
+      background: rgba(239,68,68,.18);
+      border-color: rgba(239,68,68,.35);
+      color:#111827;
     }
     .badge.manon{
-      background: rgba(202,138,4,.22);
-      border-color: rgba(202,138,4,.40);
+      background: rgba(250,204,21,.18);
+      border-color: rgba(250,204,21,.35);
       color: #111827;
     }
-    .badge.neutral{ background: #f3f4f6; }
+    .badge.neutral{ background: rgba(0,0,0,.04); }
+    .badge.ok{ background: rgba(34,197,94,.18); border-color: rgba(34,197,94,.35); }
+    .badge.warn{ background: rgba(245,158,11,.18); border-color: rgba(245,158,11,.35); }
+    .badge.bad{ background: rgba(239,68,68,.18); border-color: rgba(239,68,68,.35); }
 
-    /* ===== CHIPS (joueurs) ===== */
     .chips{
       display:flex;
       flex-wrap:wrap;
@@ -258,94 +251,233 @@
       background: #fafafa;
       min-height: 54px;
     }
-
     .chip{
       display:inline-flex;
       align-items:center;
       gap:8px;
       padding: 8px 10px;
       border-radius: 999px;
+      background: rgba(31,41,55,.08);
       border: 1px solid rgba(0,0,0,.10);
       cursor:pointer;
-      font-weight: 900;
+      font-weight:1000;
       font-size: 12px;
       user-select:none;
-      background: #f3f4f6;   /* solo */
-      color: #111827;
     }
-    .chip:hover{ transform: translateY(-1px); }
-
     .chip small{
-      font-weight: 900;
+      font-weight:1000;
+      opacity:.95;
       padding: 2px 8px;
       border-radius: 999px;
       border: 1px solid rgba(0,0,0,.10);
-      background: rgba(255,255,255,.65);
+      background: rgba(255,255,255,.70);
       color: #111827;
     }
+    .chip.lisa{ background: rgba(239,68,68,.14); border-color: rgba(239,68,68,.28); }
+    .chip.lisa small{ background: rgba(185,28,28,.10); border-color: rgba(185,28,28,.18); }
+    .chip.manon{ background: rgba(250,204,21,.16); border-color: rgba(250,204,21,.30); }
+    .chip.manon small{ background: rgba(202,138,4,.10); border-color: rgba(202,138,4,.18); }
 
-    .chip.lisa{
-      background: rgba(239,68,68,.18);
-      border-color: rgba(239,68,68,.35);
+    /* bouton suppression dans chip SOLO */
+    .chip .delBtn{
+      margin-left: 6px;
+      border: 1px solid rgba(239,68,68,.25);
+      background: rgba(239,68,68,.10);
+      color:#7f1d1d;
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-weight: 1000;
+      font-size: 11px;
+      cursor:pointer;
     }
-    .chip.lisa small{
-      background: rgba(185,28,28,.14);
-      border-color: rgba(185,28,28,.30);
-    }
-
-    .chip.manon{
-      background: rgba(250,204,21,.22);
-      border-color: rgba(250,204,21,.45);
-    }
-    .chip.manon small{
-      background: rgba(202,138,4,.14);
-      border-color: rgba(202,138,4,.30);
-    }
+    .chip .delBtn:hover{ transform: translateY(-1px); }
 
     .divider{
       height:1px;
-      background: rgba(0,0,0,.08);
+      background: rgba(0,0,0,.06);
       margin: 10px 0;
     }
 
-    /* Journal */
     .log{
       background: #0b1220;
-      border: 1px solid rgba(0,0,0,.10);
+      border: 1px solid rgba(255,255,255,.10);
       border-radius: 14px;
       padding: 10px;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
       font-size: 12px;
-      color: #e5e7eb;
+      color: rgba(229,231,235,.92);
       max-height: 380px;
       overflow:auto;
       white-space: pre-wrap;
     }
 
-    /* Encart jaune en bas : texte noir */
+    /* Subtabs (Matchs) */
+    .subtabs{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-bottom:10px;
+    }
+    .subBtn{
+      flex:1;
+      min-width: 240px;
+      padding: 9px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,.10);
+      background: #f3f4f6;
+      color: var(--text);
+      cursor:pointer;
+      font-weight: 1000;
+      font-size: 13px;
+    }
+    .subBtn.active{
+      background: rgba(22,163,74,.12);
+      border-color: rgba(22,163,74,.22);
+    }
+    .subContent{ display:none; }
+    .subContent.active{ display:block; }
+
     .warnBox{
-      border: 1px solid rgba(245,158,11,.45);
+      border: 1px solid rgba(245,158,11,.35);
       background: rgba(245,158,11,.18);
-      color: #111827;
+      color: #111827; /* demandé : texte noir */
       border-radius: 14px;
       padding: 10px;
       font-size: 12px;
       margin-top:10px;
-      font-weight: 700;
-    }
-
-    .muted{ color: var(--muted); }
-    .small{ font-size: 12px; color: var(--muted); }
-
-    /* Placeholder */
-    .placeholder{
-      padding: 18px;
-      border: 1px dashed rgba(0,0,0,.18);
-      border-radius: 14px;
-      background: #fafafa;
-      color: #111827;
       font-weight: 800;
     }
+
+    /* Match cards */
+    .tourGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 920px){
+      .tourGrid{ grid-template-columns: 1fr; }
+    }
+
+    .tourCard{
+      border: 1px solid rgba(0,0,0,.10);
+      border-radius: 16px;
+      background:#fff;
+      box-shadow: var(--shadow);
+      padding: 12px;
+    }
+    .tourCard .head{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .tourCard .head .title{
+      font-weight: 1000;
+      font-size: 14px;
+    }
+    .tourCard .head .meta{
+      color: var(--muted);
+      font-size: 12px;
+      text-align:right;
+      font-weight: 800;
+    }
+
+    .courtBlock{
+      border: 1px solid rgba(0,0,0,.08);
+      border-radius: 14px;
+      background:#fafafa;
+      padding: 10px;
+      margin-top: 10px;
+    }
+    .courtTop{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:8px;
+    }
+    .courtTop .cTitle{ font-weight: 1000; font-size: 12px; }
+    .matchLine{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      font-size: 13px;
+      font-weight: 900;
+    }
+    .teamLine{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+    }
+
+    .scoreRow{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+      margin-top: 8px;
+    }
+    .scoreRow input{
+      width: 88px;
+      text-align:center;
+      font-weight: 1000;
+    }
+
+    .benchBox{
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 14px;
+      border: 1px dashed rgba(0,0,0,.14);
+      background: #fff;
+    }
+    .benchBox .bTitle{ font-weight: 1000; font-size: 12px; margin-bottom: 6px; }
+    .benchList{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.10);
+      background: #f3f4f6;
+      font-size: 12px;
+      font-weight: 1000;
+      color: var(--text);
+      white-space:nowrap;
+    }
+
+    table{
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      overflow:hidden;
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,.10);
+      background: #fff;
+    }
+    th, td{
+      padding: 8px 8px;
+      border-bottom: 1px solid rgba(0,0,0,.06);
+      text-align:left;
+      vertical-align: top;
+    }
+    th{
+      font-size: 12px;
+      color: #111827;
+      background: #f3f4f6;
+      font-weight: 1000;
+    }
+    tr:hover td{ background: rgba(0,0,0,.02); }
+
+    .small{ font-size: 12px; color: var(--muted); }
+    .muted{ color: var(--muted); }
+    .right{ text-align:right; }
   </style>
 </head>
 
@@ -353,17 +485,19 @@
 <header>
   <div class="headRow">
     <div class="leftSlot">
-      <img src="img/logo-suzini.png" alt="TC Suzini" class="brandImg">
+      <!-- ✅ jpeg -->
+      <img src="img/logo-suzini.jpeg" alt="TC Suzini" class="brandImg">
     </div>
 
     <div class="centerSlot">
-      <div class="t1">ADMIN – AMERICANO LISA vs MANON</div>
-      <div class="t2">BT Suzini • Firestore en temps réel</div>
+      <div class="t1">Admin – Americano Lisa vs Manon</div>
+      <div class="t2">BT Suzini</div>
     </div>
 
-    <div class="rightSlot">
-      <img src="img/tournoi.png" alt="Tournoi" class="brandImg">
-      <div class="statusPill" id="statusPill">
+    <div class="rightSlot" style="gap:10px;">
+      <!-- ✅ jpeg -->
+      <img src="img/tournoi.jpeg" alt="Tournoi" class="brandImg">
+      <div class="statusPill" id="statusPill" title="Statut Firestore">
         <span class="dot" id="statusDot"></span>
         <span id="statusText">Connexion…</span>
       </div>
@@ -407,22 +541,25 @@
         <div class="row">
           <input id="newPlayerName" type="text" placeholder="Nom / Prénom (ex: Jules P.)" style="flex:2; min-width:220px;">
           <select id="newPlayerGender" style="flex:1; min-width:160px;">
-            <option value="">Sexe (optionnel)</option>
+            <option value="">Sexe (obligatoire)</option>
             <option value="H">Homme</option>
             <option value="F">Femme</option>
           </select>
           <button class="btn primary" id="btnAddPlayer">Ajouter le joueur</button>
+
+          <!-- ✅ demandé : supprimer tous les joueurs -->
+          <button class="btn danger" id="btnResetPlayers">⚠️ Réinitialiser joueurs</button>
         </div>
 
         <div class="small" style="margin-top:8px;">
-          Astuce : tu peux laisser “Sexe” vide si tu ne veux pas gérer de filtres.
-          Les joueurs ajoutés ici n’ont pas d’équipe tant que Lisa/Manon (ou l’admin) ne les choisissent pas.
+          Sexe obligatoire. Les joueurs ajoutés ici n’ont pas d’équipe tant que Lisa/Manon (ou l’admin) ne les choisissent pas.
+          <br>Tu peux aussi supprimer un joueur <b>sans équipe</b> directement dans la liste “Sans équipe” (bouton 🗑).
         </div>
 
         <div class="divider"></div>
 
         <div class="panelTitle">
-          <h2>2) Réglage du draft</h2>
+          <h2>2) Réglage du draft (qui commence ?)</h2>
           <span class="hint">Firestore: <b>meta/draft</b></span>
         </div>
 
@@ -441,14 +578,13 @@
 
           <div class="row">
             <button class="btn primary" id="btnSetStarter">Définir "qui commence"</button>
-            <button class="btn secondary" id="btnResetDraft">Réinitialiser draft</button>
-            <button class="btn danger" id="btnResetPlayers">Réinitialiser joueurs</button>
+            <button class="btn secondary" id="btnResetDraft">Réinitialiser</button>
           </div>
         </div>
 
         <div class="small" style="margin-top:8px;">
-          - “Réinitialiser draft” : enlève les équipes + remet le tour à zéro (ne supprime pas les joueurs).<br>
-          - “Réinitialiser joueurs” : <b>supprime tous les joueurs</b> (confirmation obligatoire).<br>
+          - “Définir” fixe le premier choix et met “Au tour de” sur la même personne.<br>
+          - “Réinitialiser” remet tout à zéro (utile si tu recommences).<br>
           - Règle draft : choix alterné + contrainte H/F (équilibrage) avec popup de confirmation.
         </div>
 
@@ -492,7 +628,7 @@
 
         <div class="warnBox">
           ⚠️ Onglet “Teams” = draft Lisa/Manon (choix alterné + équilibrage H/F).<br>
-          Les autres onglets sont vides pour le moment (on les branchera ensuite).
+          Les onglets Matchs / Classements / Stats sont gérés à part.
         </div>
       </div>
 
@@ -509,32 +645,136 @@
     </div>
   </div>
 
-  <!-- ===================== AUTRES ONGLET (VIDES) ===================== -->
+  <!-- ===================== TAB MATCHES ===================== -->
   <div id="matchesTab" class="tabContent">
     <div class="panel">
-      <div class="panelTitle"><h2>Matchs</h2><span class="hint">à venir</span></div>
-      <div class="placeholder">⏳ Contenu “Matchs” à venir.</div>
+      <div class="panelTitle">
+        <h2>Matchs</h2>
+        <span class="hint">Firestore: <b>matches</b> (par match, groupés par Tour)</span>
+      </div>
+
+      <div class="subtabs">
+        <button class="subBtn active" data-subtab="tourView">Tours (Dernier / En cours / À venir)</button>
+        <button class="subBtn" data-subtab="tourHistory">Historique des matchs</button>
+      </div>
+
+      <!-- ====== SUBTAB TOURS ====== -->
+      <div id="tourView" class="subContent active">
+        <div class="tourGrid">
+          <div class="tourCard" id="cardLast">
+            <div class="head">
+              <div class="title">Dernier tour (validé)</div>
+              <div class="meta" id="lastMeta">—</div>
+            </div>
+            <div id="lastBody" class="small muted">Chargement…</div>
+          </div>
+
+          <div class="tourCard" id="cardCurrent">
+            <div class="head">
+              <div class="title">Tour en cours (à valider)</div>
+              <div class="meta" id="curMeta">—</div>
+            </div>
+            <div id="curBody" class="small muted">Chargement…</div>
+          </div>
+
+          <div class="tourCard" id="cardNext">
+            <div class="head">
+              <div class="title">Tour à venir</div>
+              <div class="meta" id="nextMeta">—</div>
+            </div>
+            <div id="nextBody" class="small muted">Chargement…</div>
+          </div>
+
+          <div class="tourCard" id="cardManage">
+            <div class="head">
+              <div class="title">Gestion des tours</div>
+              <div class="meta">2 terrains</div>
+            </div>
+
+            <div class="small" style="margin-bottom:10px;">
+              - “Lancer un nouveau tournoi” : efface tous les tours et génère <b>Tour en cours</b> + <b>Tour à venir</b>.<br>
+              - “Générer le tour suivant” : autorisé uniquement si le tour <b>N-2</b> est validé.
+            </div>
+
+            <div class="row">
+              <button class="btn danger" id="btnNewTournament">⚠️ Lancer un nouveau tournoi</button>
+              <button class="btn primary" id="btnGenerateNext">Générer le tour suivant</button>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="small">
+              Règles génération :
+              <ul style="margin:8px 0 0 18px;">
+                <li>Lisa avec Lisa, Manon avec Manon (jamais mix de teams).</li>
+                <li>Tours impairs : <b>2 mixtes</b> (1H + 1F par équipe).</li>
+                <li>Tours pairs : <b>HH / FF</b> (peut être HH sur un terrain et FF sur l’autre, selon équilibrage global).</li>
+                <li>Priorités : (1) joueurs ayant joué le moins, (2) banc équilibré, (3) rotation partenaires.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====== SUBTAB HISTORIQUE ====== -->
+      <div id="tourHistory" class="subContent">
+        <div id="historyWrap" class="small muted">Chargement…</div>
+      </div>
     </div>
   </div>
 
+  <!-- ===================== TAB RANKINGS ===================== -->
   <div id="rankingsTab" class="tabContent">
     <div class="panel">
-      <div class="panelTitle"><h2>Classements</h2><span class="hint">à venir</span></div>
-      <div class="placeholder">⏳ Contenu “Classements” à venir.</div>
+      <div class="panelTitle">
+        <h2>Classements</h2>
+        <span class="hint">calculé sur les matchs <b>validés</b></span>
+      </div>
+
+      <div class="subtabs">
+        <button class="subBtn active" data-subtab="rankGeneral">Général</button>
+        <button class="subBtn" data-subtab="rankLisa">Team Lisa</button>
+        <button class="subBtn" data-subtab="rankManon">Team Manon</button>
+      </div>
+
+      <div id="rankGeneral" class="subContent active"></div>
+      <div id="rankLisa" class="subContent"></div>
+      <div id="rankManon" class="subContent"></div>
+
+      <div class="small" style="margin-top:10px;">
+        Points affichés = <b>pointsGeneral</b> dans Firestore (recalcul auto après validation / modification de score).
+      </div>
     </div>
   </div>
 
+  <!-- ===================== TAB STATS ===================== -->
   <div id="statsTab" class="tabContent">
     <div class="panel">
-      <div class="panelTitle"><h2>Statistiques</h2><span class="hint">à venir</span></div>
-      <div class="placeholder">⏳ Contenu “Statistiques” à venir.</div>
+      <div class="panelTitle">
+        <h2>Statistiques</h2>
+        <span class="hint">sur les matchs <b>validés</b></span>
+      </div>
+
+      <div class="subtabs">
+        <button class="subBtn active" data-subtab="statsMatches">Matchs joués</button>
+        <button class="subBtn" data-subtab="statsPartners">Partenaires</button>
+        <button class="subBtn" data-subtab="statsOpponents">Adversaires</button>
+      </div>
+
+      <div id="statsMatches" class="subContent active"></div>
+      <div id="statsPartners" class="subContent"></div>
+      <div id="statsOpponents" class="subContent"></div>
+
+      <div class="small" style="margin-top:10px;">
+        Les stats sont recalculées en temps réel à chaque validation / modification de match.
+      </div>
     </div>
   </div>
 </div>
 
 <script type="module">
   // ================================
-  // Firebase (projet americano-lisa-manon)
+  // Firebase
   // ================================
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
   import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
@@ -542,15 +782,15 @@
     getFirestore,
     collection,
     addDoc,
-    getDocs,
+    deleteDoc,
     doc,
     getDoc,
     setDoc,
     updateDoc,
-    deleteDoc,
     onSnapshot,
     query,
-    orderBy
+    orderBy,
+    getDocs
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -605,15 +845,33 @@
     });
   });
 
+  // Subtabs
+  document.querySelectorAll(".subBtn").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const parent = btn.closest(".panel");
+      const target = btn.dataset.subtab;
+      parent.querySelectorAll(".subBtn").forEach(b=>b.classList.remove("active"));
+      parent.querySelectorAll(".subContent").forEach(c=>c.classList.remove("active"));
+      btn.classList.add("active");
+      document.getElementById(target).classList.add("active");
+    });
+  });
+
   // ================================
-  // Firestore refs (Teams only)
+  // Firestore refs
   // ================================
   const playersCol = collection(db, "players");
+  const matchesCol = collection(db, "matches");
   const draftRef = doc(db, "meta", "draft");
 
+  // Caches
   let playersCache = [];
+  let matchesCache = [];
   let draftCache = { starter: "Lisa", turn: null, initialized: false };
 
+  // ================================
+  // Draft helpers
+  // ================================
   async function ensureDraftDoc(){
     const snap = await getDoc(draftRef);
     if(!snap.exists()){
@@ -632,9 +890,7 @@
   function sortByName(list){
     return [...list].sort((a,b)=>(a.name||"").localeCompare((b.name||""),"fr",{sensitivity:"base"}));
   }
-  function teamIcon(team){
-    return team === "Lisa" ? "🌶️" : (team === "Manon" ? "🐝" : "•");
-  }
+  function teamIcon(team){ return team === "Lisa" ? "🌶️" : (team === "Manon" ? "🐝" : "•"); }
 
   function countGenderInTeam(team){
     const list = playersCache.filter(p => p.team === team);
@@ -653,20 +909,18 @@
     let req = null;
     if(h > f) req = "F";
     else if(f > h) req = "H";
-    if(req && !hasSoloGender(req)) req = null;
-    return req;
+    if(req && !hasSoloGender(req)) req = null; // exception
+    return req; // "H" | "F" | null
   }
   function genderLabel(g){
     if(g === "H") return "Homme";
     if(g === "F") return "Femme";
     return "Non renseigné";
   }
-
   function confirmDraftPopup({ playerName, playerGender, team, requiredGender }){
     const icon = teamIcon(team);
     const reqTxt = requiredGender ? `${genderLabel(requiredGender)} (${requiredGender})` : "Aucune (choix libre)";
     const pTxt = playerGender ? `${genderLabel(playerGender)} (${playerGender})` : "Non renseigné";
-
     const msg =
 `${icon} Draft – Team ${team}
 
@@ -676,10 +930,12 @@ Sexe du joueur : ${pTxt}
 Contrainte actuelle (Team ${team}) : ${reqTxt}
 
 Confirmer l’attribution à Team ${team} ?`;
-
     return window.confirm(msg);
   }
 
+  // ================================
+  // TEAMS UI (modifs demandées localisées ici)
+  // ================================
   function renderDraftUI(){
     document.getElementById("draftTurn").textContent = draftCache.turn
       ? `${draftCache.turn} ${teamIcon(draftCache.turn)}`
@@ -704,15 +960,37 @@ Confirmer l’attribution à Team ${team} ?`;
     const mkChip = (p, teamClass) => {
       const chip = document.createElement("div");
       chip.className = "chip" + (teamClass ? " " + teamClass : "");
-      const g = (p.gender || "").toUpperCase() || "•";
+      const initial = (p.gender || "").toUpperCase() || "•";
       const icon = p.team ? teamIcon(p.team) + " " : "";
-      chip.innerHTML = `<span>${icon}${p.name || "(sans nom)"}</span><small>${g}</small>`;
+      chip.innerHTML = `<span>${icon}${p.name || "(sans nom)"}</span><small>${initial}</small>`;
+
+      // ✅ Suppression SOLO uniquement (bouton dans le chip)
+      if(!p.team){
+        const del = document.createElement("button");
+        del.className = "delBtn";
+        del.textContent = "🗑";
+        del.title = "Supprimer ce joueur (Sans équipe)";
+        del.addEventListener("click", async (ev)=>{
+          ev.stopPropagation();
+          if(!p.id) return;
+          if(!confirm(`Supprimer définitivement le joueur "${p.name}" ?\n(Seulement possible s'il est Sans équipe)`)) return;
+          try{
+            await deleteDoc(doc(db,"players",p.id));
+            log(`Joueur supprimé: ${p.name}`, "warn");
+          }catch(e){
+            console.error(e);
+            log(`Erreur suppression joueur: ${e?.message || e}`, "bad");
+            alert("Erreur lors de la suppression du joueur.");
+          }
+        });
+        chip.appendChild(del);
+      }
 
       chip.addEventListener("click", async ()=>{
         try{
           if(!p.id) return;
 
-          // SOLO -> assign
+          // Click SOLO -> assign to current turn with constraint + popup
           if(!p.team){
             if(!draftCache.turn){
               alert("Définis d'abord qui commence (bouton Définir).");
@@ -745,7 +1023,7 @@ Confirmer l’attribution à Team ${team} ?`;
             return;
           }
 
-          // Team -> remove back to SOLO
+          // Click in team -> remove back to SOLO (admin only)
           const was = p.team;
           if(!confirm(`Retirer "${p.name}" de Team ${was} (retour Sans équipe) ?`)) return;
           await updateDoc(doc(db,"players",p.id), { team: null });
@@ -761,47 +1039,44 @@ Confirmer l’attribution à Team ${team} ?`;
       return chip;
     };
 
-    if(!solo.length){
-      soloList.innerHTML = `<div class="small muted">Aucun joueur</div>`;
-    } else {
-      solo.forEach(p=> soloList.appendChild(mkChip(p, "")));
-    }
+    if(!solo.length) soloList.innerHTML = `<div class="small muted">Aucun joueur</div>`;
+    else solo.forEach(p=> soloList.appendChild(mkChip(p, "")));
 
-    if(!lisa.length){
-      lisaList.innerHTML = `<div class="small muted">Aucun joueur</div>`;
-    } else {
-      lisa.forEach(p=> lisaList.appendChild(mkChip(p, "lisa")));
-    }
+    if(!lisa.length) lisaList.innerHTML = `<div class="small muted">Aucun joueur</div>`;
+    else lisa.forEach(p=> lisaList.appendChild(mkChip(p, "lisa")));
 
-    if(!manon.length){
-      manonList.innerHTML = `<div class="small muted">Aucun joueur</div>`;
-    } else {
-      manon.forEach(p=> manonList.appendChild(mkChip(p, "manon")));
-    }
+    if(!manon.length) manonList.innerHTML = `<div class="small muted">Aucun joueur</div>`;
+    else manon.forEach(p=> manonList.appendChild(mkChip(p, "manon")));
   }
 
-  // Add Player
+  // Add Player (✅ sexe obligatoire)
   const newPlayerName = document.getElementById("newPlayerName");
   const newPlayerGender = document.getElementById("newPlayerGender");
 
   document.getElementById("btnAddPlayer").addEventListener("click", async ()=>{
     const name = normalizeName(newPlayerName.value);
     const gender = (newPlayerGender.value || "").trim();
+
     if(!name){
       alert("Saisis un nom/prénom.");
       return;
     }
+    if(!gender){
+      alert("Sexe obligatoire (H/F).");
+      return;
+    }
+
     try{
       await addDoc(playersCol, {
         name,
-        gender: gender || null,
+        gender,
         team: null,
         pointsGeneral: 0,
         createdAt: Date.now()
       });
       newPlayerName.value = "";
       newPlayerGender.value = "";
-      log(`Joueur ajouté : ${name}`);
+      log(`Joueur ajouté : ${name} (${gender})`);
     }catch(e){
       console.error(e);
       log(`Erreur ajout joueur: ${e?.message || e}`, "bad");
@@ -809,9 +1084,34 @@ Confirmer l’attribution à Team ${team} ?`;
     }
   });
 
+  // ✅ Réinitialiser joueurs = supprimer tous les joueurs
+  document.getElementById("btnResetPlayers").addEventListener("click", async ()=>{
+    if(!confirm("⚠️ Supprimer TOUS les joueurs ?\nCette action est irréversible.")) return;
+    try{
+      const snap = await getDocs(query(playersCol));
+      for(const d of snap.docs){
+        await deleteDoc(doc(db,"players",d.id));
+      }
+      log("Tous les joueurs ont été supprimés.", "warn");
+
+      // on reset aussi le draft (sans toucher au reste)
+      await setDoc(draftRef, {
+        starter: "Lisa",
+        turn: null,
+        initialized: false,
+        updatedAt: Date.now()
+      }, { merge:true });
+      log("Draft remis à zéro.", "warn");
+
+    }catch(e){
+      console.error(e);
+      log(`Erreur reset joueurs: ${e?.message || e}`, "bad");
+      alert("Erreur lors de la suppression des joueurs.");
+    }
+  });
+
   // Set starter / reset draft
   const selectStarter = document.getElementById("selectStarter");
-
   document.getElementById("btnSetStarter").addEventListener("click", async ()=>{
     try{
       const starter = selectStarter.value || "Lisa";
@@ -830,7 +1130,7 @@ Confirmer l’attribution à Team ${team} ?`;
   });
 
   document.getElementById("btnResetDraft").addEventListener("click", async ()=>{
-    if(!confirm("Réinitialiser le draft ?\n\n• enlève les teams\n• remet le tour à zéro\n• NE supprime PAS les joueurs")) return;
+    if(!confirm("Réinitialiser le draft ? (Ne supprime pas les joueurs, remet juste le tour + enlève les teams.)")) return;
     try{
       for(const p of playersCache){
         if(p.team){
@@ -851,54 +1151,832 @@ Confirmer l’attribution à Team ${team} ?`;
     }
   });
 
-  // ✅ Reset players (delete ALL players docs)
-  document.getElementById("btnResetPlayers").addEventListener("click", async ()=>{
-    const ok = confirm("⚠️ Réinitialiser joueurs ?\n\nCela va SUPPRIMER TOUS les joueurs (collection 'players').\nAction irréversible.\n\nConfirmer ?");
-    if(!ok) return;
+  // ================================
+  // MATCHES (Tours / Historique) – COMPLET
+  // ================================
+  const lastMeta = document.getElementById("lastMeta");
+  const curMeta = document.getElementById("curMeta");
+  const nextMeta = document.getElementById("nextMeta");
+
+  const lastBody = document.getElementById("lastBody");
+  const curBody = document.getElementById("curBody");
+  const nextBody = document.getElementById("nextBody");
+
+  const historyWrap = document.getElementById("historyWrap");
+
+  const btnNewTournament = document.getElementById("btnNewTournament");
+  const btnGenerateNext = document.getElementById("btnGenerateNext");
+
+  function groupMatchesByRound(list){
+    const map = new Map();
+    list.forEach(m=>{
+      const r = Number(m.roundNumber || 0);
+      if(!r) return;
+      if(!map.has(r)) map.set(r, []);
+      map.get(r).push(m);
+    });
+    // normalize courts order
+    const rounds = [...map.entries()].map(([round, matches])=>{
+      const mm = [...matches].sort((a,b)=>(a.court||0)-(b.court||0));
+      return { round, matches: mm };
+    }).sort((a,b)=>a.round-b.round);
+    return rounds;
+  }
+
+  function isRoundFullyValidated(roundObj){
+    if(!roundObj || !roundObj.matches?.length) return false;
+    // un tour = 2 terrains => on exige les 2 matches validés
+    if(roundObj.matches.length < 2) return false;
+    return roundObj.matches.every(m => m.validated === true);
+  }
+
+  function buildBenchForRound(roundObj){
+    const playing = new Set();
+    (roundObj.matches || []).forEach(m=>{
+      (m.teamA||[]).forEach(n=>playing.add(n));
+      (m.teamB||[]).forEach(n=>playing.add(n));
+    });
+    const allNames = playersCache.map(p=>p.name).filter(Boolean);
+    const bench = allNames.filter(n=>!playing.has(n));
+    return bench.sort((a,b)=>a.localeCompare(b,"fr",{sensitivity:"base"}));
+  }
+
+  function pillForPlayerName(name){
+    const p = playersCache.find(x=>x.name===name);
+    if(p?.team==="Lisa") return `<span class="pill" style="background: rgba(239,68,68,.14); border-color: rgba(239,68,68,.28);">🌶️ ${name}</span>`;
+    if(p?.team==="Manon") return `<span class="pill" style="background: rgba(250,204,21,.16); border-color: rgba(250,204,21,.30);">🐝 ${name}</span>`;
+    return `<span class="pill">${name}</span>`;
+  }
+
+  function renderRoundCard(roundObj, mode){
+    // mode: "last" | "current" | "next" | "history"
+    if(!roundObj){
+      return `<div class="small muted">Aucun tour.</div>`;
+    }
+
+    const r = roundObj.round;
+    const matches = (roundObj.matches||[]).slice(0,2);
+
+    if(matches.length < 2){
+      return `<div class="small muted">Tour ${r} incomplet (il faut 2 terrains).</div>`;
+    }
+
+    const bench = buildBenchForRound(roundObj);
+    const typeLabel = (matches[0].type || matches[1].type || "—");
+
+    let html = `<div class="small" style="margin-bottom:8px;"><b>Tour ${r}</b> • Type: <b>${typeLabel}</b></div>`;
+
+    matches.forEach((m, idx)=>{
+      const court = m.court || (idx+1);
+      const a = (m.teamA||[]);
+      const b = (m.teamB||[]);
+      const scoreA = (typeof m.scoreA==="number") ? m.scoreA : "";
+      const scoreB = (typeof m.scoreB==="number") ? m.scoreB : "";
+
+      html += `
+        <div class="courtBlock">
+          <div class="courtTop">
+            <div class="cTitle">Terrain ${court}</div>
+            <div class="small muted">${m.validated ? "✅ Validé" : "⏳ À valider"}</div>
+          </div>
+
+          <div class="matchLine">
+            <div class="teamLine">
+              <span class="badge lisa">🌶️ Lisa</span>
+              <span>${(a[0]||"—")} &amp; ${(a[1]||"—")}</span>
+            </div>
+            <div class="teamLine">
+              <span class="badge manon">🐝 Manon</span>
+              <span>${(b[0]||"—")} &amp; ${(b[1]||"—")}</span>
+            </div>
+          </div>`;
+
+      if(mode==="current"){
+        html += `
+          <div class="scoreRow">
+            <input type="number" min="0" placeholder="Score Lisa" value="${scoreA}" data-round="${r}" data-court="${court}" data-k="a">
+            <input type="number" min="0" placeholder="Score Manon" value="${scoreB}" data-round="${r}" data-court="${court}" data-k="b">
+            <button class="btn small secondary" data-act="saveScore" data-id="${m.id}">Modifier</button>
+          </div>
+          <div class="small muted" style="margin-top:6px;">
+            “Modifier” enregistre le score (même si le tour n’est pas validé).
+          </div>`;
+      } else if(mode==="last" || mode==="history"){
+        html += `
+          <div class="scoreRow">
+            <span class="badge neutral">Score</span>
+            <span style="font-weight:1000;">${(scoreA===""||scoreB==="") ? "—" : `${scoreA} - ${scoreB}`}</span>
+          </div>`;
+      } else {
+        html += `
+          <div class="scoreRow">
+            <span class="badge neutral">Score</span>
+            <span class="muted">—</span>
+          </div>`;
+      }
+
+      html += `</div>`;
+    });
+
+    html += `
+      <div class="benchBox">
+        <div class="bTitle">Banc</div>
+        <div class="benchList">
+          ${bench.length ? bench.map(pillForPlayerName).join("") : `<span class="small muted">Personne</span>`}
+        </div>
+      </div>
+    `;
+
+    if(mode==="current"){
+      html += `
+        <div class="divider"></div>
+        <div class="row" style="justify-content:flex-end;">
+          <button class="btn primary" data-act="validateRound" data-round="${r}">Valider le tour</button>
+        </div>
+        <div class="small muted" style="margin-top:6px;">
+          Pour valider, il faut <b>2 scores</b> sur chaque terrain.
+        </div>
+      `;
+    }
+
+    return html;
+  }
+
+  function computePlayerStatsFromAllMatches(list){
+    // stats utilisés pour générer les futurs tours
+    const played = {};          // matches joués par joueur (tous matches existants, validés ou non)
+    const playedRounds = {};    // ensemble des rounds joués (pour benchCount)
+    const partners = {};        // partners[player][partner] = count
+    const opponents = {};       // opponents[player][opponent] = count
+
+    const addCount = (obj, a, b) => {
+      obj[a] = obj[a] || {};
+      obj[a][b] = (obj[a][b] || 0) + 1;
+    };
+
+    list.forEach(m=>{
+      const r = Number(m.roundNumber||0);
+      const A = m.teamA || [];
+      const B = m.teamB || [];
+      const all = [...A, ...B];
+
+      all.forEach(n=>{
+        if(!n) return;
+        played[n] = (played[n] || 0) + 1;
+        playedRounds[n] = playedRounds[n] || new Set();
+        if(r) playedRounds[n].add(r);
+      });
+
+      if(A.length===2){
+        addCount(partners, A[0], A[1]);
+        addCount(partners, A[1], A[0]);
+      }
+      if(B.length===2){
+        addCount(partners, B[0], B[1]);
+        addCount(partners, B[1], B[0]);
+      }
+      if(A.length===2 && B.length===2){
+        A.forEach(a=>{
+          B.forEach(b=>{
+            addCount(opponents, a, b);
+            addCount(opponents, b, a);
+          });
+        });
+      }
+    });
+
+    const playedRoundsCount = {};
+    Object.keys(playedRounds).forEach(k=> playedRoundsCount[k] = playedRounds[k].size);
+
+    return { played, playedRoundsCount, partners, opponents };
+  }
+
+  function getTeamPlayers(team){
+    return playersCache.filter(p=>p.team===team && p.name).map(p=>p);
+  }
+
+  function pickBestPairsForTeam(teamPlayers, genderPlanPairs, stats, totalRoundsSoFar){
+    // genderPlanPairs: array of pairs, each pair is array ["H","F"] or ["H","H"] or ["F","F"] or null => libre
+    // returns array of pairs of player objects length = 2 pairs (for 2 courts)
+    const byName = new Map(teamPlayers.map(p=>[p.name,p]));
+    const names = teamPlayers.map(p=>p.name);
+
+    const played = stats.played || {};
+    const playedRoundsCount = stats.playedRoundsCount || {};
+    const partners = stats.partners || {};
+
+    const benchCount = (name)=> (totalRoundsSoFar - (playedRoundsCount[name] || 0)); // approximation "temps banc"
+
+    const partnerCount = (a,b)=> (partners[a]?.[b] || 0);
+
+    function matchesGender(name, g){
+      if(!g) return true;
+      const p = byName.get(name);
+      return p && p.gender === g;
+    }
+
+    // Build candidate lists per required gender
+    function filterNamesForPair(req){
+      if(!req) return names.slice();
+      return names.filter(n=> matchesGender(n, req[0]) || matchesGender(n, req[1]) ? true : true);
+    }
+
+    // brute force choose 4 players meeting constraints (small N typically)
+    let best = null;
+
+    const allNames = names.slice();
+
+    for(let i=0;i<allNames.length;i++){
+      for(let j=i+1;j<allNames.length;j++){
+        for(let k=0;k<allNames.length;k++){
+          if(k===i || k===j) continue;
+          for(let l=k+1;l<allNames.length;l++){
+            if(l===i || l===j) continue;
+            const sel = [allNames[i], allNames[j], allNames[k], allNames[l]];
+
+            // need partition into 2 pairs; we test both partitions:
+            const partitions = [
+              [[sel[0],sel[1]],[sel[2],sel[3]]],
+              [[sel[0],sel[2]],[sel[1],sel[3]]],
+              [[sel[0],sel[3]],[sel[1],sel[2]]],
+            ];
+
+            for(const part of partitions){
+              let ok = true;
+              for(let pIdx=0;pIdx<2;pIdx++){
+                const req = genderPlanPairs[pIdx]; // ["H","F"] etc or null
+                if(req){
+                  const a = part[pIdx][0], b = part[pIdx][1];
+                  if(req[0]===req[1]){
+                    // HH or FF
+                    if(!(matchesGender(a, req[0]) && matchesGender(b, req[0]))) { ok=false; break; }
+                  } else {
+                    // HF in any order
+                    const cond = (matchesGender(a, req[0]) && matchesGender(b, req[1])) || (matchesGender(a, req[1]) && matchesGender(b, req[0]));
+                    if(!cond){ ok=false; break; }
+                  }
+                }
+              }
+              if(!ok) continue;
+
+              // score this solution
+              const playScore = sel.reduce((s,n)=> s + (played[n]||0), 0);
+              const benchScore = sel.reduce((s,n)=> s + benchCount(n), 0);
+              const partnerScore =
+                partnerCount(part[0][0], part[0][1]) +
+                partnerCount(part[1][0], part[1][1]);
+
+              // lower is better for playScore+partnerScore, higher is better for benchScore
+              // => combine: playScore*100 + partnerScore*20 - benchScore*10
+              const score = (playScore*100) + (partnerScore*20) - (benchScore*10);
+
+              if(best===null || score < best.score){
+                best = { score, pairs: part };
+              }
+            }
+          }
+        }
+      }
+    }
+
+    if(!best){
+      // fallback: take first 4 (or less) as libre
+      const sorted = [...teamPlayers].sort((a,b)=> (played[a.name]||0)-(played[b.name]||0));
+      const pick = sorted.slice(0,4).map(p=>p.name);
+      const pairs = [[pick[0],pick[1]],[pick[2],pick[3]]].filter(x=>x[0]&&x[1]);
+      return pairs.map(pair=>pair.map(n=>byName.get(n)));
+    }
+
+    return best.pairs.map(pair=>pair.map(n=>byName.get(n)));
+  }
+
+  function assignPairsToCourts(teamPairsLisa, teamPairsManon, stats){
+    // choose permutation of Manon pairs that minimizes opponent repeats
+    const opp = stats.opponents || {};
+    const oppCount = (a,b)=> (opp[a]?.[b] || 0);
+
+    const cost = (pairL, pairM)=>{
+      const L = pairL.map(p=>p.name);
+      const M = pairM.map(p=>p.name);
+      let c = 0;
+      L.forEach(l=> M.forEach(m=> c += oppCount(l,m)));
+      return c;
+    };
+
+    const perm1 = [teamPairsManon[0], teamPairsManon[1]];
+    const perm2 = [teamPairsManon[1], teamPairsManon[0]];
+
+    const c1 = cost(teamPairsLisa[0], perm1[0]) + cost(teamPairsLisa[1], perm1[1]);
+    const c2 = cost(teamPairsLisa[0], perm2[0]) + cost(teamPairsLisa[1], perm2[1]);
+
+    return (c2 < c1) ? perm2 : perm1;
+  }
+
+  function buildGenderPlanForRound(roundNumber, teamLisaPlayers, teamManonPlayers){
+    // odd => 2 MIXTES
+    // even => choose among HH+FF / HH+HH / FF+FF to balance matches played (handled later),
+    // but here we provide feasible options.
+    const isOdd = roundNumber % 2 === 1;
+
+    const countTeam = (list, g)=> list.filter(p=>p.gender===g).length;
+
+    const Lh = countTeam(teamLisaPlayers,"H"), Lf = countTeam(teamLisaPlayers,"F");
+    const Mh = countTeam(teamManonPlayers,"H"), Mf = countTeam(teamManonPlayers,"F");
+
+    if(isOdd){
+      // Need 2 mixed pairs per team => requires at least 2H and 2F in each team
+      if(Lh>=2 && Lf>=2 && Mh>=2 && Mf>=2){
+        return { type:"MIXTE", pairs: [["H","F"],["H","F"]] };
+      }
+      // fallback libre
+      return { type:"LIBRE", pairs: [null, null] };
+    }
+
+    // Even rounds: candidates in order (prefer HH+FF if possible)
+    const candidates = [];
+    // HH + FF
+    if(Lh>=2 && Lf>=2 && Mh>=2 && Mf>=2) candidates.push({ type:"HH+FF", pairs: [["H","H"],["F","F"]] });
+    // HH + HH
+    if(Lh>=4 && Mh>=4) candidates.push({ type:"HH", pairs: [["H","H"],["H","H"]] });
+    // FF + FF
+    if(Lf>=4 && Mf>=4) candidates.push({ type:"FF", pairs: [["F","F"],["F","F"]] });
+
+    if(!candidates.length){
+      return { type:"LIBRE", pairs: [null,null] };
+    }
+
+    // selection among candidates will be done by global balancing heuristic outside
+    return { type:"EVEN", candidates };
+  }
+
+  function variance(arr){
+    if(!arr.length) return 0;
+    const mean = arr.reduce((s,x)=>s+x,0)/arr.length;
+    return arr.reduce((s,x)=>s + (x-mean)*(x-mean), 0)/arr.length;
+  }
+
+  function chooseBestEvenCandidate(cands, stats, playersAll){
+    // choose candidate that best equalizes total matches played after selecting 4+4 players
+    const played = stats.played || {};
+    const totalRoundsSoFar = groupMatchesByRound(matchesCache).length;
+
+    let best = null;
+
+    // For each candidate, we simulate picking pairs for Lisa/Manon then compute variance of played counts among all players
+    for(const cand of cands){
+      const lisaPlayers = getTeamPlayers("Lisa");
+      const manonPlayers = getTeamPlayers("Manon");
+
+      const lisaPairs = pickBestPairsForTeam(lisaPlayers, cand.pairs, stats, totalRoundsSoFar);
+      const manonPairs = pickBestPairsForTeam(manonPlayers, cand.pairs, stats, totalRoundsSoFar);
+
+      const pickedNames = [
+        ...lisaPairs.flat().map(p=>p?.name).filter(Boolean),
+        ...manonPairs.flat().map(p=>p?.name).filter(Boolean),
+      ];
+
+      const after = playersAll.map(p=>{
+        const base = played[p.name] || 0;
+        return pickedNames.includes(p.name) ? base+1 : base;
+      });
+
+      const v = variance(after);
+      const score = v; // lower is better
+      if(!best || score < best.score){
+        best = { score, cand, lisaPairs, manonPairs };
+      }
+    }
+
+    return best;
+  }
+
+  async function generateRound(roundNumber){
+    // Preconditions: need at least 4 players per team to make 2 courts
+    const lisaPlayers = getTeamPlayers("Lisa");
+    const manonPlayers = getTeamPlayers("Manon");
+
+    if(lisaPlayers.length < 4 || manonPlayers.length < 4){
+      alert("Il faut au moins 4 joueurs dans Team Lisa ET 4 joueurs dans Team Manon pour générer un tour (2 terrains).");
+      return null;
+    }
+
+    const roundsSoFar = groupMatchesByRound(matchesCache).length;
+    const stats = computePlayerStatsFromAllMatches(matchesCache);
+
+    // decide plan
+    const plan = buildGenderPlanForRound(roundNumber, lisaPlayers, manonPlayers);
+
+    let type = plan.type;
+    let genderPairs = plan.pairs;
+
+    if(plan.type === "EVEN"){
+      const allTeamPlayers = [...lisaPlayers, ...manonPlayers];
+      const best = chooseBestEvenCandidate(plan.candidates, stats, allTeamPlayers);
+      if(best){
+        type = best.cand.type;
+        genderPairs = best.cand.pairs;
+
+        // Use precomputed pairs to avoid recomputing differently
+        var lisaPairs = best.lisaPairs;
+        var manonPairs = best.manonPairs;
+      } else {
+        type = "LIBRE";
+        genderPairs = [null,null];
+      }
+    }
+
+    // pick pairs if not already chosen
+    if(!lisaPairs){
+      lisaPairs = pickBestPairsForTeam(lisaPlayers, genderPairs, stats, roundsSoFar);
+    }
+    if(!manonPairs){
+      manonPairs = pickBestPairsForTeam(manonPlayers, genderPairs, stats, roundsSoFar);
+    }
+
+    // ensure we have 2 pairs each side
+    if(lisaPairs.length < 2 || manonPairs.length < 2 || !lisaPairs[0] || !lisaPairs[1] || !manonPairs[0] || !manonPairs[1]){
+      alert("Impossible de générer 2 matchs complets (vérifie les sexes / effectifs).");
+      return null;
+    }
+
+    // assign courts to minimize opponent repeats
+    const orderedManonPairs = assignPairsToCourts(lisaPairs, manonPairs, stats);
+
+    // create 2 match docs (court 1 and 2)
+    const payloads = [
+      {
+        roundNumber,
+        court: 1,
+        type,
+        teamA: [lisaPairs[0][0].name, lisaPairs[0][1].name],
+        teamB: [orderedManonPairs[0][0].name, orderedManonPairs[0][1].name],
+        scoreA: null,
+        scoreB: null,
+        validated: false,
+        createdAt: Date.now()
+      },
+      {
+        roundNumber,
+        court: 2,
+        type,
+        teamA: [lisaPairs[1][0].name, lisaPairs[1][1].name],
+        teamB: [orderedManonPairs[1][0].name, orderedManonPairs[1][1].name],
+        scoreA: null,
+        scoreB: null,
+        validated: false,
+        createdAt: Date.now()
+      }
+    ];
 
     try{
-      setStatus("warn","Suppression…");
-      log("Suppression de tous les joueurs…", "warn");
-
-      // Option A: on supprime à partir du cache (rapide)
-      // (si cache vide pour une raison quelconque, on retombe sur getDocs)
-      let ids = playersCache.map(p=>p.id).filter(Boolean);
-
-      if(!ids.length){
-        const snap = await getDocs(playersCol);
-        ids = snap.docs.map(d=>d.id);
-      }
-
-      for(const id of ids){
-        await deleteDoc(doc(db, "players", id));
-      }
-
-      // on remet aussi le draft proprement (optionnel mais cohérent)
-      await setDoc(draftRef, {
-        starter: "Lisa",
-        turn: null,
-        initialized: false,
-        updatedAt: Date.now()
-      }, { merge:true });
-
-      log("Tous les joueurs ont été supprimés. Draft remis à zéro.", "warn");
-      setStatus("ok","Connecté");
+      await addDoc(matchesCol, payloads[0]);
+      await addDoc(matchesCol, payloads[1]);
+      log(`Tour ${roundNumber} généré (${type}).`);
+      return true;
     }catch(e){
       console.error(e);
-      setStatus("bad","Erreur");
-      log(`Erreur reset joueurs: ${e?.message || e}`, "bad");
-      alert("Erreur lors de la suppression des joueurs.\nVérifie les règles Firestore (permissions).");
+      log(`Erreur génération tour ${roundNumber}: ${e?.message || e}`, "bad");
+      alert("Erreur lors de la génération du tour.");
+      return null;
+    }
+  }
+
+  async function deleteAllMatches(){
+    for(const m of matchesCache){
+      await deleteDoc(doc(db,"matches",m.id));
+    }
+  }
+
+  async function setMatchScore(matchId, scoreA, scoreB){
+    await updateDoc(doc(db,"matches",matchId), { scoreA, scoreB });
+  }
+
+  async function validateRound(roundNumber){
+    const round = groupMatchesByRound(matchesCache).find(r=>r.round===roundNumber);
+    if(!round || round.matches.length < 2){
+      alert("Tour introuvable ou incomplet.");
+      return;
+    }
+
+    // need both scores on both courts
+    for(const m of round.matches.slice(0,2)){
+      if(typeof m.scoreA !== "number" || typeof m.scoreB !== "number"){
+        alert("Il faut saisir les deux scores pour chaque terrain avant de valider.");
+        return;
+      }
+    }
+
+    try{
+      for(const m of round.matches.slice(0,2)){
+        await updateDoc(doc(db,"matches",m.id), { validated: true });
+      }
+      log(`Tour ${roundNumber} validé.`);
+      await recomputePointsGeneral();
+    }catch(e){
+      console.error(e);
+      log(`Erreur validation tour: ${e?.message || e}`, "bad");
+      alert("Erreur lors de la validation du tour.");
+    }
+  }
+
+  function renderTours(){
+    const rounds = groupMatchesByRound(matchesCache);
+
+    const lastValid = [...rounds].reverse().find(r=>isRoundFullyValidated(r)) || null;
+    const current = rounds.find(r=>!isRoundFullyValidated(r)) || null;
+    let next = null;
+    if(current){
+      next = rounds.find(r=>r.round === current.round + 1) || null;
+    } else if(lastValid){
+      next = rounds.find(r=>r.round === lastValid.round + 1) || null;
+    }
+
+    // meta lines
+    lastMeta.textContent = lastValid ? `Tour ${lastValid.round}` : "—";
+    curMeta.textContent  = current ? `Tour ${current.round}` : "—";
+    nextMeta.textContent = next ? `Tour ${next.round}` : "—";
+
+    lastBody.innerHTML = renderRoundCard(lastValid, "last");
+    curBody.innerHTML  = current ? renderRoundCard(current, "current") : `<div class="small muted">Aucun tour en cours (tout est validé ou aucun tour).</div>`;
+    nextBody.innerHTML = next ? renderRoundCard(next, "next") : `<div class="small muted">Aucun tour à venir (génère le suivant).</div>`;
+
+    // bind actions in current card
+    curBody.querySelectorAll('button[data-act="saveScore"]').forEach(btn=>{
+      btn.addEventListener("click", async ()=>{
+        const id = btn.getAttribute("data-id");
+        const block = btn.closest(".courtBlock");
+        const aIn = block.querySelector('input[data-k="a"]');
+        const bIn = block.querySelector('input[data-k="b"]');
+
+        const a = aIn.value === "" ? null : Number(aIn.value);
+        const b = bIn.value === "" ? null : Number(bIn.value);
+        if(a === null || b === null || isNaN(a) || isNaN(b) || a<0 || b<0){
+          alert("Saisis 2 scores valides (>=0).");
+          return;
+        }
+        if(!confirm("Confirmer la modification du score ?")){
+          return;
+        }
+        try{
+          await setMatchScore(id, a, b);
+          log(`Score modifié (match ${id}) : ${a} - ${b}`);
+          await recomputePointsGeneral(); // admin veut que toute modif score soit prise en compte
+        }catch(e){
+          console.error(e);
+          log(`Erreur modification score: ${e?.message || e}`, "bad");
+          alert("Erreur lors de la modification du score.");
+        }
+      });
+    });
+
+    curBody.querySelectorAll('button[data-act="validateRound"]').forEach(btn=>{
+      btn.addEventListener("click", async ()=>{
+        const r = Number(btn.getAttribute("data-round"));
+        if(!r) return;
+        if(!confirm(`Valider le Tour ${r} ?`)) return;
+        await validateRound(r);
+      });
+    });
+
+    // render history (validated rounds, newest first)
+    const validatedRounds = rounds.filter(isRoundFullyValidated).sort((a,b)=>b.round-a.round);
+
+    if(!validatedRounds.length){
+      historyWrap.innerHTML = `<div class="small muted">Aucun match validé.</div>`;
+    } else {
+      historyWrap.innerHTML = validatedRounds.map(r=>{
+        return `
+          <div class="tourCard" style="margin-bottom:12px;">
+            <div class="head">
+              <div class="title">Tour ${r.round}</div>
+              <div class="meta">✅ Validé</div>
+            </div>
+            ${renderRoundCard(r, "history")}
+          </div>
+        `;
+      }).join("");
+    }
+  }
+
+  btnNewTournament.addEventListener("click", async ()=>{
+    if(!confirm("⚠️ Lancer un nouveau tournoi ?\nTous les tours/matchs seront supprimés puis Tour 1 + Tour 2 seront générés.")) return;
+
+    try{
+      await deleteAllMatches();
+      log("Tous les matchs supprimés (nouveau tournoi).", "warn");
+
+      // Génère tour 1 (en cours) + tour 2 (à venir)
+      await generateRound(1);
+      await generateRound(2);
+
+      await recomputePointsGeneral();
+      log("Nouveau tournoi prêt : Tour 1 + Tour 2 générés.", "ok");
+    }catch(e){
+      console.error(e);
+      log(`Erreur nouveau tournoi: ${e?.message || e}`, "bad");
+      alert("Erreur lors du lancement du nouveau tournoi.");
     }
   });
 
+  btnGenerateNext.addEventListener("click", async ()=>{
+    // règle: générer tour suivant seulement si tour N-2 validé
+    const rounds = groupMatchesByRound(matchesCache);
+    const maxRound = rounds.length ? Math.max(...rounds.map(r=>r.round)) : 0;
+    const nextRound = maxRound + 1;
+
+    if(nextRound >= 3){
+      const need = nextRound - 2;
+      const needObj = rounds.find(r=>r.round===need);
+      if(!needObj || !isRoundFullyValidated(needObj)){
+        alert(`Impossible : pour générer le Tour ${nextRound}, le Tour ${need} (N-2) doit être validé.`);
+        return;
+      }
+    }
+
+    if(!confirm(`Générer le Tour ${nextRound} ?`)) return;
+    await generateRound(nextRound);
+  });
+
   // ================================
-  // Live listeners (Teams only)
+  // Classements + Stats (inchangé)
+  // ================================
+  const rankGeneralEl = document.getElementById("rankGeneral");
+  const rankLisaEl = document.getElementById("rankLisa");
+  const rankManonEl = document.getElementById("rankManon");
+
+  const statsMatchesEl = document.getElementById("statsMatches");
+  const statsPartnersEl = document.getElementById("statsPartners");
+  const statsOpponentsEl = document.getElementById("statsOpponents");
+
+  function buildValidatedMatches(){
+    return matchesCache.filter(m=>m.validated === true);
+  }
+
+  function recomputeFromValidated(){
+    const valid = buildValidatedMatches();
+    const pointsByName = {};
+    const matchesPlayedByName = {};
+    const partners = {};
+    const opponents = {};
+
+    const addCount = (obj, a, b) => {
+      obj[a] = obj[a] || {};
+      obj[a][b] = (obj[a][b] || 0) + 1;
+    };
+
+    valid.forEach(m=>{
+      const teamA = m.teamA || [];
+      const teamB = m.teamB || [];
+      const scoreA = (typeof m.scoreA === "number") ? m.scoreA : 0;
+      const scoreB = (typeof m.scoreB === "number") ? m.scoreB : 0;
+
+      teamA.forEach(n=>{
+        pointsByName[n] = (pointsByName[n] || 0) + scoreA;
+        matchesPlayedByName[n] = (matchesPlayedByName[n] || 0) + 1;
+      });
+      teamB.forEach(n=>{
+        pointsByName[n] = (pointsByName[n] || 0) + scoreB;
+        matchesPlayedByName[n] = (matchesPlayedByName[n] || 0) + 1;
+      });
+
+      if(teamA.length===2 && teamB.length===2){
+        addCount(partners, teamA[0], teamA[1]);
+        addCount(partners, teamA[1], teamA[0]);
+        addCount(partners, teamB[0], teamB[1]);
+        addCount(partners, teamB[1], teamB[0]);
+
+        teamA.forEach(a=>{
+          teamB.forEach(b=>{
+            addCount(opponents, a, b);
+            addCount(opponents, b, a);
+          });
+        });
+      }
+    });
+
+    return { pointsByName, matchesPlayedByName, partners, opponents };
+  }
+
+  async function recomputePointsGeneral(){
+    if(!playersCache.length) return;
+    const { pointsByName } = recomputeFromValidated();
+
+    try{
+      for(const p of playersCache){
+        const name = p.name;
+        if(!name) continue;
+        const newPts = pointsByName[name] || 0;
+        const curPts = p.pointsGeneral || 0;
+        if(newPts !== curPts){
+          await updateDoc(doc(db,"players",p.id), { pointsGeneral: newPts });
+        }
+      }
+      log("Points recalculés (pointsGeneral).");
+    }catch(e){
+      console.error(e);
+      log(`Erreur recalcul points: ${e?.message || e}`, "bad");
+      alert("Erreur lors du recalcul des points.");
+    }
+  }
+
+  function renderRankings(){
+    if(!playersCache.length){
+      rankGeneralEl.innerHTML = `<div class="small muted">Aucun joueur.</div>`;
+      rankLisaEl.innerHTML = `<div class="small muted">Aucun joueur.</div>`;
+      rankManonEl.innerHTML = `<div class="small muted">Aucun joueur.</div>`;
+      return;
+    }
+
+    const sorted = [...playersCache].sort((a,b)=>(b.pointsGeneral||0)-(a.pointsGeneral||0));
+
+    const mkTable = (list) => {
+      if(!list.length) return `<div class="small muted">Aucun joueur.</div>`;
+      let html = `<table><thead><tr><th>#</th><th>Nom</th><th>Team</th><th class="right">Points</th></tr></thead><tbody>`;
+      list.forEach((p, idx)=>{
+        const teamBadge = p.team==="Lisa"
+          ? `<span class="badge lisa">🌶️ Lisa</span>`
+          : (p.team==="Manon" ? `<span class="badge manon">🐝 Manon</span>` : `<span class="badge neutral">—</span>`);
+        html += `<tr>
+          <td>${idx+1}</td>
+          <td>${p.name || ""}</td>
+          <td>${teamBadge}</td>
+          <td class="right"><b>${p.pointsGeneral || 0}</b></td>
+        </tr>`;
+      });
+      html += `</tbody></table>`;
+      return html;
+    };
+
+    rankGeneralEl.innerHTML = mkTable(sorted);
+    rankLisaEl.innerHTML = mkTable(sorted.filter(p=>p.team==="Lisa"));
+    rankManonEl.innerHTML = mkTable(sorted.filter(p=>p.team==="Manon"));
+  }
+
+  function renderStats(){
+    if(!playersCache.length){
+      statsMatchesEl.innerHTML = `<div class="small muted">Aucun joueur.</div>`;
+      statsPartnersEl.innerHTML = `<div class="small muted">Aucun joueur.</div>`;
+      statsOpponentsEl.innerHTML = `<div class="small muted">Aucun joueur.</div>`;
+      return;
+    }
+
+    const { matchesPlayedByName, partners, opponents } = recomputeFromValidated();
+    const names = sortByName(playersCache.filter(p=>p.name)).map(p=>p.name);
+
+    let htmlM = `<table><thead><tr><th>Joueur</th><th class="right">Matchs validés</th></tr></thead><tbody>`;
+    names.forEach(n=>{
+      htmlM += `<tr><td>${n}</td><td class="right"><b>${matchesPlayedByName[n] || 0}</b></td></tr>`;
+    });
+    htmlM += `</tbody></table>`;
+    statsMatchesEl.innerHTML = htmlM;
+
+    let htmlP = "";
+    names.forEach(n=>{
+      const map = partners[n] || {};
+      const list = Object.keys(map).sort((a,b)=>map[b]-map[a] || a.localeCompare(b,"fr",{sensitivity:"base"}));
+      htmlP += `<div class="panel" style="margin:10px 0 0; background: #fff;">
+        <div class="panelTitle"><h2>${n}</h2><span class="hint">partenaires</span></div>`;
+      if(!list.length){
+        htmlP += `<div class="small muted">Aucun partenaire pour l’instant.</div>`;
+      } else {
+        htmlP += `<table><thead><tr><th>Partenaire</th><th class="right">Matchs ensemble</th></tr></thead><tbody>`;
+        list.forEach(pn=>{
+          htmlP += `<tr><td>${pn}</td><td class="right"><b>${map[pn]}</b></td></tr>`;
+        });
+        htmlP += `</tbody></table>`;
+      }
+      htmlP += `</div>`;
+    });
+    statsPartnersEl.innerHTML = htmlP;
+
+    let htmlO = "";
+    names.forEach(n=>{
+      const map = opponents[n] || {};
+      const list = Object.keys(map).sort((a,b)=>map[b]-map[a] || a.localeCompare(b,"fr",{sensitivity:"base"}));
+      htmlO += `<div class="panel" style="margin:10px 0 0; background: #fff;">
+        <div class="panelTitle"><h2>${n}</h2><span class="hint">adversaires</span></div>`;
+      if(!list.length){
+        htmlO += `<div class="small muted">Aucun adversaire pour l’instant.</div>`;
+      } else {
+        htmlO += `<table><thead><tr><th>Adversaire</th><th class="right">Matchs contre</th></tr></thead><tbody>`;
+        list.forEach(on=>{
+          htmlO += `<tr><td>${on}</td><td class="right"><b>${map[on]}</b></td></tr>`;
+        });
+        htmlO += `</tbody></table>`;
+      }
+      htmlO += `</div>`;
+    });
+    statsOpponentsEl.innerHTML = htmlO;
+  }
+
+  // ================================
+  // Live listeners
   // ================================
   async function init(){
     try{
       await ensureDraftDoc();
       setStatus("ok","Connecté");
-      log("Admin (Teams) chargé. Étape 1 : ajoute des joueurs, puis définis qui commence.");
+      log("Admin chargé. Étape 1 : ajoute des joueurs, puis définis qui commence.");
     }catch(e){
       console.error(e);
       setStatus("bad","Erreur Firestore");
@@ -909,6 +1987,9 @@ Confirmer l’attribution à Team ${team} ?`;
     onSnapshot(query(playersCol, orderBy("createdAt","asc")), (snap)=>{
       playersCache = snap.docs.map(d=>({ id:d.id, ...d.data() }));
       renderDraftUI();
+      renderRankings();
+      renderStats();
+      renderTours();
     }, (err)=>{
       console.error(err);
       setStatus("bad","Erreur Firestore");
@@ -924,6 +2005,17 @@ Confirmer l’attribution à Team ${team} ?`;
       console.error(err);
       setStatus("bad","Erreur Firestore");
       log(`onSnapshot draft: ${err?.message || err}`, "bad");
+    });
+
+    onSnapshot(query(matchesCol, orderBy("createdAt","asc")), (snap)=>{
+      matchesCache = snap.docs.map(d=>({ id:d.id, ...d.data() }));
+      renderTours();
+      renderRankings();
+      renderStats();
+    }, (err)=>{
+      console.error(err);
+      setStatus("bad","Erreur Firestore");
+      log(`onSnapshot matches: ${err?.message || err}`, "bad");
     });
   }
 
