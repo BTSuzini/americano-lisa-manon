@@ -215,6 +215,11 @@
       border-color: rgba(0,0,0,.10);
       color: var(--text);
     }
+    .btn.danger{
+      background: rgba(239,68,68,.12);
+      border-color: rgba(239,68,68,.28);
+      color: #7f1d1d;
+    }
 
     /* ===== BADGES (Team) : même couleur mais plus foncée ===== */
     .badge{
@@ -242,7 +247,7 @@
     }
     .badge.neutral{ background: #f3f4f6; }
 
-    /* ===== CHIPS (joueurs) : comme “Team Lisa/Manon” mais version joueur ===== */
+    /* ===== CHIPS (joueurs) ===== */
     .chips{
       display:flex;
       flex-wrap:wrap;
@@ -321,7 +326,7 @@
     .warnBox{
       border: 1px solid rgba(245,158,11,.45);
       background: rgba(245,158,11,.18);
-      color: #111827;          /* ✅ noir */
+      color: #111827;
       border-radius: 14px;
       padding: 10px;
       font-size: 12px;
@@ -347,20 +352,17 @@
 <body>
 <header>
   <div class="headRow">
-    <!-- GAUCHE : logo Suzini -->
     <div class="leftSlot">
-      <img src="img/logo-suzini.jpeg" alt="TC Suzini" class="brandImg">
+      <img src="img/logo-suzini.png" alt="TC Suzini" class="brandImg">
     </div>
 
-    <!-- CENTRE : titre -->
     <div class="centerSlot">
       <div class="t1">ADMIN – AMERICANO LISA vs MANON</div>
       <div class="t2">BT Suzini • Firestore en temps réel</div>
     </div>
 
-    <!-- DROITE : image tournoi + statut -->
     <div class="rightSlot">
-      <img src="img/tournoi.jpeg" alt="Tournoi" class="brandImg">
+      <img src="img/tournoi.png" alt="Tournoi" class="brandImg">
       <div class="statusPill" id="statusPill">
         <span class="dot" id="statusDot"></span>
         <span id="statusText">Connexion…</span>
@@ -371,7 +373,6 @@
 
 <script>
   // ========= SÉCURITÉ SIMPLE (localStorage) =========
-  // Change ton PIN ici (6 chiffres conseillé)
   const ADMIN_PIN = "211189";
   const STORAGE_KEY = "admin_access_ok_v1";
 
@@ -394,7 +395,7 @@
     <button class="tabBtn" data-tab="statsTab">Statistiques</button>
   </div>
 
-  <!-- ===================== TAB TEAMS (SEUL ONgLET ACTIF) ===================== -->
+  <!-- ===================== TAB TEAMS ===================== -->
   <div id="teamsTab" class="tabContent active">
     <div class="grid">
       <div class="panel">
@@ -421,7 +422,7 @@
         <div class="divider"></div>
 
         <div class="panelTitle">
-          <h2>2) Réglage du draft (qui commence ?)</h2>
+          <h2>2) Réglage du draft</h2>
           <span class="hint">Firestore: <b>meta/draft</b></span>
         </div>
 
@@ -440,13 +441,14 @@
 
           <div class="row">
             <button class="btn primary" id="btnSetStarter">Définir "qui commence"</button>
-            <button class="btn secondary" id="btnResetDraft">Réinitialiser</button>
+            <button class="btn secondary" id="btnResetDraft">Réinitialiser draft</button>
+            <button class="btn danger" id="btnResetPlayers">Réinitialiser joueurs</button>
           </div>
         </div>
 
         <div class="small" style="margin-top:8px;">
-          - “Définir” fixe le premier choix et met “Au tour de” sur la même personne.<br>
-          - “Réinitialiser” remet tout à zéro (utile si tu recommences).<br>
+          - “Réinitialiser draft” : enlève les équipes + remet le tour à zéro (ne supprime pas les joueurs).<br>
+          - “Réinitialiser joueurs” : <b>supprime tous les joueurs</b> (confirmation obligatoire).<br>
           - Règle draft : choix alterné + contrainte H/F (équilibrage) avec popup de confirmation.
         </div>
 
@@ -507,39 +509,27 @@
     </div>
   </div>
 
-  <!-- ===================== TAB MATCHES (VIDE POUR L'INSTANT) ===================== -->
+  <!-- ===================== AUTRES ONGLET (VIDES) ===================== -->
   <div id="matchesTab" class="tabContent">
     <div class="panel">
-      <div class="panelTitle">
-        <h2>Matchs</h2>
-        <span class="hint">à venir</span>
-      </div>
-      <div class="placeholder">⏳ Contenu “Matchs” à venir. (On branche après validation de l’onglet Teams.)</div>
+      <div class="panelTitle"><h2>Matchs</h2><span class="hint">à venir</span></div>
+      <div class="placeholder">⏳ Contenu “Matchs” à venir.</div>
     </div>
   </div>
 
-  <!-- ===================== TAB RANKINGS (VIDE POUR L'INSTANT) ===================== -->
   <div id="rankingsTab" class="tabContent">
     <div class="panel">
-      <div class="panelTitle">
-        <h2>Classements</h2>
-        <span class="hint">à venir</span>
-      </div>
+      <div class="panelTitle"><h2>Classements</h2><span class="hint">à venir</span></div>
       <div class="placeholder">⏳ Contenu “Classements” à venir.</div>
     </div>
   </div>
 
-  <!-- ===================== TAB STATS (VIDE POUR L'INSTANT) ===================== -->
   <div id="statsTab" class="tabContent">
     <div class="panel">
-      <div class="panelTitle">
-        <h2>Statistiques</h2>
-        <span class="hint">à venir</span>
-      </div>
+      <div class="panelTitle"><h2>Statistiques</h2><span class="hint">à venir</span></div>
       <div class="placeholder">⏳ Contenu “Statistiques” à venir.</div>
     </div>
   </div>
-
 </div>
 
 <script type="module">
@@ -552,10 +542,12 @@
     getFirestore,
     collection,
     addDoc,
+    getDocs,
     doc,
     getDoc,
     setDoc,
     updateDoc,
+    deleteDoc,
     onSnapshot,
     query,
     orderBy
@@ -791,6 +783,7 @@ Confirmer l’attribution à Team ${team} ?`;
   // Add Player
   const newPlayerName = document.getElementById("newPlayerName");
   const newPlayerGender = document.getElementById("newPlayerGender");
+
   document.getElementById("btnAddPlayer").addEventListener("click", async ()=>{
     const name = normalizeName(newPlayerName.value);
     const gender = (newPlayerGender.value || "").trim();
@@ -816,8 +809,9 @@ Confirmer l’attribution à Team ${team} ?`;
     }
   });
 
-  // Set starter / reset
+  // Set starter / reset draft
   const selectStarter = document.getElementById("selectStarter");
+
   document.getElementById("btnSetStarter").addEventListener("click", async ()=>{
     try{
       const starter = selectStarter.value || "Lisa";
@@ -836,9 +830,8 @@ Confirmer l’attribution à Team ${team} ?`;
   });
 
   document.getElementById("btnResetDraft").addEventListener("click", async ()=>{
-    if(!confirm("Réinitialiser le draft ? (Ne supprime pas les joueurs, remet juste le tour + enlève les teams.)")) return;
+    if(!confirm("Réinitialiser le draft ?\n\n• enlève les teams\n• remet le tour à zéro\n• NE supprime PAS les joueurs")) return;
     try{
-      // on enlève les teams
       for(const p of playersCache){
         if(p.team){
           await updateDoc(doc(db,"players",p.id), { team: null });
@@ -855,6 +848,46 @@ Confirmer l’attribution à Team ${team} ?`;
       console.error(e);
       log(`Erreur reset draft: ${e?.message || e}`, "bad");
       alert("Erreur lors de la réinitialisation du draft.");
+    }
+  });
+
+  // ✅ Reset players (delete ALL players docs)
+  document.getElementById("btnResetPlayers").addEventListener("click", async ()=>{
+    const ok = confirm("⚠️ Réinitialiser joueurs ?\n\nCela va SUPPRIMER TOUS les joueurs (collection 'players').\nAction irréversible.\n\nConfirmer ?");
+    if(!ok) return;
+
+    try{
+      setStatus("warn","Suppression…");
+      log("Suppression de tous les joueurs…", "warn");
+
+      // Option A: on supprime à partir du cache (rapide)
+      // (si cache vide pour une raison quelconque, on retombe sur getDocs)
+      let ids = playersCache.map(p=>p.id).filter(Boolean);
+
+      if(!ids.length){
+        const snap = await getDocs(playersCol);
+        ids = snap.docs.map(d=>d.id);
+      }
+
+      for(const id of ids){
+        await deleteDoc(doc(db, "players", id));
+      }
+
+      // on remet aussi le draft proprement (optionnel mais cohérent)
+      await setDoc(draftRef, {
+        starter: "Lisa",
+        turn: null,
+        initialized: false,
+        updatedAt: Date.now()
+      }, { merge:true });
+
+      log("Tous les joueurs ont été supprimés. Draft remis à zéro.", "warn");
+      setStatus("ok","Connecté");
+    }catch(e){
+      console.error(e);
+      setStatus("bad","Erreur");
+      log(`Erreur reset joueurs: ${e?.message || e}`, "bad");
+      alert("Erreur lors de la suppression des joueurs.\nVérifie les règles Firestore (permissions).");
     }
   });
 
