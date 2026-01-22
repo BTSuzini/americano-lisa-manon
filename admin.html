@@ -549,6 +549,76 @@
   }
 </script>
 
+
+<script>
+  // ========= Tabs & Subtabs (NE DOIT PAS dépendre de Firebase) =========
+  function bindTabs(){
+    const tabBtns = document.querySelectorAll(".tabBtn");
+    const tabContents = document.querySelectorAll(".tabContent");
+
+    tabBtns.forEach(btn=>{
+      btn.addEventListener("click", (ev)=>{
+        ev.preventDefault();
+        const target = btn.dataset.tab;
+        if(!target) return;
+
+        tabBtns.forEach(b=>b.classList.remove("active"));
+        tabContents.forEach(c=>c.classList.remove("active"));
+
+        btn.classList.add("active");
+        const el = document.getElementById(target);
+        if(el) el.classList.add("active");
+      }, { passive:false });
+    });
+  }
+
+  function bindSubtabs(){
+    document.querySelectorAll(".subBtn").forEach(btn=>{
+      btn.addEventListener("click", (ev)=>{
+        ev.preventDefault();
+        const parent = btn.closest(".panel");
+        const target = btn.dataset.subtab;
+        if(!parent || !target) return;
+
+        parent.querySelectorAll(".subBtn").forEach(b=>b.classList.remove("active"));
+        parent.querySelectorAll(".subContent").forEach(c=>c.classList.remove("active"));
+
+        btn.classList.add("active");
+        const el = document.getElementById(target);
+        if(el) el.classList.add("active");
+      }, { passive:false });
+    });
+  }
+
+  // ========= Watchdog : si le module Firebase ne démarre pas =========
+  window.__fbModuleOk = false;
+
+  function setHeaderStatusFallback(state, text){
+    const dot = document.getElementById("statusDot");
+    const label = document.getElementById("statusText");
+    if(label) label.textContent = text || "";
+    if(dot){
+      dot.classList.remove("ok","bad");
+      if(state==="ok") dot.classList.add("ok");
+      if(state==="bad") dot.classList.add("bad");
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", ()=>{
+    bindTabs();
+    bindSubtabs();
+
+    // au bout de 2s, si le module n’a pas confirmé → erreur de chargement
+    setTimeout(()=>{
+      if(!window.__fbModuleOk){
+        setHeaderStatusFallback("bad", "Erreur chargement Firebase (module)");
+        // astuce : ouvre la console Safari pour voir l’erreur d’import
+      }
+    }, 2000);
+  });
+</script>  
+
+
 <div class="container">
   <div class="tabs">
     <button class="tabBtn active" data-tab="teamsTab">Teams Lisa/Manon</button>
@@ -803,6 +873,7 @@
 </div>
 
 <script type="module">
+  window.__fbModuleOk = true;
   // ================================
   // Firebase
   // ================================
