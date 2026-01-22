@@ -2,335 +2,834 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Admin – Americano Lisa vs Manon</title>
+  <title>Admin – Attribution Teams (Lisa / Manon)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
-    body{ font-family: system-ui, -apple-system, Segoe UI, Arial, sans-serif; margin:0; background:#0f172a; color:#e5e7eb; }
-    header{ background:#b91c1c; padding:14px; font-weight:700; }
-    header small{ display:block; font-weight:400; opacity:.9; }
+    :root{
+      --red:#b71c1c;
+      --bg:#0f1115;
+      --panel:#141822;
+      --line:rgba(255,255,255,0.10);
+      --muted:rgba(255,255,255,0.70);
+      --white:#fff;
 
-    .container{ max-width:1100px; margin:auto; padding:14px; display:grid; gap:14px; }
-    .box{ background:#020617; border-radius:10px; padding:12px; border:1px solid #1e293b; }
-    h2{ margin:0 0 10px 0; font-size:16px; }
+      --ok:#2e7d32;
+      --warn:#f9a825;
 
-    input,select,button{ padding:8px; border-radius:6px; border:none; font-size:14px; }
-    input,select{ background:#020617; color:#e5e7eb; border:1px solid #334155; }
-    button{ cursor:pointer; font-weight:600; }
+      --btn:#1f2433;
+      --btn2:#2a3146;
 
-    .btn-red{ background:#dc2626; color:white; }
-    .btn-yellow{ background:#facc15; color:#020617; }
-    .btn-gray{ background:#334155; color:white; }
+      --radius:14px;
+    }
 
-    .row{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+    html,body{height:100%;}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--white);
+    }
 
-    .pill{ padding:6px 10px; border-radius:999px; font-size:13px; cursor:pointer; display:inline-block; }
-    .lisa{ background:#ec4899; color:white; }
-    .manon{ background:#8b5cf6; color:white; }
-    .neutral{ background:#334155; }
+    header{
+      background: var(--red);
+      padding: 14px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+    }
+    .title-wrap{
+      display:flex;
+      flex-direction:column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .title{
+      font-size: 18px;
+      font-weight: 900;
+      line-height: 1.1;
+      white-space: nowrap;
+      overflow:hidden;
+      text-overflow: ellipsis;
+    }
+    .subtitle{
+      font-size: 13px;
+      opacity: .9;
+      font-weight: 600;
+    }
+    .status-pill{
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 800;
+      background: rgba(0,0,0,0.15);
+      white-space: nowrap;
+    }
+    .status-pill.ok{ border-color: rgba(46,125,50,0.55); }
+    .status-pill.err{ border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.10); }
 
-    .lists{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
-    ul{ list-style:none; padding:0; margin:0; }
-    li{ margin-bottom:6px; }
+    .wrap{
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 14px;
+      box-sizing: border-box;
+    }
 
+    .grid{
+      display:grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 12px;
+    }
+
+    .panel{
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow:hidden;
+    }
+    .panel-title{
+      padding: 10px 12px;
+      font-weight: 900;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0));
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+    }
+    .panel-title small{
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    .panel-body{ padding: 12px; }
+
+    .row{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    input, select{
+      background: rgba(255,255,255,0.05);
+      color: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px 10px;
+      font-size: 14px;
+      outline: none;
+    }
+    input::placeholder{ color: rgba(255,255,255,0.55); }
+
+    button{
+      border: 0;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-weight: 900;
+      cursor: pointer;
+      color: var(--white);
+      background: var(--btn);
+    }
+    button:hover{ background: var(--btn2); }
+    button.primary{ background: var(--red); }
+    button.primary:hover{ filter: brightness(1.05); }
+    button.warn{
+      background: #3a3f52;
+      color: #fff;
+    }
+    button.small{
+      padding: 8px 10px;
+      font-size: 13px;
+      border-radius: 9px;
+    }
+
+    .hint{
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+      margin-top: 8px;
+    }
+
+    /* Lists */
+    .lists{
+      margin-top: 10px;
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+    }
+    .listbox{
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px;
+      background: rgba(255,255,255,0.03);
+      min-height: 120px;
+    }
+    .listbox h4{
+      margin: 0 0 8px 0;
+      font-size: 14px;
+      font-weight: 900;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 8px;
+    }
+    .count{
+      font-size: 12px;
+      font-weight: 900;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      background: rgba(255,255,255,0.03);
+    }
+
+    .chips{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 8px;
+    }
+    .chip{
+      border-radius: 999px;
+      padding: 8px 10px;
+      font-size: 13px;
+      font-weight: 900;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.05);
+      cursor: pointer;
+      user-select:none;
+    }
+    .chip:hover{ filter: brightness(1.08); }
+    .chip.lisa{
+      background: rgba(255, 105, 180, 0.16);
+      border-color: rgba(255, 105, 180, 0.28);
+    }
+    .chip.manon{
+      background: rgba(140, 110, 255, 0.16);
+      border-color: rgba(140, 110, 255, 0.28);
+    }
+    .chip.neutral{
+      background: rgba(255,255,255,0.04);
+    }
+    .chip small{
+      font-weight: 900;
+      opacity: 0.75;
+      margin-left: 6px;
+    }
+
+    /* Journal */
     .log{
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      font-size:12px;
-      background:#020617;
-      padding:8px;
-      border-radius:6px;
-      max-height:180px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      line-height: 1.35;
+      padding: 10px;
+      background: rgba(0,0,0,0.25);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      max-height: 260px;
       overflow:auto;
-      border:1px solid #1e293b;
+      white-space: pre-wrap;
     }
 
-    .statusbar{
-      display:none;
-      margin-top:10px;
-      padding:10px;
-      border-radius:8px;
-      border:1px solid rgba(255,255,255,0.18);
-      background: rgba(220,38,38,0.18);
-      color:#fff;
-      font-size:13px;
-      line-height:1.3;
+    /* PIN overlay */
+    .overlay{
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.72);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 16px;
+      z-index: 9999;
     }
-    .statusbar.show{ display:block; }
+    .pin-card{
+      width: min(520px, 100%);
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow:hidden;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.45);
+    }
+    .pin-head{
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      font-weight: 1000;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0));
+    }
+    .pin-body{ padding: 14px; }
+    .pin-body p{
+      margin: 0 0 10px 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+    .pin-actions{
+      display:flex;
+      gap: 10px;
+      margin-top: 10px;
+      flex-wrap:wrap;
+    }
+    .pin-error{
+      margin-top: 10px;
+      color: rgba(255,220,220,0.95);
+      font-weight: 900;
+      font-size: 13px;
+      display:none;
+    }
+
+    @media (max-width: 980px){
+      .grid{ grid-template-columns: 1fr; }
+      .lists{ grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 
 <body>
-
-<header>
-  Admin – Attribution Teams (Lisa / Manon)
-  <small>Americano Lisa vs Manon</small>
-</header>
-
-<div class="container">
-
-  <div class="box">
-    <h2>1) Ajout de joueurs (sans équipe)</h2>
-    <div class="row">
-      <input id="playerName" placeholder="Nom / Prénom" />
-      <select id="playerGender">
-        <option value="">Sexe (optionnel)</option>
-        <option value="F">Femme</option>
-        <option value="H">Homme</option>
-      </select>
-      <button id="btnAdd" class="btn-red">Ajouter le joueur</button>
+  <header>
+    <div class="title-wrap">
+      <div class="title">Admin – Attribution Teams (Lisa / Manon)</div>
+      <div class="subtitle">Americano Lisa vs Manon</div>
     </div>
-    <div id="statusbar" class="statusbar"></div>
-  </div>
+    <div id="pillStatus" class="status-pill err">Connexion…</div>
+  </header>
 
-  <div class="box">
-    <h2>2) Réglage du draft</h2>
-    <div class="row">
-      <strong>Au tour de :</strong> <span id="turnLabel">—</span>
-    </div>
-    <div class="row" style="margin-top:6px;">
-      <select id="starterSelect">
-        <option value="">Qui commence ?</option>
-        <option value="Lisa">Lisa</option>
-        <option value="Manon">Manon</option>
-      </select>
-      <button id="btnSetStarter" class="btn-yellow">Définir “qui commence”</button>
-      <button id="btnReset" class="btn-gray">Réinitialiser</button>
-    </div>
-  </div>
-
-  <div class="box">
-    <h2>3) Listes</h2>
-    <div class="lists">
-      <div>
-        <strong>Sans équipe</strong>
-        <ul id="listNone"></ul>
-      </div>
-      <div>
-        <strong>Team Lisa</strong>
-        <ul id="listLisa"></ul>
-      </div>
-      <div>
-        <strong>Team Manon</strong>
-        <ul id="listManon"></ul>
+  <!-- PIN Overlay -->
+  <div id="pinOverlay" class="overlay" style="display:none;">
+    <div class="pin-card">
+      <div class="pin-head">Accès Admin (PIN)</div>
+      <div class="pin-body">
+        <p id="pinMsg">Saisis le PIN admin.</p>
+        <div class="row">
+          <input id="pinInput" inputmode="numeric" autocomplete="one-time-code" maxlength="12" placeholder="PIN (ex: 123456)" />
+          <button id="btnPinValidate" class="primary">Valider</button>
+        </div>
+        <div class="pin-actions">
+          <button id="btnPinLogout" class="warn small">Oublier le PIN (cet appareil)</button>
+        </div>
+        <div id="pinError" class="pin-error">PIN incorrect.</div>
+        <div class="hint">
+          Astuce : après validation, le PIN est mémorisé sur cet appareil (localStorage).
+        </div>
       </div>
     </div>
-    <div style="margin-top:10px; font-size:12px; opacity:.85;">
-      Astuce : clique un joueur dans “Sans équipe” pour l’attribuer à la personne dont c’est le tour.
+  </div>
+
+  <div class="wrap">
+    <div class="grid">
+      <!-- Colonne gauche -->
+      <div>
+        <div class="panel">
+          <div class="panel-title">
+            <span>1) Ajout de joueurs (sans équipe)</span>
+            <small>Firestore : players</small>
+          </div>
+          <div class="panel-body">
+            <div class="row">
+              <input id="inpName" placeholder="Nom / Prénom" style="min-width:240px; flex:1;" />
+              <select id="selGender" style="min-width:180px;">
+                <option value="">Sexe (optionnel)</option>
+                <option value="H">Homme (H)</option>
+                <option value="F">Femme (F)</option>
+              </select>
+              <button id="btnAdd" class="primary">Ajouter le joueur</button>
+            </div>
+            <div class="hint">
+              Les joueurs ajoutés ici n’ont pas d’équipe tant que Lisa/Manon (ou l’admin) ne les choisissent pas.
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:12px;">
+          <div class="panel-title">
+            <span>2) Réglage du draft</span>
+            <small>Firestore : meta/draft</small>
+          </div>
+          <div class="panel-body">
+            <div class="row" style="margin-bottom:10px;">
+              <div style="font-weight:900;">
+                Au tour de : <span id="curTurnLabel" style="color:#fff;">—</span>
+              </div>
+            </div>
+
+            <div class="row">
+              <select id="selStarts" style="min-width:200px;">
+                <option value="LISA">Lisa</option>
+                <option value="MANON">Manon</option>
+              </select>
+              <button id="btnSetStarts" class="primary">Définir "qui commence"</button>
+              <button id="btnResetDraft" class="warn">Réinitialiser</button>
+            </div>
+
+            <div class="hint">
+              - “Définir” fixe le premier choix et met “Au tour de” sur la même personne.<br />
+              - “Réinitialiser” remet “Au tour de” à vide (utile si tu recommences).
+            </div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:12px;">
+          <div class="panel-title">
+            <span>3) Listes</span>
+            <small>choix alterné automatique</small>
+          </div>
+          <div class="panel-body">
+            <div class="hint" style="margin-top:0;">
+              Astuce : clique un joueur dans <b>Sans équipe</b> pour l’attribuer à la personne dont c’est le tour.
+            </div>
+
+            <div class="lists" style="margin-top:10px;">
+              <div class="listbox">
+                <h4>Sans équipe <span id="countNone" class="count">0</span></h4>
+                <div id="listNone" class="chips"></div>
+              </div>
+
+              <div class="listbox">
+                <h4>Team Lisa <span id="countLisa" class="count">0</span></h4>
+                <div id="listLisa" class="chips"></div>
+              </div>
+
+              <div class="listbox">
+                <h4>Team Manon <span id="countManon" class="count">0</span></h4>
+                <div id="listManon" class="chips"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Colonne droite -->
+      <div>
+        <div class="panel">
+          <div class="panel-title">
+            <span>Journal</span>
+            <small>utile si ça bloque</small>
+          </div>
+          <div class="panel-body">
+            <div id="logBox" class="log">Chargement…</div>
+            <div class="hint">
+              Si tu vois “Missing or insufficient permissions”, ce sont les règles Firestore.
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-
-  <div class="box">
-    <h2>Journal</h2>
-    <div id="log" class="log"></div>
-  </div>
-
-</div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
   import {
-    getFirestore, collection, addDoc, updateDoc, doc,
-    onSnapshot, setDoc, getDoc, query, orderBy
+    getFirestore,
+    collection,
+    doc,
+    getDoc,
+    setDoc,
+    addDoc,
+    updateDoc,
+    onSnapshot,
+    query,
+    orderBy,
+    serverTimestamp
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-  // ========= DOM =========
-  const elName = document.getElementById("playerName");
-  const elGender = document.getElementById("playerGender");
-  const elTurn = document.getElementById("turnLabel");
-  const elStarter = document.getElementById("starterSelect");
-  const elListNone = document.getElementById("listNone");
-  const elListLisa = document.getElementById("listLisa");
-  const elListManon = document.getElementById("listManon");
-  const elLog = document.getElementById("log");
-  const elStatus = document.getElementById("statusbar");
-
-  const btnAdd = document.getElementById("btnAdd");
-  const btnSetStarter = document.getElementById("btnSetStarter");
-  const btnReset = document.getElementById("btnReset");
-
-  function showStatus(msg){
-    elStatus.textContent = msg;
-    elStatus.classList.add("show");
-  }
-  function clearStatus(){
-    elStatus.textContent = "";
-    elStatus.classList.remove("show");
-  }
-
-  function log(msg){
-    const d = new Date().toLocaleTimeString();
-    elLog.innerHTML = `[${d}] ${escapeHtml(msg)}<br>` + elLog.innerHTML;
-  }
-  function escapeHtml(s){
-    return String(s).replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]));
-  }
-
-  // ========= Firebase =========
+  // === Firebase config (projet americano-lisa-manon) ===
   const firebaseConfig = {
-    apiKey: "AIzaSyD7-WLKemajFSh4INdTCVpPvF2hv_jPQm8",
+    apiKey: "AIzaSyD7-WLKEMajFSh4INdTCVpPvF2hv_jPQm8",
     authDomain: "americano-lisa-manon.firebaseapp.com",
     projectId: "americano-lisa-manon",
     storageBucket: "americano-lisa-manon.firebasestorage.app",
     messagingSenderId: "98885291802",
-    appId: "1:98885291802:web:6aff774bfb8fd14db226a3"
+    appId: "1:98885291802:web:6af7774bfb8fd14db226a3"
   };
 
   const app = initializeApp(firebaseConfig);
+  try { getAnalytics(app); } catch(e){ /* analytics optionnel */ }
   const db = getFirestore(app);
 
+  // === DOM ===
+  const pillStatus = document.getElementById("pillStatus");
+
+  const inpName = document.getElementById("inpName");
+  const selGender = document.getElementById("selGender");
+  const btnAdd = document.getElementById("btnAdd");
+
+  const curTurnLabel = document.getElementById("curTurnLabel");
+  const selStarts = document.getElementById("selStarts");
+  const btnSetStarts = document.getElementById("btnSetStarts");
+  const btnResetDraft = document.getElementById("btnResetDraft");
+
+  const listNone = document.getElementById("listNone");
+  const listLisa = document.getElementById("listLisa");
+  const listManon = document.getElementById("listManon");
+  const countNone = document.getElementById("countNone");
+  const countLisa = document.getElementById("countLisa");
+  const countManon = document.getElementById("countManon");
+
+  const logBox = document.getElementById("logBox");
+
+  // PIN overlay
+  const pinOverlay = document.getElementById("pinOverlay");
+  const pinInput = document.getElementById("pinInput");
+  const pinMsg = document.getElementById("pinMsg");
+  const pinError = document.getElementById("pinError");
+  const btnPinValidate = document.getElementById("btnPinValidate");
+  const btnPinLogout = document.getElementById("btnPinLogout");
+
+  // === Collections / docs ===
   const playersCol = collection(db, "players");
-  const draftRef = doc(db, "meta", "draft");
+  const adminDocRef = doc(db, "meta", "admin"); // { pin: "123456" }
+  const draftDocRef = doc(db, "meta", "draft"); // { turn: "LISA"/"MANON", startedBy, updatedAt }
 
-  // ========= Actions =========
-  async function addPlayer(){
-    clearStatus();
-    try{
-      const name = elName.value.trim();
-      if(!name){
-        showStatus("⚠️ Mets un nom/prénom avant d’ajouter.");
-        return;
+  // === State ===
+  let playersCache = [];
+  let draftCache = { turn: null, startedBy: null };
+  let isUnlocked = false;
+
+  function nowHHMMSS(){
+    const d = new Date();
+    const hh = String(d.getHours()).padStart(2,"0");
+    const mm = String(d.getMinutes()).padStart(2,"0");
+    const ss = String(d.getSeconds()).padStart(2,"0");
+    return `${hh}:${mm}:${ss}`;
+  }
+  function log(line, ok=true){
+    const icon = ok ? "✅" : "❌";
+    const prev = logBox.textContent === "Chargement…" ? "" : logBox.textContent;
+    logBox.textContent = `[${nowHHMMSS()}] ${icon} ${line}\n` + prev;
+  }
+
+  function setStatusOk(txt){
+    pillStatus.className = "status-pill ok";
+    pillStatus.textContent = txt;
+  }
+  function setStatusErr(txt){
+    pillStatus.className = "status-pill err";
+    pillStatus.textContent = txt;
+  }
+
+  function teamLabel(k){
+    if (k === "LISA") return "Lisa";
+    if (k === "MANON") return "Manon";
+    return "—";
+  }
+
+  // === PIN logic ===
+  function openPinOverlay(msg){
+    pinMsg.textContent = msg;
+    pinError.style.display = "none";
+    pinOverlay.style.display = "";
+    pinInput.value = "";
+    setTimeout(()=>pinInput.focus(), 50);
+  }
+
+  function closePinOverlay(){
+    pinOverlay.style.display = "none";
+  }
+
+  async function getServerPin(){
+    const snap = await getDoc(adminDocRef);
+    if (!snap.exists()) return null;
+    const data = snap.data() || {};
+    const pin = (data.pin ?? "").toString().trim();
+    return pin ? pin : null;
+  }
+
+  async function ensureUnlocked(){
+    // 1) si PIN en localStorage, on tente direct
+    const local = (localStorage.getItem("ADMIN_PIN") || "").trim();
+    const serverPin = await getServerPin();
+
+    // Cas 1 : aucun PIN serveur => création
+    if (!serverPin){
+      openPinOverlay("Aucun PIN n’est défini. Crée le premier PIN admin (ex: 123456).");
+      return;
+    }
+
+    // Cas 2 : PIN serveur existe, on check local
+    if (local && local === serverPin){
+      isUnlocked = true;
+      closePinOverlay();
+      setStatusOk("Admin OK");
+      log("Accès admin validé (PIN mémorisé).");
+      return;
+    }
+
+    // Sinon on demande
+    openPinOverlay("Saisis le PIN admin.");
+  }
+
+  async function validatePin(){
+    pinError.style.display = "none";
+    const entered = (pinInput.value || "").trim();
+    if (!entered){
+      pinError.textContent = "PIN requis.";
+      pinError.style.display = "";
+      return;
+    }
+
+    const serverPin = await getServerPin();
+
+    // Si pas de PIN serveur => on le crée
+    if (!serverPin){
+      try{
+        await setDoc(adminDocRef, { pin: entered, updatedAt: Date.now() }, { merge: true });
+        localStorage.setItem("ADMIN_PIN", entered);
+        isUnlocked = true;
+        closePinOverlay();
+        setStatusOk("Admin OK");
+        log("PIN créé et accès admin validé.");
+      }catch(e){
+        pinError.textContent = "Impossible d’enregistrer le PIN (règles Firestore ?).";
+        pinError.style.display = "";
+        log(`Erreur création PIN : ${e?.message || e}`, false);
+        setStatusErr("Erreur Firestore");
       }
+      return;
+    }
 
+    // Sinon on compare
+    if (entered === serverPin){
+      localStorage.setItem("ADMIN_PIN", entered);
+      isUnlocked = true;
+      closePinOverlay();
+      setStatusOk("Admin OK");
+      log("Accès admin validé.");
+    } else {
+      pinError.textContent = "PIN incorrect.";
+      pinError.style.display = "";
+      isUnlocked = false;
+      setStatusErr("PIN requis");
+    }
+  }
+
+  btnPinValidate.addEventListener("click", validatePin);
+  pinInput.addEventListener("keydown", (e)=>{
+    if (e.key === "Enter") validatePin();
+  });
+  btnPinLogout.addEventListener("click", ()=>{
+    localStorage.removeItem("ADMIN_PIN");
+    isUnlocked = false;
+    openPinOverlay("PIN oublié. Saisis le PIN admin.");
+    setStatusErr("PIN requis");
+    log("PIN local supprimé (cet appareil).");
+  });
+
+  // === Render lists ===
+  function render(){
+    const none = playersCache.filter(p => !p.team);
+    const lisa = playersCache.filter(p => p.team === "LISA");
+    const manon = playersCache.filter(p => p.team === "MANON");
+
+    countNone.textContent = String(none.length);
+    countLisa.textContent = String(lisa.length);
+    countManon.textContent = String(manon.length);
+
+    listNone.innerHTML = "";
+    listLisa.innerHTML = "";
+    listManon.innerHTML = "";
+
+    function makeChip(p, cls){
+      const div = document.createElement("div");
+      div.className = `chip ${cls}`;
+      const g = (p.gender || "").toString().trim();
+      div.innerHTML = `${escapeHtml(p.name || "")}${g ? `<small>${g}</small>` : ""}`;
+      return div;
+    }
+
+    none.forEach(p=>{
+      const chip = makeChip(p, "neutral");
+      chip.title = "Cliquer pour attribuer au tour en cours";
+      chip.addEventListener("click", async ()=>{
+        if (!isUnlocked){
+          openPinOverlay("Saisis le PIN admin.");
+          return;
+        }
+        const turn = draftCache.turn;
+        if (turn !== "LISA" && turn !== "MANON"){
+          log("Draft non initialisé : définis 'qui commence' avant d’attribuer.", false);
+          return;
+        }
+        await assignPlayerToTeam(p.id, turn);
+      });
+      listNone.appendChild(chip);
+    });
+
+    lisa.forEach(p=>{
+      const chip = makeChip(p, "lisa");
+      chip.title = "Team Lisa";
+      listLisa.appendChild(chip);
+    });
+
+    manon.forEach(p=>{
+      const chip = makeChip(p, "manon");
+      chip.title = "Team Manon";
+      listManon.appendChild(chip);
+    });
+
+    curTurnLabel.textContent = teamLabel(draftCache.turn);
+  }
+
+  function escapeHtml(str){
+    return (str ?? "").toString()
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+  // === Actions ===
+  async function addPlayer(){
+    if (!isUnlocked){
+      openPinOverlay("Saisis le PIN admin.");
+      return;
+    }
+    const name = (inpName.value || "").trim();
+    const gender = (selGender.value || "").trim();
+
+    if (!name){
+      log("Nom / Prénom requis.", false);
+      return;
+    }
+
+    try{
       await addDoc(playersCol, {
         name,
-        gender: elGender.value || null,
+        gender: gender || null,
         team: null,
-        createdAt: Date.now()
+        createdAt: Date.now(),
+        createdAtServer: serverTimestamp()
       });
-
-      elName.value = "";
-      elGender.value = "";
-      log(`✅ Joueur ajouté : ${name}`);
-    }catch(err){
-      console.error(err);
-      log(`❌ Erreur addPlayer : ${err?.message || err}`);
-      showStatus("❌ Firestore a refusé l’écriture (permissions). Va dans Firestore > Règles, ou envoie-moi une capture du message d’erreur dans le journal.");
+      inpName.value = "";
+      selGender.value = "";
+      log(`Joueur ajouté : ${name}`);
+    }catch(e){
+      log(`Erreur ajout joueur : ${e?.message || e}`, false);
+      setStatusErr("Erreur Firestore");
     }
   }
 
-  async function setStarter(){
-    clearStatus();
+  btnAdd.addEventListener("click", addPlayer);
+  inpName.addEventListener("keydown", (e)=>{
+    if (e.key === "Enter") addPlayer();
+  });
+
+  async function setStarts(){
+    if (!isUnlocked){
+      openPinOverlay("Saisis le PIN admin.");
+      return;
+    }
+    const who = selStarts.value;
+    if (who !== "LISA" && who !== "MANON") return;
+
     try{
-      const who = elStarter.value;
-      if(!who){
-        showStatus("⚠️ Choisis d’abord Lisa ou Manon.");
-        return;
-      }
-      await setDoc(draftRef, { starter: who, turn: who }, { merge: true });
-      log(`✅ Draft initialisé – ${who} commence`);
-    }catch(err){
-      console.error(err);
-      log(`❌ Erreur setStarter : ${err?.message || err}`);
-      showStatus("❌ Firestore a refusé l’écriture (permissions).");
+      await setDoc(draftDocRef, {
+        startedBy: who,
+        turn: who,
+        updatedAt: Date.now(),
+        updatedAtServer: serverTimestamp()
+      }, { merge: true });
+      log(`Draft initialisé – ${teamLabel(who)} commence`);
+    }catch(e){
+      log(`Erreur draft : ${e?.message || e}`, false);
+      setStatusErr("Erreur Firestore");
     }
   }
+
+  btnSetStarts.addEventListener("click", setStarts);
 
   async function resetDraft(){
-    clearStatus();
+    if (!isUnlocked){
+      openPinOverlay("Saisis le PIN admin.");
+      return;
+    }
     try{
-      await setDoc(draftRef, {}, { merge: false });
-      log("✅ Draft réinitialisé");
-    }catch(err){
-      console.error(err);
-      log(`❌ Erreur resetDraft : ${err?.message || err}`);
-      showStatus("❌ Firestore a refusé l’écriture (permissions).");
+      await setDoc(draftDocRef, {
+        startedBy: null,
+        turn: null,
+        updatedAt: Date.now(),
+        updatedAtServer: serverTimestamp()
+      }, { merge: true });
+      log("Draft réinitialisé.");
+    }catch(e){
+      log(`Erreur reset : ${e?.message || e}`, false);
+      setStatusErr("Erreur Firestore");
     }
   }
 
-  async function pick(playerId, team){
-    clearStatus();
+  btnResetDraft.addEventListener("click", resetDraft);
+
+  async function assignPlayerToTeam(playerId, team){
     try{
-      if(team !== "Lisa" && team !== "Manon"){
-        showStatus("⚠️ Définis d’abord qui commence (étape 2).");
-        return;
-      }
+      const next = (team === "LISA") ? "MANON" : "LISA";
 
-      const snap = await getDoc(draftRef);
-      const data = snap.exists() ? snap.data() : {};
-      const turn = data.turn;
+      await updateDoc(doc(db, "players", playerId), {
+        team,
+        updatedAt: Date.now(),
+        updatedAtServer: serverTimestamp()
+      });
 
-      if(turn !== team){
-        showStatus(`⛔ Ce n’est pas le tour de ${team}. Au tour de : ${turn || "—"}`);
-        return;
-      }
+      await setDoc(draftDocRef, {
+        turn: next,
+        updatedAt: Date.now(),
+        updatedAtServer: serverTimestamp()
+      }, { merge: true });
 
-      await updateDoc(doc(db,"players",playerId), { team });
-      await setDoc(draftRef, { turn: team === "Lisa" ? "Manon" : "Lisa" }, { merge:true });
-
-      log(`✅ ${team} choisit un joueur → tour suivant`);
-    }catch(err){
-      console.error(err);
-      log(`❌ Erreur pick : ${err?.message || err}`);
-      showStatus("❌ Firestore a refusé l’écriture (permissions).");
+      log(`${teamLabel(team)} choisit un joueur → tour suivant`);
+    }catch(e){
+      log(`Erreur attribution : ${e?.message || e}`, false);
+      setStatusErr("Erreur Firestore");
     }
   }
 
-  // ========= Brancher les boutons =========
-  btnAdd.addEventListener("click", addPlayer);
-  btnSetStarter.addEventListener("click", setStarter);
-  btnReset.addEventListener("click", resetDraft);
-
-  // Entrée = ajoute
-  elName.addEventListener("keydown", (e)=>{
-    if(e.key === "Enter") addPlayer();
-  });
-
-  // ========= Live updates =========
-  onSnapshot(draftRef, (snap)=>{
-    const turn = snap.exists() ? (snap.data().turn || "—") : "—";
-    elTurn.textContent = turn;
-  }, (err)=>{
-    console.error(err);
-    log(`❌ onSnapshot draft : ${err?.message || err}`);
-    showStatus("❌ Lecture Firestore refusée (permissions).");
-  });
-
-  const playersQuery = query(playersCol, orderBy("createdAt","asc"));
-  onSnapshot(playersQuery, (snap)=>{
-    elListNone.innerHTML = "";
-    elListLisa.innerHTML = "";
-    elListManon.innerHTML = "";
-
-    snap.docs.forEach(d=>{
-      const p = d.data();
-      const li = document.createElement("li");
-
-      if(!p.team){
-        const span = document.createElement("span");
-        span.className = "pill neutral";
-        span.textContent = p.name || "";
-        span.addEventListener("click", ()=> pick(d.id, elTurn.textContent));
-        li.appendChild(span);
-        elListNone.appendChild(li);
-        return;
-      }
-
-      if(p.team === "Lisa"){
-        li.innerHTML = `<span class="pill lisa">${escapeHtml(p.name || "")}</span>`;
-        elListLisa.appendChild(li);
-        return;
-      }
-
-      if(p.team === "Manon"){
-        li.innerHTML = `<span class="pill manon">${escapeHtml(p.name || "")}</span>`;
-        elListManon.appendChild(li);
-        return;
-      }
+  // === Firestore listeners ===
+  function startListeners(){
+    // Players
+    const qPlayers = query(playersCol, orderBy("createdAt", "asc"));
+    onSnapshot(qPlayers, (snap)=>{
+      playersCache = snap.docs.map(d=>({ id: d.id, ...d.data() }));
+      render();
+      if (isUnlocked) setStatusOk("Admin OK");
+    }, (err)=>{
+      log(`onSnapshot players : ${err?.message || err}`, false);
+      setStatusErr("Erreur Firestore");
     });
-  }, (err)=>{
-    console.error(err);
-    log(`❌ onSnapshot players : ${err?.message || err}`);
-    showStatus("❌ Lecture Firestore refusée (permissions).");
-  });
 
-  // Expose aussi pour debug si besoin
-  window.addPlayer = addPlayer;
-  window.setStarter = setStarter;
-  window.resetDraft = resetDraft;
-  window.pick = pick;
+    // Draft
+    onSnapshot(draftDocRef, (snap)=>{
+      if (!snap.exists()){
+        draftCache = { turn: null, startedBy: null };
+      } else {
+        const d = snap.data() || {};
+        draftCache = {
+          turn: d.turn ?? null,
+          startedBy: d.startedBy ?? null
+        };
+      }
+      render();
+    }, (err)=>{
+      log(`onSnapshot draft : ${err?.message || err}`, false);
+      setStatusErr("Erreur Firestore");
+    });
+  }
 
-  log("Admin chargé. Étape 1 : ajoute des joueurs, puis définis qui commence.");
+  // === Boot ===
+  (async function init(){
+    setStatusErr("PIN requis");
+    log("Admin chargé. Étape 1 : ajout de joueurs, puis définis qui commence.");
+
+    try{
+      await ensureUnlocked();
+      // overlay ouvert si besoin
+      startListeners();
+    }catch(e){
+      log(`Erreur init : ${e?.message || e}`, false);
+      setStatusErr("Erreur init");
+      openPinOverlay("Erreur de connexion Firestore. Vérifie le projet/règles.");
+    }
+  })();
 </script>
-
 </body>
 </html>
