@@ -292,6 +292,34 @@
     }
     .chip .delBtn:hover{ transform: translateY(-1px); }
 
+
+
+    /* ===== Présence (Teams) ===== */
+.chip.absent{
+  opacity: .45;
+  filter: grayscale(.2);
+  text-decoration: line-through;
+}
+
+.chip .presBtn{
+  margin-left: 6px;
+  border: 1px solid rgba(0,0,0,.12);
+  background: rgba(0,0,0,.04);
+  color:#111827;
+  border-radius: 999px;
+  padding: 4px 8px;
+  font-weight: 1000;
+  font-size: 11px;
+  cursor:pointer;
+}
+.chip .presBtn:hover{ transform: translateY(-1px); }
+
+.chip .presBtn.abs{
+  border-color: rgba(239,68,68,.25);
+  background: rgba(239,68,68,.10);
+  color:#7f1d1d;
+}
+    
     .divider{
       height:1px;
       background: rgba(0,0,0,.06);
@@ -731,16 +759,18 @@
         <span class="hint">calculé sur les matchs <b>validés</b></span>
       </div>
 
-      <div class="subtabs">
-        <button class="subBtn active" data-subtab="rankGeneral">Général</button>
-        <button class="subBtn" data-subtab="rankLisa">Team Lisa</button>
-        <button class="subBtn" data-subtab="rankManon">Team Manon</button>
-      </div>
+     <div class="subtabs">
+  <button class="subBtn active" data-subtab="rankGeneral">Général</button>
+  <button class="subBtn" data-subtab="rankLisa">Team Lisa</button>
+  <button class="subBtn" data-subtab="rankManon">Team Manon</button>
+  <button class="subBtn" data-subtab="rankDuel">Lisa vs Manon</button> <!-- ✅ nouveau -->
+</div>
 
-      <div id="rankGeneral" class="subContent active"></div>
-      <div id="rankLisa" class="subContent"></div>
-      <div id="rankManon" class="subContent"></div>
-
+<div id="rankGeneral" class="subContent active"></div>
+<div id="rankLisa" class="subContent"></div>
+<div id="rankManon" class="subContent"></div>
+<div id="rankDuel" class="subContent"></div> <!-- ✅ nouveau -->
+      
       <div class="small" style="margin-top:10px;">
         Points affichés = <b>pointsGeneral</b> dans Firestore (recalcul auto après validation / modification de score).
       </div>
@@ -959,7 +989,8 @@ Confirmer l’attribution à Team ${team} ?`;
 
     const mkChip = (p, teamClass) => {
       const chip = document.createElement("div");
-      chip.className = "chip" + (teamClass ? " " + teamClass : "");
+      const isPresent = (p.present !== false); // défaut = présent
+      chip.className = "chip" + (teamClass ? " " + teamClass : "") + (isPresent ? "" : " absent");
       const initial = (p.gender || "").toUpperCase() || "•";
       const icon = p.team ? teamIcon(p.team) + " " : "";
       chip.innerHTML = `<span>${icon}${p.name || "(sans nom)"}</span><small>${initial}</small>`;
@@ -986,6 +1017,29 @@ Confirmer l’attribution à Team ${team} ?`;
         chip.appendChild(del);
       }
 
+      // ✅ Présent / Absent (toggle)
+        const presBtn = document.createElement("button");
+        presBtn.className = "presBtn" + ((p.present === false) ? " abs" : "");
+        presBtn.textContent = (p.present === false) ? "🚫 Absent" : "✅ Présent";
+        presBtn.title = "Basculer Présent / Absent (autant de fois que nécessaire)";
+
+        presBtn.addEventListener("click", async (ev)=>{
+        ev.stopPropagation();
+        try{
+          const next = !(p.present !== false);
+          await updateDoc(doc(db,"players",p.id), { present: next });
+          log(`Présence modifiée: ${p.name} → ${next ? "Présent" : "Absent"}`, "warn");
+        }
+        catch(e){
+          console.error(e);
+          log(`Erreur présence: ${e?.message || e}`, "bad");
+          alert("Erreur lors du changement de présence.");
+          }
+      });
+
+chip.appendChild(presBtn);
+
+  
       chip.addEventListener("click", async ()=>{
         try{
           if(!p.id) return;
@@ -997,6 +1051,11 @@ Confirmer l’attribution à Team ${team} ?`;
               return;
             }
 
+            if(p.present === false){
+              alert("Ce joueur est marqué ABSENT. Repasse-le en PRÉSENT pour pouvoir le sélectionner.");
+              return;
+            }
+            
             const team = draftCache.turn;
             const req = requiredGenderForTeam(team);
 
@@ -1071,6 +1130,8 @@ Confirmer l’attribution à Team ${team} ?`;
         name,
         gender,
         team: null,
+        await addDoc(playersCol, {
+        present: true,        // ✅ nouveau
         pointsGeneral: 0,
         createdAt: Date.now()
       });
@@ -1352,8 +1413,10 @@ Confirmer l’attribution à Team ${team} ?`;
   }
 
   function getTeamPlayers(team){
-    return playersCache.filter(p=>p.team===team && p.name).map(p=>p);
-  }
+  return playersCache
+    .filter(p => p.team === team && p.name && (p.present !== false)) // ✅ absents exclus
+    .map(p => p);
+}
 
   function pickBestPairsForTeam(teamPlayers, genderPlanPairs, stats, totalRoundsSoFar){
     // genderPlanPairs: array of pairs, each pair is array ["H","F"] or ["H","H"] or ["F","F"] or null => libre
@@ -1664,11 +1727,21 @@ Confirmer l’attribution à Team ${team} ?`;
         alert("Il faut saisir les deux scores pour chaque terrain avant de valider.");
         return;
       }
+    // ✅ Snapshot présence au moment de la validation (par tour)
+      const roster = playersCache.filter(p => (p.team === "Lisa" || p.team === "Manon") && p.name);
+      const presentNames = roster.filter(p => p.present !== false).map(p => p.name);
+      const absentNames  = roster.filter(p => p.present === false).map(p => p.name);
+    
     }
-
+    
     try{
-      for(const m of round.matches.slice(0,2)){
-        await updateDoc(doc(db,"matches",m.id), { validated: true });
+        for(const m of round.matches.slice(0,2)){
+        await updateDoc(doc(db,"matches",m.id), {
+        validated: true,
+        presentNamesSnapshot: presentNames, // ✅ nouveau
+        absentNamesSnapshot: absentNames    // ✅ nouveau
+        });
+      }
       }
       log(`Tour ${roundNumber} validé.`);
       await recomputePointsGeneral();
@@ -1803,6 +1876,7 @@ Confirmer l’attribution à Team ${team} ?`;
   const rankGeneralEl = document.getElementById("rankGeneral");
   const rankLisaEl = document.getElementById("rankLisa");
   const rankManonEl = document.getElementById("rankManon");
+  const rankDuelEl = document.getElementById("rankDuel");
 
   const statsMatchesEl = document.getElementById("statsMatches");
   const statsPartnersEl = document.getElementById("statsPartners");
@@ -1824,20 +1898,22 @@ Confirmer l’attribution à Team ${team} ?`;
       obj[a][b] = (obj[a][b] || 0) + 1;
     };
 
+    // ✅ Regroupement par Tour (roundNumber)
+const byRound = new Map();
+valid.forEach(m=>{
+  const r = Number(m.roundNumber || 0);
+  if(!r) return;
+  if(!byRound.has(r)) byRound.set(r, []);
+  byRound.get(r).push(m);
+});
+    
     valid.forEach(m=>{
       const teamA = m.teamA || [];
       const teamB = m.teamB || [];
       const scoreA = (typeof m.scoreA === "number") ? m.scoreA : 0;
       const scoreB = (typeof m.scoreB === "number") ? m.scoreB : 0;
 
-      teamA.forEach(n=>{
-        pointsByName[n] = (pointsByName[n] || 0) + scoreA;
-        matchesPlayedByName[n] = (matchesPlayedByName[n] || 0) + 1;
-      });
-      teamB.forEach(n=>{
-        pointsByName[n] = (pointsByName[n] || 0) + scoreB;
-        matchesPlayedByName[n] = (matchesPlayedByName[n] || 0) + 1;
-      });
+     
 
       if(teamA.length===2 && teamB.length===2){
         addCount(partners, teamA[0], teamA[1]);
@@ -1852,8 +1928,71 @@ Confirmer l’attribution à Team ${team} ?`;
           });
         });
       }
+
+      
     });
 
+// ✅ Points + matchs joués, calculés PAR TOUR (terrain / banc / absents)
+for(const [r, matches] of byRound.entries()){
+  const ms = [...matches].sort((a,b)=>(a.court||0)-(b.court||0)).slice(0,2);
+  if(ms.length < 2) continue;
+
+  const m1 = ms[0];
+  const m2 = ms[1];
+
+  // scores (si validé, ils doivent exister, mais on sécurise)
+  const sA1 = (typeof m1.scoreA === "number") ? m1.scoreA : 0;
+  const sB1 = (typeof m1.scoreB === "number") ? m1.scoreB : 0;
+  const sA2 = (typeof m2.scoreA === "number") ? m2.scoreA : 0;
+  const sB2 = (typeof m2.scoreB === "number") ? m2.scoreB : 0;
+
+  // joueurs sur le terrain (8)
+  const playing = [
+    ...(m1.teamA||[]), ...(m1.teamB||[]),
+    ...(m2.teamA||[]), ...(m2.teamB||[])
+  ].filter(Boolean);
+
+  // snapshots présence/absence (au moment de la validation)
+  const presentSnap = (m1.presentNamesSnapshot || []).filter(Boolean);
+  const absentSnap  = (m1.absentNamesSnapshot  || []).filter(Boolean);
+
+  // banc = présents - joueurs sur le terrain
+  const playingSet = new Set(playing);
+  const bench = presentSnap.filter(n=>!playingSet.has(n));
+
+  // moyenne points "sur le terrain"
+  // chaque Lisa prend scoreA, chaque Manon scoreB, donc moyenne = (scoreLisa + scoreManon)/2 par match,
+  // mais on a 2 terrains donc on moyenne sur les 2 matchs :
+  const avgCourtPoints = ((sA1 + sB1)/2 + (sA2 + sB2)/2) / 2;
+
+  // min points sur le terrain (pour absents) : min des 4 scores d’équipes sur les 2 terrains
+  const minCourtPoints = Math.min(sA1, sB1, sA2, sB2);
+
+  // "matchs joués moyen des présents durant ce tour" = 8 / nbPrésents
+  const presentCount = Math.max(1, presentSnap.length);
+  const avgMatchesPresent = 8 / presentCount;
+
+  // 1) joueurs sur le terrain : points = score de leur team, matchs +1
+  function addPlayer(name, pts, mp){
+    if(!name) return;
+    pointsByName[name] = (pointsByName[name] || 0) + pts;
+    matchesPlayedByName[name] = (matchesPlayedByName[name] || 0) + mp;
+  }
+
+  // Terrain 1
+  (m1.teamA||[]).forEach(n=> addPlayer(n, sA1, 1));
+  (m1.teamB||[]).forEach(n=> addPlayer(n, sB1, 1));
+  // Terrain 2
+  (m2.teamA||[]).forEach(n=> addPlayer(n, sA2, 1));
+  (m2.teamB||[]).forEach(n=> addPlayer(n, sB2, 1));
+
+  // 2) banc : points = moyenne terrain, matchs +0
+  bench.forEach(n=> addPlayer(n, avgCourtPoints, 0));
+
+  // 3) absents : points = min-2, matchs + avgMatchesPresent
+  absentSnap.forEach(n=> addPlayer(n, (minCourtPoints - 2), avgMatchesPresent));
+}
+    
     return { pointsByName, matchesPlayedByName, partners, opponents };
   }
 
@@ -1884,6 +2023,32 @@ Confirmer l’attribution à Team ${team} ?`;
       rankGeneralEl.innerHTML = `<div class="small muted">Aucun joueur.</div>`;
       rankLisaEl.innerHTML = `<div class="small muted">Aucun joueur.</div>`;
       rankManonEl.innerHTML = `<div class="small muted">Aucun joueur.</div>`;
+      
+      const sumLisa = sorted.filter(p=>p.team==="Lisa").reduce((s,p)=> s + (Number(p.pointsGeneral)||0), 0);
+      const sumManon = sorted.filter(p=>p.team==="Manon").reduce((s,p)=> s + (Number(p.pointsGeneral)||0), 0);
+
+rankDuelEl.innerHTML = `
+  <div class="tourCard" style="box-shadow: var(--shadow);">
+    <div class="head">
+      <div class="title">Score cumulé des teams</div>
+      <div class="meta">Somme des points (pointsGeneral)</div>
+    </div>
+
+    <div class="row" style="justify-content:space-between;">
+      <span class="badge lisa">🌶️ Team Lisa</span>
+      <span class="badge lisa" style="font-size:14px;">${sumLisa}</span>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="row" style="justify-content:space-between;">
+      <span class="badge manon">🐝 Team Manon</span>
+      <span class="badge manon" style="font-size:14px;">${sumManon}</span>
+    </div>
+  </div>
+`;
+
+      
       return;
     }
 
