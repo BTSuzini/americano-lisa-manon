@@ -1198,14 +1198,13 @@ chip.appendChild(presBtn);
 
     try{
       await addDoc(playersCol, {
-        name,
-        gender,
-        team: null,
-        await addDoc(playersCol, {
-        present: true,        // ✅ nouveau
-        pointsGeneral: 0,
-        createdAt: Date.now()
-      });
+  name,
+  gender,
+  team: null,
+  present: true,
+  pointsGeneral: 0,
+  createdAt: Date.now()
+});
       newPlayerName.value = "";
       newPlayerGender.value = "";
       log(`Joueur ajouté : ${name} (${gender})`);
@@ -1793,15 +1792,15 @@ chip.appendChild(presBtn);
     }
 
     // need both scores on both courts
+
+  const roster = playersCache.filter(p => (p.team === "Lisa" || p.team === "Manon") && p.name);
+const presentNames = roster.filter(p => p.present !== false).map(p => p.name);
+const absentNames  = roster.filter(p => p.present === false).map(p => p.name);
     for(const m of round.matches.slice(0,2)){
       if(typeof m.scoreA !== "number" || typeof m.scoreB !== "number"){
         alert("Il faut saisir les deux scores pour chaque terrain avant de valider.");
         return;
       }
-    // ✅ Snapshot présence au moment de la validation (par tour)
-      const roster = playersCache.filter(p => (p.team === "Lisa" || p.team === "Manon") && p.name);
-      const presentNames = roster.filter(p => p.present !== false).map(p => p.name);
-      const absentNames  = roster.filter(p => p.present === false).map(p => p.name);
     
     }
     
@@ -2090,6 +2089,7 @@ for(const [r, matches] of byRound.entries()){
   }
 
   function renderRankings(){
+    const sorted = [...playersCache].sort((a,b)=>(b.pointsGeneral||0)-(a.pointsGeneral||0));
     if(!playersCache.length){
       rankGeneralEl.innerHTML = `<div class="small muted">Aucun joueur.</div>`;
       rankLisaEl.innerHTML = `<div class="small muted">Aucun joueur.</div>`;
@@ -2122,8 +2122,6 @@ rankDuelEl.innerHTML = `
       
       return;
     }
-
-    const sorted = [...playersCache].sort((a,b)=>(b.pointsGeneral||0)-(a.pointsGeneral||0));
 
     const mkTable = (list) => {
       if(!list.length) return `<div class="small muted">Aucun joueur.</div>`;
