@@ -3,7 +3,7 @@
      Bandeau = style Admin : fond vert, écriture blanche,
      logo à gauche + image tournoi à droite (+ statut rond seul).
      Onglets: Équipes / Matchs / Classements / Statistiques / Règlement
-     ✅ Seul l’onglet Équipes est fonctionnel pour l’instant
+     ✅ Onglet Équipes + ✅ Onglet Matchs (3 encarts : dernier / en cours / à venir)
      ========================= -->
 <!doctype html>
 <html lang="fr">
@@ -57,17 +57,15 @@
       z-index: 50;
     }
 
-    /* bandeau centré + 3 zones */
     .headRow{
       max-width: 1100px;
       margin: 0 auto;
       display:grid;
-      grid-template-columns: 120px 1fr 120px; /* gauche / centre / droite */
+      grid-template-columns: 120px 1fr 120px;
       align-items:center;
       gap:10px;
     }
 
-    /* logos/images */
     .brandImg{
       height: 42px;
       width: auto;
@@ -326,7 +324,127 @@
       font-weight: 900;
     }
 
-    /* Mobile : bandeau compact */
+    /* ===== Match cards (mobile) ===== */
+    .tourCard{
+      border: 1px solid rgba(0,0,0,.10);
+      border-radius: 16px;
+      background:#fff;
+      box-shadow: var(--shadow);
+      padding: 12px;
+      margin-top: 12px;
+    }
+    .tourCard:first-child{ margin-top: 0; }
+
+    .tourHead{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .tourTitle{
+      font-weight: 1000;
+      font-size: 14px;
+    }
+    .tourMeta{
+      color: var(--muted);
+      font-size: 12px;
+      text-align:right;
+      font-weight: 800;
+      white-space:nowrap;
+    }
+
+    .courtBlock{
+      border: 1px solid rgba(0,0,0,.08);
+      border-radius: 14px;
+      background:#fafafa;
+      padding: 10px;
+      margin-top: 10px;
+    }
+    .courtTop{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:8px;
+    }
+    .courtTop .cTitle{ font-weight: 1000; font-size: 12px; }
+    .matchLine{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      font-size: 13px;
+      font-weight: 900;
+    }
+    .teamLine{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+    }
+    .teamPill{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.10);
+      font-size: 12px;
+      font-weight: 1000;
+      white-space:nowrap;
+    }
+    .teamPill.lisa{ background: rgba(239,68,68,.18); border-color: rgba(239,68,68,.35); }
+    .teamPill.manon{ background: rgba(250,204,21,.18); border-color: rgba(250,204,21,.35); }
+
+    .scoreRow{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      margin-top: 8px;
+      flex-wrap:wrap;
+      font-size: 12px;
+      font-weight: 1000;
+    }
+    .scoreTag{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.10);
+      background: rgba(0,0,0,.04);
+      font-size: 12px;
+      font-weight: 1000;
+      white-space:nowrap;
+    }
+
+    .benchBox{
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 14px;
+      border: 1px dashed rgba(0,0,0,.14);
+      background: #fff;
+    }
+    .benchBox .bTitle{ font-weight: 1000; font-size: 12px; margin-bottom: 6px; }
+    .benchList{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.10);
+      background: #f3f4f6;
+      font-size: 12px;
+      font-weight: 1000;
+      color: var(--text);
+      white-space:nowrap;
+    }
+
     @media (max-width: 520px){
       .headRow{ grid-template-columns: 64px 1fr 64px; }
       .brandImg{ height: 38px; }
@@ -339,18 +457,15 @@
 <body>
 <header>
   <div class="headRow">
-    <!-- GAUCHE : logo Suzini (jpeg) -->
     <div class="leftSlot">
       <img src="img/logo-suzini.jpeg" alt="TC Suzini" class="brandImg">
     </div>
 
-    <!-- CENTRE : titre -->
     <div class="centerSlot">
       <div class="t1">Americano Lisa vs Manon</div>
       <div class="t2">BT Suzini</div>
     </div>
 
-    <!-- DROITE : image tournoi + statut (rond seul) -->
     <div class="rightSlot" style="gap:10px;">
       <img src="img/tournoi.jpeg" alt="Tournoi" class="brandImg">
       <span class="statusDotOnly" id="statusDot" aria-label="statut connexion"></span>
@@ -410,14 +525,46 @@
     </div>
   </div>
 
-  <!-- ===================== TABS VIDES POUR L’INSTANT ===================== -->
+  <!-- ===================== TAB MATCHS ===================== -->
   <div id="matchesTab" class="tabContent">
     <div class="panel">
-      <div class="panelTitle"><h2>Matchs</h2><span class="hint">à venir</span></div>
-      <div class="placeholder">⏳ Contenu à venir.</div>
+      <div class="panelTitle">
+        <h2>Matchs</h2>
+        <span class="hint">matches (dernier / en cours / à venir)</span>
+      </div>
+
+      <!-- 3 encarts -->
+      <div class="tourCard" id="cardLast">
+        <div class="tourHead">
+          <div class="tourTitle">Dernier tour (validé)</div>
+          <div class="tourMeta" id="lastMeta">—</div>
+        </div>
+        <div id="lastBody" class="small muted">Chargement…</div>
+      </div>
+
+      <div class="tourCard" id="cardCurrent">
+        <div class="tourHead">
+          <div class="tourTitle">Tour en cours</div>
+          <div class="tourMeta" id="curMeta">—</div>
+        </div>
+        <div id="curBody" class="small muted">Chargement…</div>
+      </div>
+
+      <div class="tourCard" id="cardNext">
+        <div class="tourHead">
+          <div class="tourTitle">Tour à venir</div>
+          <div class="tourMeta" id="nextMeta">—</div>
+        </div>
+        <div id="nextBody" class="small muted">Chargement…</div>
+      </div>
+
+      <div class="small muted" style="margin-top:10px;">
+        Affichage : 2 terrains + banc + score (score disponible si saisi).
+      </div>
     </div>
   </div>
 
+  <!-- ===================== AUTRES TABS ===================== -->
   <div id="rankingsTab" class="tabContent">
     <div class="panel">
       <div class="panelTitle"><h2>Classements</h2><span class="hint">à venir</span></div>
@@ -473,7 +620,6 @@
 
   function setStatus(state){
     statusDot.classList.remove("ok","bad");
-    // ok = vert (par défaut warn = orange)
     if(state==="ok") statusDot.classList.add("ok");
     else if(state==="bad") statusDot.classList.add("bad");
   }
@@ -501,17 +647,25 @@
     return team === "Lisa" ? "🌶️" : (team === "Manon" ? "🐝" : "•");
   }
 
+  function pillForPlayer(p){
+    const name = typeof p === "string" ? p : (p?.name || "");
+    if(!name) return "";
+    return `<span class="pill">${name}</span>`;
+  }
+
   // ================================
   // Firestore refs
   // ================================
   const playersCol = collection(db, "players");
   const draftRef = doc(db, "meta", "draft");
+  const matchesCol = collection(db, "matches");
 
   let playersCache = [];
   let draftCache = { starter:"Lisa", turn:null, initialized:false };
+  let matchesCache = [];
 
   // ================================
-  // Render
+  // Render Teams
   // ================================
   const draftTurnLine = document.getElementById("draftTurnLine");
   const draftStatePill = document.getElementById("draftStatePill");
@@ -567,15 +721,144 @@
   }
 
   // ================================
+  // Matchs helpers (dernier / en cours / à venir)
+  // ================================
+  const lastMeta = document.getElementById("lastMeta");
+  const curMeta  = document.getElementById("curMeta");
+  const nextMeta = document.getElementById("nextMeta");
+
+  const lastBody = document.getElementById("lastBody");
+  const curBody  = document.getElementById("curBody");
+  const nextBody = document.getElementById("nextBody");
+
+  function groupMatchesByRound(list){
+    const map = new Map();
+    list.forEach(m=>{
+      const r = Number(m.roundNumber || 0);
+      if(!r) return;
+      if(!map.has(r)) map.set(r, []);
+      map.get(r).push(m);
+    });
+    const rounds = [...map.entries()].map(([round, matches])=>{
+      const mm = [...matches].sort((a,b)=>(a.court||0)-(b.court||0));
+      return { round, matches: mm };
+    }).sort((a,b)=>a.round-b.round);
+    return rounds;
+  }
+
+  function isRoundFullyValidated(roundObj){
+    if(!roundObj || !roundObj.matches?.length) return false;
+    if(roundObj.matches.length < 2) return false;
+    return roundObj.matches.every(m => m.validated === true);
+  }
+
+  function buildBenchForRound(roundObj){
+    const playing = new Set();
+    (roundObj.matches || []).forEach(m=>{
+      (m.teamA||[]).forEach(n=>playing.add(n));
+      (m.teamB||[]).forEach(n=>playing.add(n));
+    });
+    const allNames = playersCache.map(p=>p.name).filter(Boolean);
+    const bench = allNames.filter(n=>!playing.has(n));
+    return bench.sort((a,b)=>a.localeCompare(b,"fr",{sensitivity:"base"}));
+  }
+
+  function renderRound(roundObj, mode){
+    // mode: "last" | "current" | "next"
+    if(!roundObj){
+      return `<div class="small muted">Aucun tour.</div>`;
+    }
+
+    const r = roundObj.round;
+    const matches = (roundObj.matches||[]).slice(0,2);
+    if(matches.length < 2){
+      return `<div class="small muted">Tour ${r} incomplet (il faut 2 terrains).</div>`;
+    }
+
+    const bench = buildBenchForRound(roundObj);
+    const typeLabel = (matches[0].type || matches[1].type || "—");
+
+    let html = `<div class="small" style="margin-bottom:8px;"><b>Tour ${r}</b> • Type: <b>${typeLabel}</b></div>`;
+
+    matches.forEach((m, idx)=>{
+      const court = m.court || (idx+1);
+      const a = (m.teamA||[]);
+      const b = (m.teamB||[]);
+      const scoreA = (typeof m.scoreA==="number") ? m.scoreA : null;
+      const scoreB = (typeof m.scoreB==="number") ? m.scoreB : null;
+
+      const scoreTxt = (scoreA===null || scoreB===null) ? "—" : `${scoreA} - ${scoreB}`;
+
+      html += `
+        <div class="courtBlock">
+          <div class="courtTop">
+            <div class="cTitle">Terrain ${court}</div>
+            <div class="small muted">${m.validated ? "✅ Validé" : "⏳ En attente"}</div>
+          </div>
+
+          <div class="matchLine">
+            <div class="teamLine">
+              <span class="teamPill lisa">🌶️ Lisa</span>
+              <span>${(a[0]||"—")} &amp; ${(a[1]||"—")}</span>
+            </div>
+            <div class="teamLine">
+              <span class="teamPill manon">🐝 Manon</span>
+              <span>${(b[0]||"—")} &amp; ${(b[1]||"—")}</span>
+            </div>
+          </div>
+
+          <div class="scoreRow">
+            <span class="scoreTag">Score</span>
+            <span>${scoreTxt}</span>
+          </div>
+        </div>
+      `;
+    });
+
+    html += `
+      <div class="benchBox">
+        <div class="bTitle">Banc</div>
+        <div class="benchList">
+          ${bench.length ? bench.map(pillForPlayer).join("") : `<span class="small muted">Personne</span>`}
+        </div>
+      </div>
+    `;
+
+    return html;
+  }
+
+  function renderMatches(){
+    const rounds = groupMatchesByRound(matchesCache);
+
+    const lastValid = [...rounds].reverse().find(r=>isRoundFullyValidated(r)) || null;
+    const current   = rounds.find(r=>!isRoundFullyValidated(r)) || null;
+
+    let next = null;
+    if(current){
+      next = rounds.find(r=>r.round === current.round + 1) || null;
+    } else if(lastValid){
+      next = rounds.find(r=>r.round === lastValid.round + 1) || null;
+    }
+
+    lastMeta.textContent = lastValid ? `Tour ${lastValid.round}` : "—";
+    curMeta.textContent  = current ? `Tour ${current.round}` : "—";
+    nextMeta.textContent = next ? `Tour ${next.round}` : "—";
+
+    lastBody.innerHTML = renderRound(lastValid, "last");
+    curBody.innerHTML  = current ? renderRound(current, "current") : `<div class="small muted">Aucun tour en cours.</div>`;
+    nextBody.innerHTML = next ? renderRound(next, "next") : `<div class="small muted">Aucun tour à venir.</div>`;
+  }
+
+  // ================================
   // Live listeners
   // ================================
   function init(){
-    // On passe vert dès qu’on reçoit un snapshot OK
     setStatus("warn");
 
     onSnapshot(query(playersCol, orderBy("createdAt","asc")), (snap)=>{
       playersCache = snap.docs.map(d=>({ id:d.id, ...d.data() }));
       renderTeams();
+      renderMatches();
       setStatus("ok");
     }, (err)=>{
       console.error(err);
@@ -589,6 +872,16 @@
         draftCache = { starter:"Lisa", turn:null, initialized:false };
       }
       renderTeams();
+      setStatus("ok");
+    }, (err)=>{
+      console.error(err);
+      setStatus("bad");
+    });
+
+    // Matches (nouveau)
+    onSnapshot(query(matchesCol, orderBy("createdAt","asc")), (snap)=>{
+      matchesCache = snap.docs.map(d=>({ id:d.id, ...d.data() }));
+      renderMatches();
       setStatus("ok");
     }, (err)=>{
       console.error(err);
