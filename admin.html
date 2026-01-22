@@ -14,33 +14,38 @@
       --muted:#9ca3af;
       --border:rgba(255,255,255,.08);
       --shadow: 0 10px 30px rgba(0,0,0,.35);
-      --red:#b91c1c;
-      --red2:#ef4444;
-      --chip:#1f2937;
-      --chipLisa:#7c3aed;
-      --chipManon:#2563eb;
+
+      /* ===== THEME VERT (demandé) ===== */
+      --green:#16a34a;         /* vert principal */
+      --green2:#15803d;        /* vert foncé */
+      --accent: var(--green);
+
+      /* Teams */
+      --lisa:#ef4444;          /* ROUGE */
+      --lisa2:#b91c1c;
+      --manon:#facc15;         /* JAUNE */
+      --manon2:#ca8a04;
+
       --ok:#22c55e;
       --warn:#f59e0b;
       --bad:#ef4444;
-      --btn:#111827;
-      --btn2:#1f2937;
-      --btnText:#e5e7eb;
-      --input:#0b1220;
-      --accent:#b91c1c;
+
+      --btnText:#ffffff;
     }
 
     *{ box-sizing:border-box; }
     body{
       margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: radial-gradient(1200px 600px at 20% 0%, rgba(185,28,28,.20), transparent 55%),
-                  radial-gradient(900px 600px at 90% 10%, rgba(37,99,235,.18), transparent 55%),
-                  var(--bg);
+      background:
+        radial-gradient(1200px 600px at 20% 0%, rgba(22,163,74,.22), transparent 55%),
+        radial-gradient(900px 600px at 90% 10%, rgba(250,204,21,.14), transparent 55%),
+        var(--bg);
       color: var(--text);
     }
 
     header{
-      background: linear-gradient(90deg, rgba(185,28,28,1), rgba(127,29,29,1));
+      background: linear-gradient(90deg, rgba(22,163,74,1), rgba(21,128,61,1));
       padding: 12px 14px;
       box-shadow: var(--shadow);
       position: sticky;
@@ -110,7 +115,7 @@
     .tabBtn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.05); }
     .tabBtn.active{
       border-color: rgba(255,255,255,.22);
-      background: rgba(185,28,28,.22);
+      background: rgba(22,163,74,.22);
       box-shadow: 0 12px 25px rgba(0,0,0,.22);
     }
 
@@ -186,14 +191,21 @@
       white-space:nowrap;
     }
     .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.08); }
+
+    /* ✅ Boutons verts */
     .btn.primary{
-      background: linear-gradient(180deg, rgba(239,68,68,.95), rgba(185,28,28,.95));
+      background: linear-gradient(180deg, rgba(22,163,74,.98), rgba(21,128,61,.98));
       border-color: rgba(255,255,255,.20);
+      color: #fff;
     }
-    .btn.secondary{ background: rgba(255,255,255,.05); }
+    .btn.secondary{
+      background: rgba(255,255,255,.05);
+      color: #fff;
+    }
     .btn.danger{
       background: rgba(239,68,68,.15);
       border-color: rgba(239,68,68,.35);
+      color: #fff;
     }
     .btn.small{ padding: 7px 10px; border-radius: 10px; font-size: 12px; }
 
@@ -206,12 +218,22 @@
       border: 1px solid rgba(255,255,255,.14);
       background: rgba(255,255,255,.05);
       font-size: 12px;
-      font-weight: 800;
+      font-weight: 900;
       color: var(--text);
       white-space:nowrap;
     }
-    .badge.lisa{ background: rgba(124,58,237,.22); border-color: rgba(124,58,237,.35); }
-    .badge.manon{ background: rgba(37,99,235,.22); border-color: rgba(37,99,235,.35); }
+
+    /* ✅ Lisa = ROUGE + 🌶️ */
+    .badge.lisa{
+      background: rgba(239,68,68,.18);
+      border-color: rgba(239,68,68,.35);
+    }
+    /* ✅ Manon = JAUNE + 🐝 */
+    .badge.manon{
+      background: rgba(250,204,21,.16);
+      border-color: rgba(250,204,21,.35);
+      color: #fff;
+    }
     .badge.neutral{ background: rgba(255,255,255,.06); }
     .badge.ok{ background: rgba(34,197,94,.18); border-color: rgba(34,197,94,.35); }
     .badge.warn{ background: rgba(245,158,11,.18); border-color: rgba(245,158,11,.35); }
@@ -236,20 +258,27 @@
       background: rgba(31,41,55,.75);
       border: 1px solid rgba(255,255,255,.12);
       cursor:pointer;
-      font-weight:800;
+      font-weight:900;
       font-size: 12px;
       user-select:none;
     }
     .chip small{
       font-weight:900;
-      opacity:.9;
+      opacity:.95;
       padding: 2px 8px;
       border-radius: 999px;
       border: 1px solid rgba(255,255,255,.12);
       background: rgba(0,0,0,.2);
+      color: rgba(255,255,255,.95);
     }
-    .chip.lisa small{ background: rgba(124,58,237,.25); border-color: rgba(124,58,237,.35); }
-    .chip.manon small{ background: rgba(37,99,235,.25); border-color: rgba(37,99,235,.35); }
+    .chip.lisa small{
+      background: rgba(239,68,68,.22);
+      border-color: rgba(239,68,68,.35);
+    }
+    .chip.manon small{
+      background: rgba(250,204,21,.18);
+      border-color: rgba(250,204,21,.35);
+    }
 
     .divider{
       height:1px;
@@ -424,8 +453,8 @@
 
             <div class="small" style="margin:6px 0 6px;">Qui commence ?</div>
             <select id="selectStarter" style="min-width:200px;">
-              <option value="Lisa">Lisa</option>
-              <option value="Manon">Manon</option>
+              <option value="Lisa">Lisa 🌶️</option>
+              <option value="Manon">Manon 🐝</option>
             </select>
           </div>
 
@@ -437,18 +466,20 @@
 
         <div class="small" style="margin-top:8px;">
           - “Définir” fixe le premier choix et met “Au tour de” sur la même personne.<br>
-          - “Réinitialiser” remet tout à zéro (utile si tu recommences).
+          - “Réinitialiser” remet tout à zéro (utile si tu recommences).<br>
+          - Règle draft : choix alterné + contrainte H/F (équilibrage) avec popup de confirmation.
         </div>
 
         <div class="divider"></div>
 
         <div class="panelTitle">
           <h2>3) Listes</h2>
-          <span class="hint">choix alterné automatique</span>
+          <span class="hint">choix alterné + contrainte H/F</span>
         </div>
 
         <div class="small" style="margin-bottom:8px;">
-          Astuce : clique un joueur dans <b>Sans équipe</b> pour l’attribuer à la personne dont c’est le tour.
+          Astuce : clique un joueur dans <b>Sans équipe</b> pour l’attribuer à la personne dont c’est le tour (popup).
+          Clique dans une team pour retirer le joueur (retour “Sans équipe”).
         </div>
 
         <div class="grid" style="grid-template-columns: 1fr 1fr 1fr; gap:10px;">
@@ -462,7 +493,7 @@
 
           <div>
             <div class="row" style="justify-content:space-between; margin-bottom:6px;">
-              <span class="badge lisa">Team Lisa</span>
+              <span class="badge lisa">🌶️ Team Lisa</span>
               <span class="badge lisa" id="countLisa">0</span>
             </div>
             <div class="chips" id="lisaList"></div>
@@ -470,7 +501,7 @@
 
           <div>
             <div class="row" style="justify-content:space-between; margin-bottom:6px;">
-              <span class="badge manon">Team Manon</span>
+              <span class="badge manon">🐝 Team Manon</span>
               <span class="badge manon" id="countManon">0</span>
             </div>
             <div class="chips" id="manonList"></div>
@@ -478,8 +509,8 @@
         </div>
 
         <div class="warnBox">
-          ⚠️ Les équipes Lisa/Manon sont un onglet “draft”.  
-          Les onglets Matchs / Classements / Stats sont indépendants : tu peux gérer les matchs ensuite, validés par l’admin.
+          ⚠️ Onglet “Teams” = draft Lisa/Manon (choix alterné + équilibrage H/F).<br>
+          Les onglets Matchs / Classements / Stats restent indépendants : tu gères les matchs ensuite, validés par l’admin.
         </div>
       </div>
 
@@ -497,6 +528,7 @@
   </div>
 
   <!-- ===================== TAB MATCHES ===================== -->
+  <!-- (inchangé) -->
   <div id="matchesTab" class="tabContent">
     <div class="panel">
       <div class="panelTitle">
@@ -510,7 +542,6 @@
         <button class="subBtn" data-subtab="matchHistory">Historique</button>
       </div>
 
-      <!-- Create / Edit -->
       <div id="matchCreate" class="subContent active">
         <div class="panel" style="margin:0; background: rgba(255,255,255,.02);">
           <div class="panelTitle">
@@ -594,7 +625,6 @@
         </div>
       </div>
 
-      <!-- Current (not validated) -->
       <div id="matchCurrent" class="subContent">
         <div class="panelTitle">
           <h2>Matchs à valider</h2>
@@ -603,7 +633,6 @@
         <div id="currentMatchesWrap" class="small muted">Chargement…</div>
       </div>
 
-      <!-- History -->
       <div id="matchHistory" class="subContent">
         <div class="panelTitle">
           <h2>Historique</h2>
@@ -615,6 +644,7 @@
   </div>
 
   <!-- ===================== TAB RANKINGS ===================== -->
+  <!-- (inchangé) -->
   <div id="rankingsTab" class="tabContent">
     <div class="panel">
       <div class="panelTitle">
@@ -639,6 +669,7 @@
   </div>
 
   <!-- ===================== TAB STATS ===================== -->
+  <!-- (inchangé) -->
   <div id="statsTab" class="tabContent">
     <div class="panel">
       <div class="panelTitle">
@@ -683,7 +714,6 @@
     orderBy
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
-  // ✅ Ton firebaseConfig (projet americano-lisa-manon)
   const firebaseConfig = {
     apiKey: "AIzaSyD7-WLKEmajFSh4INdTCVpPvF2hv_jPQm8",
     authDomain: "americano-lisa-manon.firebaseapp.com",
@@ -763,7 +793,7 @@
   let draftCache = { starter: "Lisa", turn: null, initialized: false };
 
   // ================================
-  // Draft (Lisa/Manon)
+  // Draft (Lisa/Manon) + CONTRAINTE H/F + POPUP (mode B)
   // ================================
   async function ensureDraftDoc(){
     const snap = await getDoc(draftRef);
@@ -784,18 +814,76 @@
     return (s || "").trim().replace(/\s+/g," ");
   }
 
+  function sortByName(list){
+    return [...list].sort((a,b)=>(a.name||"").localeCompare((b.name||""),"fr",{sensitivity:"base"}));
+  }
+
+  function teamIcon(team){
+    return team === "Lisa" ? "🌶️" : (team === "Manon" ? "🐝" : "•");
+  }
+
   function playerLabel(p){
     const g = p.gender ? ` • ${p.gender}` : "";
     const t = p.team ? ` • ${p.team}` : "";
     return `${p.name}${g}${t}`;
   }
 
-  function sortByName(list){
-    return [...list].sort((a,b)=>(a.name||"").localeCompare((b.name||""),"fr",{sensitivity:"base"}));
+  function countGenderInTeam(team){
+    const list = playersCache.filter(p => p.team === team);
+    let h = 0, f = 0;
+    list.forEach(p=>{
+      if(p.gender === "H") h++;
+      else if(p.gender === "F") f++;
+    });
+    return { h, f };
+  }
+
+  function hasSoloGender(g){
+    return playersCache.some(p => !p.team && p.gender === g);
+  }
+
+  function requiredGenderForTeam(team){
+    // Règle :
+    // - si H > F => prochain choix doit être F
+    // - si F > H => prochain choix doit être H
+    // - sinon => libre
+    // Exception : si sexe requis non dispo dans SOLO => libre
+    const { h, f } = countGenderInTeam(team);
+    let req = null;
+    if(h > f) req = "F";
+    else if(f > h) req = "H";
+    if(req && !hasSoloGender(req)) req = null; // exception
+    return req; // "H" | "F" | null
+  }
+
+  function genderLabel(g){
+    if(g === "H") return "Homme";
+    if(g === "F") return "Femme";
+    return "Non renseigné";
+  }
+
+  function confirmDraftPopup({ playerName, playerGender, team, requiredGender }){
+    const icon = teamIcon(team);
+    const reqTxt = requiredGender ? `${genderLabel(requiredGender)} (${requiredGender})` : "Aucune (choix libre)";
+    const pTxt = playerGender ? `${genderLabel(playerGender)} (${playerGender})` : "Non renseigné";
+
+    const msg =
+`${icon} Draft – Team ${team}
+
+Joueur sélectionné : ${playerName}
+Sexe du joueur : ${pTxt}
+
+Contrainte actuelle (Team ${team}) : ${reqTxt}
+
+Confirmer l’attribution à Team ${team} ?`;
+
+    return window.confirm(msg);
   }
 
   function renderDraftUI(){
-    document.getElementById("draftTurn").textContent = draftCache.turn || "—";
+    document.getElementById("draftTurn").textContent = draftCache.turn
+      ? `${draftCache.turn} ${teamIcon(draftCache.turn)}`
+      : "—";
 
     const solo = sortByName(playersCache.filter(p=>!p.team));
     const lisa = sortByName(playersCache.filter(p=>p.team==="Lisa"));
@@ -813,40 +901,67 @@
     lisaList.innerHTML = "";
     manonList.innerHTML = "";
 
-    const mkChip = (p, teamClass, showTeamBadge=false) => {
+    const mkChip = (p, teamClass) => {
       const chip = document.createElement("div");
       chip.className = "chip" + (teamClass ? " " + teamClass : "");
       const initial = (p.gender || "").toUpperCase() || "•";
-      chip.innerHTML = `<span>${p.name || "(sans nom)"}</span><small>${initial}</small>`;
 
-      // Click actions:
-      // - from SOLO: assign to current turn (must be set)
-      // - from Lisa/Manon: remove back to SOLO
+      // on met aussi l’emoji équipe dans le chip si déjà dans une team
+      const icon = p.team ? teamIcon(p.team) + " " : "";
+      chip.innerHTML = `<span>${icon}${p.name || "(sans nom)"}</span><small>${initial}</small>`;
+
       chip.addEventListener("click", async ()=>{
         try{
           if(!p.id) return;
 
+          // ====== Click SOLO -> assign to current turn with constraint + popup ======
           if(!p.team){
             if(!draftCache.turn){
               alert("Définis d'abord qui commence (bouton Définir).");
               return;
             }
-            const t = draftCache.turn;
-            await updateDoc(doc(db,"players",p.id), { team: t });
-            await updateDoc(draftRef, { turn: otherTeam(t), updatedAt: Date.now() });
-            log(`${t} choisit un joueur → tour suivant`);
-          } else {
-            const was = p.team;
-            if(!confirm(`Retirer "${p.name}" de Team ${was} (retour Sans équipe) ?`)) return;
-            await updateDoc(doc(db,"players",p.id), { team: null });
-            log(`Joueur retiré de Team ${was}: ${p.name}`);
+
+            const team = draftCache.turn;
+            const req = requiredGenderForTeam(team);
+
+            // Si contrainte active, et joueur ne match pas -> on bloque (car sexe requis dispo)
+            if(req && p.gender && p.gender !== req){
+              alert(`Contrainte H/F : Team ${team} doit choisir un(e) ${genderLabel(req)} maintenant.\nCe joueur (${genderLabel(p.gender)}) ne peut pas être choisi tant que la contrainte est active.`);
+              return;
+            }
+            if(req && !p.gender){
+              alert(`Contrainte H/F : Team ${team} doit choisir un(e) ${genderLabel(req)} maintenant.\nOr ce joueur n'a pas de sexe renseigné → sélection impossible (tant que la contrainte est active).`);
+              return;
+            }
+
+            // Popup confirmation (mode B)
+            const ok = confirmDraftPopup({
+              playerName: p.name || "(sans nom)",
+              playerGender: p.gender || null,
+              team,
+              requiredGender: req
+            });
+            if(!ok) return;
+
+            await updateDoc(doc(db,"players",p.id), { team: team });
+            await updateDoc(draftRef, { turn: otherTeam(team), updatedAt: Date.now() });
+            log(`${teamIcon(team)} ${team} choisit : ${p.name} → tour suivant : ${otherTeam(team)}`);
+            return;
           }
+
+          // ====== Click in team -> remove back to SOLO ======
+          const was = p.team;
+          if(!confirm(`Retirer "${p.name}" de Team ${was} (retour Sans équipe) ?`)) return;
+          await updateDoc(doc(db,"players",p.id), { team: null });
+          log(`Joueur retiré de Team ${was}: ${p.name}`, "warn");
+
         }catch(e){
           console.error(e);
           log(`Erreur draft: ${e?.message || e}`, "bad");
           alert("Erreur lors de la mise à jour du draft.");
         }
       });
+
       return chip;
     };
 
@@ -908,7 +1023,7 @@
         initialized: true,
         updatedAt: Date.now()
       }, { merge:true });
-      log(`Draft initialisé – ${starter} commence`);
+      log(`Draft initialisé – ${starter} commence (${teamIcon(starter)})`);
     }catch(e){
       console.error(e);
       log(`Erreur set starter: ${e?.message || e}`, "bad");
@@ -919,20 +1034,18 @@
   document.getElementById("btnResetDraft").addEventListener("click", async ()=>{
     if(!confirm("Réinitialiser le draft ? (Ne supprime pas les joueurs, remet juste le tour + enlève les teams.)")) return;
     try{
-      // Reset players team
       for(const p of playersCache){
         if(p.team){
           await updateDoc(doc(db,"players",p.id), { team: null });
         }
       }
-      // Reset draft
       await setDoc(draftRef, {
         starter: "Lisa",
         turn: null,
         initialized: false,
         updatedAt: Date.now()
       }, { merge:true });
-      log("Draft réinitialisé.");
+      log("Draft réinitialisé.", "warn");
     }catch(e){
       console.error(e);
       log(`Erreur reset draft: ${e?.message || e}`, "bad");
@@ -941,9 +1054,8 @@
   });
 
   // ================================
-  // Matches management
+  // Matches management (inchangé)
   // ================================
-  // Create match UI
   const matchRound = document.getElementById("matchRound");
   const matchCourt = document.getElementById("matchCourt");
   const matchType = document.getElementById("matchType");
@@ -979,7 +1091,6 @@
       opt.textContent = playerLabel(p);
       sel.appendChild(opt);
     });
-    // try restore
     if(prev && [...sel.options].some(o=>o.value===prev)) sel.value = prev;
   }
 
@@ -1158,7 +1269,6 @@
     const m = getMatchById(loadedMatchId);
     if(!m){ alert("Match introuvable."); return; }
 
-    // If validating: require both scores
     if(!m.validated){
       if(typeof m.scoreA !== "number" || typeof m.scoreB !== "number"){
         alert("Saisis les deux scores avant de valider.");
@@ -1316,7 +1426,7 @@
   }
 
   // ================================
-  // Classements + Stats (sur matchs validés)
+  // Classements + Stats (inchangé)
   // ================================
   const rankGeneralEl = document.getElementById("rankGeneral");
   const rankLisaEl = document.getElementById("rankLisa");
@@ -1331,8 +1441,6 @@
   }
 
   function recomputeFromValidated(){
-    // return:
-    // pointsByName, matchesPlayedByName, partners[name][partner], opponents[name][opp]
     const valid = buildValidatedMatches();
     const pointsByName = {};
     const matchesPlayedByName = {};
@@ -1359,15 +1467,12 @@
         matchesPlayedByName[n] = (matchesPlayedByName[n] || 0) + 1;
       });
 
-      // Partners / Opponents
       if(teamA.length===2 && teamB.length===2){
-        // partners
         addCount(partners, teamA[0], teamA[1]);
         addCount(partners, teamA[1], teamA[0]);
         addCount(partners, teamB[0], teamB[1]);
         addCount(partners, teamB[1], teamB[0]);
 
-        // opponents cross
         teamA.forEach(a=>{
           teamB.forEach(b=>{
             addCount(opponents, a, b);
@@ -1381,7 +1486,6 @@
   }
 
   async function recomputePointsGeneral(){
-    // write pointsGeneral into players based on validated matches
     if(!playersCache.length) return;
     const { pointsByName } = recomputeFromValidated();
 
@@ -1418,8 +1522,8 @@
       let html = `<table><thead><tr><th>#</th><th>Nom</th><th>Team</th><th class="right">Points</th></tr></thead><tbody>`;
       list.forEach((p, idx)=>{
         const teamBadge = p.team==="Lisa"
-          ? `<span class="badge lisa">Lisa</span>`
-          : (p.team==="Manon" ? `<span class="badge manon">Manon</span>` : `<span class="badge neutral">—</span>`);
+          ? `<span class="badge lisa">🌶️ Lisa</span>`
+          : (p.team==="Manon" ? `<span class="badge manon">🐝 Manon</span>` : `<span class="badge neutral">—</span>`);
         html += `<tr>
           <td>${idx+1}</td>
           <td>${p.name || ""}</td>
@@ -1447,7 +1551,6 @@
     const { matchesPlayedByName, partners, opponents } = recomputeFromValidated();
     const names = sortByName(playersCache.filter(p=>p.name)).map(p=>p.name);
 
-    // Matches played
     let htmlM = `<table><thead><tr><th>Joueur</th><th class="right">Matchs validés</th></tr></thead><tbody>`;
     names.forEach(n=>{
       htmlM += `<tr><td>${n}</td><td class="right"><b>${matchesPlayedByName[n] || 0}</b></td></tr>`;
@@ -1455,7 +1558,6 @@
     htmlM += `</tbody></table>`;
     statsMatchesEl.innerHTML = htmlM;
 
-    // Partners
     let htmlP = "";
     names.forEach(n=>{
       const map = partners[n] || {};
@@ -1475,7 +1577,6 @@
     });
     statsPartnersEl.innerHTML = htmlP;
 
-    // Opponents
     let htmlO = "";
     names.forEach(n=>{
       const map = opponents[n] || {};
@@ -1511,7 +1612,6 @@
       return;
     }
 
-    // players
     onSnapshot(query(playersCol, orderBy("createdAt","asc")), (snap)=>{
       playersCache = snap.docs.map(d=>({ id:d.id, ...d.data() }));
       renderDraftUI();
@@ -1524,7 +1624,6 @@
       log(`onSnapshot players: ${err?.message || err}`, "bad");
     });
 
-    // draft
     onSnapshot(draftRef, (snap)=>{
       if(snap.exists()){
         draftCache = snap.data() || draftCache;
@@ -1536,7 +1635,6 @@
       log(`onSnapshot draft: ${err?.message || err}`, "bad");
     });
 
-    // matches
     onSnapshot(query(matchesCol, orderBy("createdAt","asc")), (snap)=>{
       matchesCache = snap.docs.map(d=>({ id:d.id, ...d.data() }));
       refreshMatchSelect();
