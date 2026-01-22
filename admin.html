@@ -6,65 +6,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
-    body{
-      font-family: system-ui, -apple-system, Segoe UI, Arial, sans-serif;
-      margin:0;
-      background:#0f172a;
-      color:#e5e7eb;
-    }
-    header{
-      background:#b91c1c;
-      padding:14px;
-      font-weight:700;
-    }
-    header small{
-      display:block;
-      font-weight:400;
-      opacity:.9;
-    }
-    .container{
-      max-width:1100px;
-      margin:auto;
-      padding:14px;
-      display:grid;
-      gap:14px;
-    }
-    .box{
-      background:#020617;
-      border-radius:10px;
-      padding:12px;
-      border:1px solid #1e293b;
-    }
-    h2{
-      margin:0 0 10px 0;
-      font-size:16px;
-    }
-    input,select,button{
-      padding:8px;
-      border-radius:6px;
-      border:none;
-      font-size:14px;
-    }
-    input,select{
-      background:#020617;
-      color:#e5e7eb;
-      border:1px solid #334155;
-    }
-    button{
-      cursor:pointer;
-      font-weight:600;
-    }
+    body{ font-family: system-ui, -apple-system, Segoe UI, Arial, sans-serif; margin:0; background:#0f172a; color:#e5e7eb; }
+    header{ background:#b91c1c; padding:14px; font-weight:700; }
+    header small{ display:block; font-weight:400; opacity:.9; }
+
+    .container{ max-width:1100px; margin:auto; padding:14px; display:grid; gap:14px; }
+    .box{ background:#020617; border-radius:10px; padding:12px; border:1px solid #1e293b; }
+    h2{ margin:0 0 10px 0; font-size:16px; }
+
+    input,select,button{ padding:8px; border-radius:6px; border:none; font-size:14px; }
+    input,select{ background:#020617; color:#e5e7eb; border:1px solid #334155; }
+    button{ cursor:pointer; font-weight:600; }
+
     .btn-red{ background:#dc2626; color:white; }
     .btn-yellow{ background:#facc15; color:#020617; }
     .btn-gray{ background:#334155; color:white; }
 
-    .row{ display:flex; gap:8px; flex-wrap:wrap; }
-    .pill{
-      padding:6px 10px;
-      border-radius:999px;
-      font-size:13px;
-      cursor:pointer;
-    }
+    .row{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+
+    .pill{ padding:6px 10px; border-radius:999px; font-size:13px; cursor:pointer; display:inline-block; }
     .lisa{ background:#ec4899; color:white; }
     .manon{ background:#8b5cf6; color:white; }
     .neutral{ background:#334155; }
@@ -74,16 +34,31 @@
     li{ margin-bottom:6px; }
 
     .log{
-      font-family:monospace;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       font-size:12px;
       background:#020617;
       padding:8px;
       border-radius:6px;
-      max-height:160px;
+      max-height:180px;
       overflow:auto;
+      border:1px solid #1e293b;
     }
+
+    .statusbar{
+      display:none;
+      margin-top:10px;
+      padding:10px;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,0.18);
+      background: rgba(220,38,38,0.18);
+      color:#fff;
+      font-size:13px;
+      line-height:1.3;
+    }
+    .statusbar.show{ display:block; }
   </style>
 </head>
+
 <body>
 
 <header>
@@ -93,7 +68,6 @@
 
 <div class="container">
 
-  <!-- 1. AJOUT JOUEUR -->
   <div class="box">
     <h2>1) Ajout de joueurs (sans équipe)</h2>
     <div class="row">
@@ -103,11 +77,11 @@
         <option value="F">Femme</option>
         <option value="H">Homme</option>
       </select>
-      <button class="btn-red" onclick="addPlayer()">Ajouter le joueur</button>
+      <button id="btnAdd" class="btn-red">Ajouter le joueur</button>
     </div>
+    <div id="statusbar" class="statusbar"></div>
   </div>
 
-  <!-- 2. DRAFT -->
   <div class="box">
     <h2>2) Réglage du draft</h2>
     <div class="row">
@@ -119,12 +93,11 @@
         <option value="Lisa">Lisa</option>
         <option value="Manon">Manon</option>
       </select>
-      <button class="btn-yellow" onclick="setStarter()">Définir “qui commence”</button>
-      <button class="btn-gray" onclick="resetDraft()">Réinitialiser</button>
+      <button id="btnSetStarter" class="btn-yellow">Définir “qui commence”</button>
+      <button id="btnReset" class="btn-gray">Réinitialiser</button>
     </div>
   </div>
 
-  <!-- 3. LISTES -->
   <div class="box">
     <h2>3) Listes</h2>
     <div class="lists">
@@ -141,9 +114,11 @@
         <ul id="listManon"></ul>
       </div>
     </div>
+    <div style="margin-top:10px; font-size:12px; opacity:.85;">
+      Astuce : clique un joueur dans “Sans équipe” pour l’attribuer à la personne dont c’est le tour.
+    </div>
   </div>
 
-  <!-- 4. LOG -->
   <div class="box">
     <h2>Journal</h2>
     <div id="log" class="log"></div>
@@ -155,9 +130,42 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
   import {
     getFirestore, collection, addDoc, updateDoc, doc,
-    onSnapshot, setDoc, getDoc
+    onSnapshot, setDoc, getDoc, query, orderBy
   } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-firestore.js";
 
+  // ========= DOM =========
+  const elName = document.getElementById("playerName");
+  const elGender = document.getElementById("playerGender");
+  const elTurn = document.getElementById("turnLabel");
+  const elStarter = document.getElementById("starterSelect");
+  const elListNone = document.getElementById("listNone");
+  const elListLisa = document.getElementById("listLisa");
+  const elListManon = document.getElementById("listManon");
+  const elLog = document.getElementById("log");
+  const elStatus = document.getElementById("statusbar");
+
+  const btnAdd = document.getElementById("btnAdd");
+  const btnSetStarter = document.getElementById("btnSetStarter");
+  const btnReset = document.getElementById("btnReset");
+
+  function showStatus(msg){
+    elStatus.textContent = msg;
+    elStatus.classList.add("show");
+  }
+  function clearStatus(){
+    elStatus.textContent = "";
+    elStatus.classList.remove("show");
+  }
+
+  function log(msg){
+    const d = new Date().toLocaleTimeString();
+    elLog.innerHTML = `[${d}] ${escapeHtml(msg)}<br>` + elLog.innerHTML;
+  }
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]));
+  }
+
+  // ========= Firebase =========
   const firebaseConfig = {
     apiKey: "AIzaSyD7-WLKemajFSh4INdTCVpPvF2hv_jPQm8",
     authDomain: "americano-lisa-manon.firebaseapp.com",
@@ -173,81 +181,155 @@
   const playersCol = collection(db, "players");
   const draftRef = doc(db, "meta", "draft");
 
-  const log = msg => {
-    const d = new Date().toLocaleTimeString();
-    document.getElementById("log").innerHTML =
-      `[${d}] ${msg}<br>` + document.getElementById("log").innerHTML;
-  };
-
+  // ========= Actions =========
   async function addPlayer(){
-    const name = playerName.value.trim();
-    if(!name) return;
-    await addDoc(playersCol,{
-      name,
-      gender: playerGender.value || null,
-      team: null,
-      createdAt: Date.now()
-    });
-    playerName.value="";
-    log(`Joueur ajouté : ${name}`);
+    clearStatus();
+    try{
+      const name = elName.value.trim();
+      if(!name){
+        showStatus("⚠️ Mets un nom/prénom avant d’ajouter.");
+        return;
+      }
+
+      await addDoc(playersCol, {
+        name,
+        gender: elGender.value || null,
+        team: null,
+        createdAt: Date.now()
+      });
+
+      elName.value = "";
+      elGender.value = "";
+      log(`✅ Joueur ajouté : ${name}`);
+    }catch(err){
+      console.error(err);
+      log(`❌ Erreur addPlayer : ${err?.message || err}`);
+      showStatus("❌ Firestore a refusé l’écriture (permissions). Va dans Firestore > Règles, ou envoie-moi une capture du message d’erreur dans le journal.");
+    }
   }
 
   async function setStarter(){
-    const who = starterSelect.value;
-    if(!who) return;
-    await setDoc(draftRef,{
-      starter: who,
-      turn: who
-    });
-    log(`Draft initialisé – ${who} commence`);
+    clearStatus();
+    try{
+      const who = elStarter.value;
+      if(!who){
+        showStatus("⚠️ Choisis d’abord Lisa ou Manon.");
+        return;
+      }
+      await setDoc(draftRef, { starter: who, turn: who }, { merge: true });
+      log(`✅ Draft initialisé – ${who} commence`);
+    }catch(err){
+      console.error(err);
+      log(`❌ Erreur setStarter : ${err?.message || err}`);
+      showStatus("❌ Firestore a refusé l’écriture (permissions).");
+    }
   }
 
   async function resetDraft(){
-    await setDoc(draftRef,{});
-    log("Draft réinitialisé");
+    clearStatus();
+    try{
+      await setDoc(draftRef, {}, { merge: false });
+      log("✅ Draft réinitialisé");
+    }catch(err){
+      console.error(err);
+      log(`❌ Erreur resetDraft : ${err?.message || err}`);
+      showStatus("❌ Firestore a refusé l’écriture (permissions).");
+    }
   }
 
   async function pick(playerId, team){
-    const snap = await getDoc(draftRef);
-    if(!snap.exists()) return;
-    const { turn } = snap.data();
-    if(turn !== team) return;
+    clearStatus();
+    try{
+      if(team !== "Lisa" && team !== "Manon"){
+        showStatus("⚠️ Définis d’abord qui commence (étape 2).");
+        return;
+      }
 
-    await updateDoc(doc(db,"players",playerId),{ team });
-    await updateDoc(draftRef,{ turn: team === "Lisa" ? "Manon" : "Lisa" });
-    log(`${team} choisit un joueur`);
+      const snap = await getDoc(draftRef);
+      const data = snap.exists() ? snap.data() : {};
+      const turn = data.turn;
+
+      if(turn !== team){
+        showStatus(`⛔ Ce n’est pas le tour de ${team}. Au tour de : ${turn || "—"}`);
+        return;
+      }
+
+      await updateDoc(doc(db,"players",playerId), { team });
+      await setDoc(draftRef, { turn: team === "Lisa" ? "Manon" : "Lisa" }, { merge:true });
+
+      log(`✅ ${team} choisit un joueur → tour suivant`);
+    }catch(err){
+      console.error(err);
+      log(`❌ Erreur pick : ${err?.message || err}`);
+      showStatus("❌ Firestore a refusé l’écriture (permissions).");
+    }
   }
 
-  onSnapshot(playersCol, snap=>{
-    listNone.innerHTML="";
-    listLisa.innerHTML="";
-    listManon.innerHTML="";
+  // ========= Brancher les boutons =========
+  btnAdd.addEventListener("click", addPlayer);
+  btnSetStarter.addEventListener("click", setStarter);
+  btnReset.addEventListener("click", resetDraft);
+
+  // Entrée = ajoute
+  elName.addEventListener("keydown", (e)=>{
+    if(e.key === "Enter") addPlayer();
+  });
+
+  // ========= Live updates =========
+  onSnapshot(draftRef, (snap)=>{
+    const turn = snap.exists() ? (snap.data().turn || "—") : "—";
+    elTurn.textContent = turn;
+  }, (err)=>{
+    console.error(err);
+    log(`❌ onSnapshot draft : ${err?.message || err}`);
+    showStatus("❌ Lecture Firestore refusée (permissions).");
+  });
+
+  const playersQuery = query(playersCol, orderBy("createdAt","asc"));
+  onSnapshot(playersQuery, (snap)=>{
+    elListNone.innerHTML = "";
+    elListLisa.innerHTML = "";
+    elListManon.innerHTML = "";
 
     snap.docs.forEach(d=>{
-      const p=d.data();
-      const li=document.createElement("li");
+      const p = d.data();
+      const li = document.createElement("li");
 
       if(!p.team){
-        li.innerHTML=`<span class="pill neutral">${p.name}</span>`;
-        li.onclick=()=>pick(d.id,document.getElementById("turnLabel").textContent);
-        listNone.appendChild(li);
+        const span = document.createElement("span");
+        span.className = "pill neutral";
+        span.textContent = p.name || "";
+        span.addEventListener("click", ()=> pick(d.id, elTurn.textContent));
+        li.appendChild(span);
+        elListNone.appendChild(li);
+        return;
       }
-      if(p.team==="Lisa"){
-        li.innerHTML=`<span class="pill lisa">${p.name}</span>`;
-        listLisa.appendChild(li);
+
+      if(p.team === "Lisa"){
+        li.innerHTML = `<span class="pill lisa">${escapeHtml(p.name || "")}</span>`;
+        elListLisa.appendChild(li);
+        return;
       }
-      if(p.team==="Manon"){
-        li.innerHTML=`<span class="pill manon">${p.name}</span>`;
-        listManon.appendChild(li);
+
+      if(p.team === "Manon"){
+        li.innerHTML = `<span class="pill manon">${escapeHtml(p.name || "")}</span>`;
+        elListManon.appendChild(li);
+        return;
       }
     });
+  }, (err)=>{
+    console.error(err);
+    log(`❌ onSnapshot players : ${err?.message || err}`);
+    showStatus("❌ Lecture Firestore refusée (permissions).");
   });
 
-  onSnapshot(draftRef,snap=>{
-    document.getElementById("turnLabel").textContent =
-      snap.exists() ? snap.data().turn || "—" : "—";
-  });
+  // Expose aussi pour debug si besoin
+  window.addPlayer = addPlayer;
+  window.setStarter = setStarter;
+  window.resetDraft = resetDraft;
+  window.pick = pick;
 
+  log("Admin chargé. Étape 1 : ajoute des joueurs, puis définis qui commence.");
 </script>
 
 </body>
